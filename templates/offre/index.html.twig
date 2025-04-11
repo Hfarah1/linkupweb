@@ -1,0 +1,198 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Offres
+{% endblock %}
+
+{% block content %}
+	<!-- Single Page Header start -->
+	<div class="container-fluid page-header py-5">
+		<h1 class="text-center text-white display-6">Offres d'emploi</h1>
+		<ol class="breadcrumb justify-content-center mb-0">
+			<li class="breadcrumb-item">
+				<a href="{{ path('app_home') }}">Accueil</a>
+			</li>
+			<li class="breadcrumb-item active text-white">Offres</li>
+		</ol>
+	</div>
+	<!-- Single Page Header End -->
+
+	<!-- Fruits Shop Start-->
+	<div class="container-fluid fruite py-5">
+		<div class="container py-5">
+			<h1 class="mb-4">Liste des offres</h1>
+			<div class="row g-4">
+				<div class="col-lg-12">
+					<div class="row g-4">
+						<div class="col-xl-3">
+							<div class="input-group w-100 mx-auto d-flex">
+								<input type="search" class="form-control p-3" placeholder="Mots-clés" aria-describedby="search-icon-1">
+								<span id="search-icon-1" class="input-group-text p-3">
+									<i class="fa fa-search"></i>
+								</span>
+							</div>
+						</div>
+						<div class="col-6"></div>
+						<div class="col-xl-3">
+							<div class="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
+								<label for="sorting">Trier par:</label>
+								<select id="sorting" name="sorting" class="border-0 form-select-sm bg-light me-3">
+									<option value="default">Par défaut</option>
+									<option value="popular">Popularité</option>
+									<option value="salary">Salaire</option>
+									<option value="recent">Récent</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="row g-4">
+						<div
+							class="col-lg-3">
+							<!-- Filters Sidebar -->
+							<div class="row g-4">
+								<div class="col-lg-12">
+									<div class="mb-3">
+										<h4>Catégories</h4>
+										<ul class="list-unstyled fruite-categorie">
+											{% for name, count in categories %}
+												<li>
+													<div class="d-flex justify-content-between fruite-name">
+														<a href="#">
+															<i class="fas fa-briefcase me-2"></i>
+															{{ name }}</a>
+														<span>({{ count }})</span>
+													</div>
+												</li>
+											{% endfor %}
+										</ul>
+									</div>
+								</div>
+								<div class="col-lg-12">
+									<div class="mb-3">
+										<h4 class="mb-2">Salaire</h4>
+										<input type="range" class="form-range w-100" id="salaryRange" min="0" max="5000" value="0" step="100" oninput="salaryValue.value=salaryRange.value">
+										<div class="d-flex justify-content-between">
+											<span>0 DT</span>
+											<output id="salaryValue">0</output>
+											<span>5000+ DT</span>
+										</div>
+									</div>
+								</div>
+								<div class="col-lg-12">
+									<div class="mb-3">
+										<h4>Gouvernorat</h4>
+										{% for region in regions %}
+											<div class="mb-2">
+												<input type="checkbox" class="me-2 region-filter" id="region-{{ loop.index }}" value="{{ region }}">
+												<label for="region-{{ loop.index }}">{{ region }}</label>
+											</div>
+										{% endfor %}
+									</div>
+								</div>
+							</div>
+						</div>
+						<div
+							class="col-lg-9">
+							<!-- Offers Listing -->
+							<div class="row g-4 justify-content-center">
+								{% for offre in offres %}
+									<div class="col-md-6 col-lg-6 col-xl-4">
+										<a href="{{ path('app_offre_show', {'id_offre': offre.id_offre}) }}" class="text-decoration-none">
+											<div class="rounded position-relative fruite-item">
+												<div class="fruite-img">
+													{% if offre.organisationLogo %}
+														{% set logoContent = offre.getOrganisationLogo() %}
+														<img src="data:image/jpeg;base64,{{ logoContent|base64_encode }}" class="img-fluid w-100 rounded-top" alt="Logo {{ offre.organisation }}" style="height: 200px; object-fit: cover;">
+													{% else %}
+														<img src="{{ asset('front/img/offer-placeholder.png') }}" class="img-fluid w-100 rounded-top bg-light" alt="Offre {{ offre.titre }}" style="height: 200px; object-fit: cover;">
+													{% endif %}
+												</div>
+												<div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">
+													{{ offre.categorie|upper }}
+												</div>
+												<div class="p-4 border border-secondary border-top-0 rounded-bottom">
+													<h4>{{ offre.titre }}</h4>
+													<p>{{ offre.description|u.truncate(100, '...') }}</p>
+													<div class="d-flex justify-content-between flex-lg-wrap">
+														<p class="text-dark fs-5 fw-bold mb-0">
+															{% if offre.gouvernorat or offre.ville %}
+																<i class="fas fa-map-marker-alt text-secondary me-2"></i>
+																{% if offre.gouvernorat %}
+																	{{ offre.gouvernorat }}
+																	{% if offre.ville %}
+																		,
+																		{{ offre.ville }}
+																	{% endif %}
+																{% else %}
+																	{{ offre.ville }}
+																{% endif %}
+															{% else %}
+																<span class="text-muted">Lieu non spécifié</span>
+															{% endif %}
+														</p>
+													</a>
+												</div>
+											</div>
+										</div>
+									</div>
+								{% else %}
+									<div class="col-12 text-center py-5">
+										<p class="text-muted">Aucune offre disponible pour le moment</p>
+									</div>
+								{% endfor %}
+							</div>
+
+							<!-- Pagination -->
+							<div class="col-12">
+								<div class="pagination d-flex justify-content-center mt-5">
+									<a href="#" class="rounded">&laquo;</a>
+									<a href="#" class="active rounded">1</a>
+									<a href="#" class="rounded">2</a>
+									<a href="#" class="rounded">3</a>
+									<a href="#" class="rounded">4</a>
+									<a href="#" class="rounded">5</a>
+									<a href="#" class="rounded">&raquo;</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Fruits Shop End-->
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script>
+		// Filtering functionality
+document.addEventListener('DOMContentLoaded', function () {
+const searchInput = document.querySelector('input[type="search"]');
+const categoryLinks = document.querySelectorAll('.fruite-categorie a');
+const regionFilters = document.querySelectorAll('.region-filter');
+const salaryRange = document.getElementById('salaryRange');
+const sortingSelect = document.getElementById('sorting');
+
+// Add event listeners for filtering
+searchInput.addEventListener('input', filterOffers);
+categoryLinks.forEach(link => link.addEventListener('click', filterByCategory));
+regionFilters.forEach(filter => filter.addEventListener('change', filterOffers));
+salaryRange.addEventListener('input', filterOffers);
+sortingSelect.addEventListener('change', sortOffers);
+
+function filterOffers() { // Implement filtering logic here
+console.log('Filtering offers...');
+}
+
+function filterByCategory(e) {
+e.preventDefault();
+// Implement category filtering
+console.log('Filtering by category...');
+}
+
+function sortOffers() { // Implement sorting logic
+console.log('Sorting offers...');
+}
+});
+	</script>
+{% endblock %}

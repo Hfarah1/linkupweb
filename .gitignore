@@ -1,5 +1,5 @@
 
-###> symfony/framework-bundle ###
+###> symfony/framework-bundle ###Test-Path $PROFILE
 /.env.local
 /.env.local.php
 /.env.*.local
