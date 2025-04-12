@@ -6,7 +6,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
+use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\CandidatureRepository;
 
 #[ORM\Entity(repositoryClass: CandidatureRepository::class)]
@@ -88,20 +88,27 @@ class Candidature
     }
 
     #[ORM\Column(type: 'blob', nullable: false)]
-    private ?string $cv_file = null;
+    private  $cv_file = null;
 
     public function getCv_file(): ?string
     {
         return $this->cv_file;
     }
 
-    public function setCv_file(string $cv_file): self
+    public function setCv_file( $cv_file): self
     {
         $this->cv_file = $cv_file;
         return $this;
     }
 
     #[ORM\Column(type: 'text', nullable: false)]
+    #[Assert\NotBlank(message: "La lettre de motivation ne peut pas être vide")]
+    #[Assert\Length(
+        min: 20,
+        max: 2000,
+        minMessage: "La lettre de motivation doit faire au moins {{ limit }} caractères",
+        maxMessage: "La lettre de motivation ne peut pas dépasser {{ limit }} caractères"
+    )]
     private ?string $lettre_motivation = null;
 
     public function getLettre_motivation(): ?string

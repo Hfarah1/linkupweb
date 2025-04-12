@@ -47,7 +47,9 @@ final class CandidatureController extends AbstractController
             $entityManager->persist($candidature);
             $entityManager->flush();
             $this->addFlash('success', 'Votre candidature a été soumise avec succès');
-            return $this->redirectToRoute('app_offre_show', ['id_offre' => $offre->getIdOffre()]);
+            return $this->redirectToRoute('app_offre_show', [
+                'id_offre' => $offre->getIdOffre()
+            ]);
         }
 
         return $this->render('candidature/new.html.twig', [
@@ -58,10 +60,11 @@ final class CandidatureController extends AbstractController
     }
 
     #[Route('/{id_candidature}', name: 'app_candidature_show', methods: ['GET'])]
-    public function show(Candidature $candidature): Response
+    public function show(Candidature $candidature, Offre $offre): Response
     {
         return $this->render('candidature/show.html.twig', [
             'candidature' => $candidature,
+            'offre' => $offre,
         ]);
     }
 

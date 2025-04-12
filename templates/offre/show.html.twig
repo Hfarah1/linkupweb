@@ -4,6 +4,7 @@
 	{{ offre.titre }}
 {% endblock %}
 
+
 {% block content %}
 	<!-- Single Page Header start -->
 	<div class="container-fluid page-header py-5">
@@ -180,14 +181,6 @@
 																</div>
 															</div>
 														{% endif %}
-													</div>
-													<div class="mt-3">
-														<a href="{{ path('app_candidature_show', {'id_candidature': candidature.id_candidature}) }}" class="btn btn-sm btn-info me-2">
-															Voir détails
-														</a>
-														<a href="{{ path('app_candidature_edit', {'id_candidature': candidature.id_candidature}) }}" class="btn btn-sm btn-warning">
-															Modifier
-														</a>
 													</div>
 												</div>
 											</div>
