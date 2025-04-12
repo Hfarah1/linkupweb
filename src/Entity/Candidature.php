@@ -101,7 +101,7 @@ class Candidature
         return $this;
     }
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: false)]
     private ?string $lettre_motivation = null;
 
     public function getLettre_motivation(): ?string

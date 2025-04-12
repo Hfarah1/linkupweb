@@ -60,15 +60,17 @@
 
 							<div class="mb-4">
 								<h5>Compétences requises:</h5>
-								<p>{{ offre.competencesRequises|nl2br }}</p>
+								{% if offre.competencesRequises is not null %}
+									<p>{{ offre.competencesRequises|nl2br }}</p>
+								{% else %}
+									<h5 class="fw-bold mb-3 text-muted">Non spécifiées</h5>
+								{% endif %}
 							</div>
-
-							<a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
+							<a href="{{ path('app_candidature_new', {'id_offre': offre.id_offre}) }}" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
 								<i class="fa fa-shopping-bag me-2 text-primary"></i>
 								Postuler à cette offre
 							</a>
 						</div>
-
 						<div class="col-lg-12">
 							<nav>
 								<div class="nav nav-tabs mb-3">
@@ -204,51 +206,46 @@
 
 			<!-- Related Offers Section -->
 			<h1 class="fw-bold mb-4">Related Offers par catégories</h1>
-<div class="vesitable">
-    <div class="owl-carousel vegetable-carousel justify-content-center">
-        {% if recommendedOffers|length > 0 %}
-            {% for recommendedOffer in recommendedOffers %}
-                <div class="border border-primary rounded position-relative vesitable-item d-flex flex-column h-100">
-                    <a href="{{ path('app_offre_show', {'id_offre': recommendedOffer.id_offre}) }}" class="d-flex flex-column h-100 text-decoration-none">
-                        <div class="vesitable-img" style="height: 300px; overflow: hidden;">
-                            {% if recommendedOffer.organisationLogo %}
-                                {% set logoContent = recommendedOffer.getOrganisationLogo() %}
-                                <img src="data:image/jpeg;base64,{{ logoContent|base64_encode }}" 
-                                     class="img-fluid w-100 h-100 rounded-top" 
-                                     alt="Logo {{ recommendedOffer.organisation }}"
-                                     style="object-fit: cover;">
-                            {% else %}
-                                <img src="{{ asset('front/img/offer-placeholder.png') }}" 
-                                     class="img-fluid w-100 h-100 rounded-top" 
-                                     alt="Logo {{ recommendedOffer.organisation }}"
-                                     style="object-fit: cover;">
-                            {% endif %}
-                        </div>
-                        <div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 10px; right: 10px;">
-                            {{ recommendedOffer.categorie }}
-                        </div>
-                        <div class="p-3 flex-grow-1 d-flex flex-column">
-                            <h4 class="mb-2">{{ recommendedOffer.titre }}</h4>
-                            <p class="mb-2 flex-grow-1">{{ recommendedOffer.description|length > 100 ? recommendedOffer.description|slice(0, 100) ~ '...' : recommendedOffer.description }}</p>
-                            <div class="mt-auto">
-                                <p class="text-dark fs-5 fw-bold mb-0">
-                                    {% if recommendedOffer.salaire %}
-                                        {{ recommendedOffer.salaire|number_format(2, ',', ' ') }} DT
-                                    {% else %}
-                                        <span class="text-muted">Salaire non spécifié</span>
-                                    {% endif %}
-                                </p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            {% endfor %}
-        {% else %}
-            <div class="alert alert-info">Aucune offre similaire trouvée.</div>
-        {% endif %}
-    </div>
-</div>
-            <!-- End Related Offers Section -->
+			<div class="vesitable">
+				<div class="owl-carousel vegetable-carousel justify-content-center">
+					{% if recommendedOffers|length > 0 %}
+						{% for recommendedOffer in recommendedOffers %}
+							<div class="border border-primary rounded position-relative vesitable-item d-flex flex-column h-100">
+								<a href="{{ path('app_offre_show', {'id_offre': recommendedOffer.id_offre}) }}" class="d-flex flex-column h-100 text-decoration-none">
+									<div class="vesitable-img" style="height: 300px; overflow: hidden;">
+										{% if recommendedOffer.organisationLogo %}
+											{% set logoContent = recommendedOffer.getOrganisationLogo() %}
+											<img src="data:image/jpeg;base64,{{ logoContent|base64_encode }}" class="img-fluid w-100 h-100 rounded-top" alt="Logo {{ recommendedOffer.organisation }}" style="object-fit: cover;">
+										{% else %}
+											<img src="{{ asset('front/img/offer-placeholder.png') }}" class="img-fluid w-100 h-100 rounded-top" alt="Logo {{ recommendedOffer.organisation }}" style="object-fit: cover;">
+										{% endif %}
+									</div>
+									<div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 10px; right: 10px;">
+										{{ recommendedOffer.categorie }}
+									</div>
+									<div class="p-3 flex-grow-1 d-flex flex-column">
+										<h4 class="mb-2">{{ recommendedOffer.titre }}</h4>
+										<p class="mb-2 flex-grow-1">{{ recommendedOffer.description|length > 100 ? recommendedOffer.description|slice(0, 100) ~ '...' : recommendedOffer.description }}</p>
+										<div class="mt-auto">
+											<p class="text-dark fs-5 fw-bold mb-0">
+												{% if recommendedOffer.salaire %}
+													{{ recommendedOffer.salaire|number_format(2, ',', ' ') }}
+													DT
+												{% else %}
+													<span class="text-muted">Salaire non spécifié</span>
+												{% endif %}
+											</p>
+										</div>
+									</div>
+								</a>
+							</div>
+						{% endfor %}
+					{% else %}
+						<div class="alert alert-info">Aucune offre similaire trouvée.</div>
+					{% endif %}
+				</div>
+			</div>
+			<!-- End Related Offers Section -->
 		</div>
 	</div>
 </div>

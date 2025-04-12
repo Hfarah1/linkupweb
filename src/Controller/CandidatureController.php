@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Candidature;
+use App\Entity\User;
+use App\Entity\Offre;
 use App\Form\CandidatureType;
 use App\Repository\CandidatureRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -11,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/candidature')]
+#[Route('/offre/{id_offre}/candidature')]
 final class CandidatureController extends AbstractController
 {
     #[Route(name: 'app_candidature_index', methods: ['GET'])]
@@ -23,21 +25,34 @@ final class CandidatureController extends AbstractController
     }
 
     #[Route('/new', name: 'app_candidature_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, Offre $offre, CandidatureRepository $candidatureRepository): Response
     {
         $candidature = new Candidature();
+        $candidature->setUser($entityManager->getReference(User::class, 1));
+        $candidature->setOffre($offre);
+        $candidature->setStatut('En attente');
+        $candidature->setDateCandidature(new \DateTime());
         $form = $this->createForm(CandidatureType::class, $candidature);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $cvFile = $form->get('cv_upload')->getData();
+
+            if ($cvFile) {
+                // Store the file content in the database as BLOB
+                $candidature->setCvFile(file_get_contents($cvFile->getPathname()));
+            }
+            
             $entityManager->persist($candidature);
             $entityManager->flush();
-
-            return $this->redirectToRoute('app_candidature_index', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('success', 'Votre candidature a été soumise avec succès');
+            return $this->redirectToRoute('app_offre_show', ['id_offre' => $offre->getIdOffre()]);
         }
 
         return $this->render('candidature/new.html.twig', [
             'candidature' => $candidature,
+            'offre' => $offre,
             'form' => $form,
         ]);
     }
@@ -71,7 +86,7 @@ final class CandidatureController extends AbstractController
     #[Route('/{id_candidature}', name: 'app_candidature_delete', methods: ['POST'])]
     public function delete(Request $request, Candidature $candidature, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$candidature->getId_candidature(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $candidature->getId_candidature(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($candidature);
             $entityManager->flush();
         }
