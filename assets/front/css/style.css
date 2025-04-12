@@ -495,3 +495,13 @@
 }
 /*** Footer End ***/
 
+/* Gestion Candidature CSSS*/
+.modal-xl {
+    max-width: 90%;
+}
+
+@media (min-width: 1200px) {
+    .modal-xl {
+        max-width: 1140px;
+    }
+}

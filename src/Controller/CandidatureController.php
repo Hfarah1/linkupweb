@@ -43,7 +43,7 @@ final class CandidatureController extends AbstractController
                 // Store the file content in the database as BLOB
                 $candidature->setCvFile(file_get_contents($cvFile->getPathname()));
             }
-            
+
             $entityManager->persist($candidature);
             $entityManager->flush();
             $this->addFlash('success', 'Votre candidature a été soumise avec succès');
@@ -95,5 +95,35 @@ final class CandidatureController extends AbstractController
         }
 
         return $this->redirectToRoute('app_candidature_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/{id_candidature}/view-cv', name: 'app_candidature_view_cv')]
+    public function viewCv(Candidature $candidature): Response
+    {
+        $cvContent = $candidature->getCvFile();
+
+        if (is_resource($cvContent)) {
+            $cvContent = stream_get_contents($cvContent);
+        }
+
+        return new Response($cvContent, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="cv_' . $candidature->getId_candidature() . '.pdf"'
+        ]);
+    }
+
+    #[Route('/{id_candidature}/download-cv', name: 'app_candidature_download_cv')]
+    public function downloadCv(Candidature $candidature): Response
+    {
+        $cvContent = $candidature->getCvFile();
+
+        if (is_resource($cvContent)) {
+            $cvContent = stream_get_contents($cvContent);
+        }
+
+        return new Response($cvContent, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="cv_' . $candidature->getIdCandidature() . '.pdf"'
+        ]);
     }
 }
