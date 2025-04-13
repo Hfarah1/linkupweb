@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Offre - {{ offre.titre|default('Détails de l\'Offre') }}{% endblock %}
+{% block title %}Offre -
+{{ offre.titre|default('Détails de l\'Offre') }}{% endblock %}
 
 {% block content %}
     <!-- Single Page Header start -->
@@ -10,534 +11,493 @@
             <ol class="breadcrumb justify-content-center mb-0">
                 <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
                 <li class="breadcrumb-item"><a href="{{ path('app_offre_index') }}">Offres</a></li>
-                <li class="breadcrumb-item active text-white">{{ offre.titre|default('Offre')|u.truncate(30, '...') }}</li>
-            </ol>
-        </div>
-    </div>
-    <!-- Single Page Header End -->
+                <li class="breadcrumb-item active text-white">{{ offre.titre|default('Offre')|u.truncate(30, '...') }}
+</li></ol></div></div><!-- Single Page Header End --><!-- Single Offer Start --><div class="container-fluid py-5 mt-5"><div class="container py-5"><div class="row g-4 mb-5">
+<div
+	class="col-lg-8 col-xl-9">
+	<!-- Main Offer Card -->
+	<div class="card border-0 shadow-sm mb-4">
+		<div class="card-body">
+			<div
+				class="row g-4">
+				<!-- Organization Logo -->
+				<div class="col-lg-6">
+					<div class="border rounded p-3 d-flex align-items-center justify-content-center bg-light" style="height: 100%; min-height: 300px;">
+						{% if offre.organisationLogo %}
+							<img src="data:image/jpeg;base64,{{ offre.organisationLogo|base64_encode }}" class="img-fluid rounded" alt="Logo {{ offre.organisation|default('Organisation') }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+						{% else %}
+							<img src="{{ asset('front/img/offer-placeholder.png') }}" class="img-fluid rounded" alt="Placeholder" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+						{% endif %}
+					</div>
+				</div>
 
-    <!-- Single Offer Start -->
-    <div class="container-fluid py-5 mt-5">
-        <div class="container py-5">
-            <div class="row g-4 mb-5">
-                <div class="col-lg-8 col-xl-9">
-                    <!-- Main Offer Card -->
-                    <div class="card border-0 shadow-sm mb-4">
-                        <div class="card-body">
-                            <div class="row g-4">
-                                <!-- Organization Logo -->
-                                <div class="col-lg-6">
-                                    <div class="border rounded p-3 d-flex align-items-center justify-content-center bg-light" style="height: 100%; min-height: 300px;">
-                                        {% if offre.organisationLogo %}
-                                            <img src="data:image/jpeg;base64,{{ offre.organisationLogo|base64_encode }}" 
-                                                 class="img-fluid rounded" 
-                                                 alt="Logo {{ offre.organisation|default('Organisation') }}" 
-                                                 style="max-width: 100%; max-height: 100%; object-fit: contain;">
-                                        {% else %}
-                                            <img src="{{ asset('front/img/offer-placeholder.png') }}" 
-                                                 class="img-fluid rounded" 
-                                                 alt="Placeholder" 
-                                                 style="max-width: 100%; max-height: 100%; object-fit: contain;">
-                                        {% endif %}
-                                    </div>
-                                </div>
+				<!-- Offer Details -->
+				<div class="col-lg-6">
+					<div class="d-flex align-items-center mb-3">
+						<span class="badge bg-primary me-2">{{ offre.categorie|default('N/A') }}</span>
+						<small class="text-muted">
+							<i class="far fa-calendar-alt me-1"></i>
+							{{ offre.datePublication ? offre.datePublication|date('d/m/Y') : 'Non spécifiée' }}
+						</small>
+					</div>
 
-                                <!-- Offer Details -->
-                                <div class="col-lg-6">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <span class="badge bg-primary me-2">{{ offre.categorie|default('N/A') }}</span>
-                                        <small class="text-muted">
-                                            <i class="far fa-calendar-alt me-1"></i>
-                                            {{ offre.datePublication ? offre.datePublication|date('d/m/Y') : 'Non spécifiée' }}
-                                        </small>
-                                    </div>
+					<h2 class="fw-bold mb-3">{{ offre.titre|default('Sans titre') }}</h2>
 
-                                    <h2 class="fw-bold mb-3">{{ offre.titre|default('Sans titre') }}</h2>
+					<div class="d-flex align-items-center mb-4">
+						{% if offre.salaire %}
+							<h4 class="fw-bold text-success mb-0 me-3">
+								{{ offre.salaire|number_format(2, ',', ' ') }}
+								DT
+							</h4>
+						{% else %}
+							<span class="badge bg-secondary">Salaire non spécifié</span>
+						{% endif %}
+						<span class="badge bg-info rounded-pill">{{ offre.typeContrat|default('N/A') }}</span>
+					</div>
 
-                                    <div class="d-flex align-items-center mb-4">
-                                        {% if offre.salaire %}
-                                            <h4 class="fw-bold text-success mb-0 me-3">
-                                                {{ offre.salaire|number_format(2, ',', ' ') }} DT
-                                            </h4>
-                                        {% else %}
-                                            <span class="badge bg-secondary">Salaire non spécifié</span>
-                                        {% endif %}
-                                        <span class="badge bg-info rounded-pill">{{ offre.typeContrat|default('N/A') }}</span>
-                                    </div>
+					<div class="mb-4">
+						<h5 class="d-flex align-items-center mb-3">
+							<i class="fas fa-align-left text-primary me-2"></i>Description
+						</h5>
+						<div class="ps-4 bg-light p-3 rounded">
+							{{ offre.description|default('Aucune description disponible')|nl2br }}
+						</div>
+					</div>
 
-                                    <div class="mb-4">
-                                        <h5 class="d-flex align-items-center mb-3">
-                                            <i class="fas fa-align-left text-primary me-2"></i>Description
-                                        </h5>
-                                        <div class="ps-4 bg-light p-3 rounded">
-                                            {{ offre.description|default('Aucune description disponible')|nl2br }}
-                                        </div>
-                                    </div>
+					<div class="mb-4">
+						<h5 class="d-flex align-items-center mb-3">
+							<i class="fas fa-tasks text-primary me-2"></i>Compétences Requises
+						</h5>
+						<div class="ps-4 bg-light p-3 rounded">
+							{% if offre.competencesRequises %}
+								{{ offre.competencesRequises|nl2br }}
+							{% else %}
+								<p class="text-muted mb-0">Non spécifiées</p>
+							{% endif %}
+						</div>
+					</div>
 
-                                    <div class="mb-4">
-                                        <h5 class="d-flex align-items-center mb-3">
-                                            <i class="fas fa-tasks text-primary me-2"></i>Compétences Requises
-                                        </h5>
-                                        <div class="ps-4 bg-light p-3 rounded">
-                                            {% if offre.competencesRequises %}
-                                                {{ offre.competencesRequises|nl2br }}
-                                            {% else %}
-                                                <p class="text-muted mb-0">Non spécifiées</p>
-                                            {% endif %}
-                                        </div>
-                                    </div>
+					<div class="d-grid gap-2">
+						<a href="{{ path('app_candidature_new', {'id_offre': offre.id_offre}) }}" class="btn btn-primary btn-lg rounded-pill py-3 text-uppercase">
+							<i class="fas fa-paper-plane me-2"></i>Postuler à cette Offre
+						</a>
+						{% if is_granted('ROLE_ADMIN') %}
+							<a href="{{ path('app_offre_edit', {'id_offre': offre.id_offre}) }}" class="btn btn-warning btn-lg rounded-pill py-3 text-uppercase">
+								<i class="fas fa-edit me-2"></i>Modifier cette Offre
+							</a>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
-                                    <div class="d-grid gap-2">
-                                        <a href="{{ path('app_candidature_new', {'id_offre': offre.id_offre}) }}" 
-                                           class="btn btn-primary btn-lg rounded-pill py-3 text-uppercase">
-                                            <i class="fas fa-paper-plane me-2"></i>Postuler à cette Offre
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+	<!-- Tabs Section -->
+	<div class="card border-0 shadow-sm" id="candidatures">
+		<div class="card-body">
+			<nav>
+				<div class="nav nav-tabs mb-4" id="nav-tab" role="tablist">
+					<button class="nav-link active" id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about" type="button" role="tab" aria-controls="nav-about" aria-selected="true">
+						<i class="fas fa-info-circle me-2"></i>Détails
+					</button>
+					<button class="nav-link" id="nav-mission-tab" data-bs-toggle="tab" data-bs-target="#nav-mission" type="button" role="tab" aria-controls="nav-mission" aria-selected="false">
+						<i class="fas fa-users me-2"></i>Candidatures ({{ candidatures|length }})
+					</button>
+				</div>
+			</nav>
 
-                    <!-- Tabs Section -->
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body">
-                            <nav>
-                                <div class="nav nav-tabs mb-4" id="nav-tab" role="tablist">
-                                    <button class="nav-link active" id="nav-about-tab" data-bs-toggle="tab" 
-                                            data-bs-target="#nav-about" type="button" role="tab" 
-                                            aria-controls="nav-about" aria-selected="true">
-                                        <i class="fas fa-info-circle me-2"></i>Détails
-                                    </button>
-                                    <button class="nav-link" id="nav-mission-tab" data-bs-toggle="tab" 
-                                            data-bs-target="#nav-mission" type="button" role="tab" 
-                                            aria-controls="nav-mission" aria-selected="false">
-                                        <i class="fas fa-users me-2"></i>Candidatures ({{ candidatures|length }})
-                                    </button>
-                                </div>
-                            </nav>
+			<div
+				class="tab-content">
+				<!-- Details Tab -->
+				<div class="tab-pane fade show active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
+					<div class="list-group list-group-flush">
+						<div class="list-group-item d-flex justify-content-between align-items-center py-3">
+							<span class="fw-bold">
+								<i class="fas fa-map-marker-alt me-2 text-primary"></i>Localisation
+							</span>
+							<span>
+								{% if offre.gouvernorat and offre.ville %}
+									{{ offre.ville }},
+									{{ offre.gouvernorat }}
+								{% elseif offre.gouvernorat %}
+									{{ offre.gouvernorat }}
+								{% elseif offre.ville %}
+									{{ offre.ville }}
+								{% else %}
+									Non spécifiée
+								{% endif %}
+							</span>
+						</div>
+						<div class="list-group-item d-flex justify-content-between align-items-center py-3">
+							<span class="fw-bold">
+								<i class="fas fa-building me-2 text-primary"></i>Organisation
+							</span>
+							<span>{{ offre.organisation|default('Non spécifiée') }}</span>
+						</div>
+						<div class="list-group-item d-flex justify-content-between align-items-center py-3">
+							<span class="fw-bold">
+								<i class="fas fa-file-contract me-2 text-primary"></i>Type de Contrat
+							</span>
+							<span>{{ offre.typeContrat|default('Non spécifié') }}</span>
+						</div>
+						<div class="list-group-item d-flex justify-content-between align-items-center py-3">
+							<span class="fw-bold">
+								<i class="fas fa-check-circle me-2 text-primary"></i>Statut
+							</span>
+							<span class="badge bg-{{ offre.statut == 'Active' ? 'success' : 'secondary' }} rounded-pill">
+								{{ offre.statut|default('Inconnu') }}
+							</span>
+						</div>
+						<div class="list-group-item d-flex justify-content-between align-items-center py-3">
+							<span class="fw-bold">
+								<i class="fas fa-calendar-alt me-2 text-primary"></i>Date de Publication
+							</span>
+							<span>{{ offre.datePublication ? offre.datePublication|date('d/m/Y H:i') : 'Non spécifiée' }}</span>
+						</div>
+					</div>
+				</div>
 
-                            <div class="tab-content">
-                                <!-- Details Tab -->
-                                <div class="tab-pane fade show active" id="nav-about" role="tabpanel" 
-                                     aria-labelledby="nav-about-tab">
-                                    <div class="list-group list-group-flush">
-                                        <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                            <span class="fw-bold">
-                                                <i class="fas fa-map-marker-alt me-2 text-primary"></i>Localisation
-                                            </span>
-                                            <span>
-                                                {% if offre.gouvernorat and offre.ville %}
-                                                    {{ offre.ville }}, {{ offre.gouvernorat }}
-                                                {% elseif offre.gouvernorat %}
-                                                    {{ offre.gouvernorat }}
-                                                {% elseif offre.ville %}
-                                                    {{ offre.ville }}
-                                                {% else %}
-                                                    Non spécifiée
-                                                {% endif %}
-                                            </span>
-                                        </div>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                            <span class="fw-bold">
-                                                <i class="fas fa-building me-2 text-primary"></i>Organisation
-                                            </span>
-                                            <span>{{ offre.organisation|default('Non spécifiée') }}</span>
-                                        </div>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                            <span class="fw-bold">
-                                                <i class="fas fa-file-contract me-2 text-primary"></i>Type de Contrat
-                                            </span>
-                                            <span>{{ offre.typeContrat|default('Non spécifié') }}</span>
-                                        </div>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                            <span class="fw-bold">
-                                                <i class="fas fa-check-circle me-2 text-primary"></i>Statut
-                                            </span>
-                                            <span class="badge bg-{{ offre.statut == 'Active' ? 'success' : 'secondary' }} rounded-pill">
-                                                {{ offre.statut|default('Inconnu') }}
-                                            </span>
-                                        </div>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                            <span class="fw-bold">
-                                                <i class="fas fa-calendar-alt me-2 text-primary"></i>Date de Publication
-                                            </span>
-                                            <span>{{ offre.datePublication ? offre.datePublication|date('d/m/Y H:i') : 'Non spécifiée' }}</span>
-                                        </div>
-                                    </div>
-                                </div>
+				<!-- Applications Tab -->
+				<div class="tab-pane fade" id="nav-mission" role="tabpanel" aria-labelledby="nav-mission-tab">
+					{% if candidatures|length > 0 %}
+						{% for candidature in candidatures %}
+							<div class="card mb-3 shadow-sm">
+								<div class="card-body">
+									<div class="d-flex">
+										<div class="flex-shrink-0">
+											<img src="{{ candidature.user.avatar ?? asset('front/img/avatar.jpg') }}" class="img-fluid rounded-circle" style="width: 80px; height: 80px; object-fit: cover;" alt="Candidat {{ candidature.user.prenom|default('') }} {{ candidature.user.nom|default('') }}">
+										</div>
+										<div class="flex-grow-1 ms-3">
+											<div class="d-flex justify-content-between align-items-center mb-2">
+												<h5 class="mb-0">
+													<a href="{{ path('app_candidature_show', { 'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature }) }}" class="text-decoration-none text-primary">
+														{{ candidature.user.prenom|default('Non spécifié') }}
+														{{ candidature.user.nom|default('') }}
+													</a>
+												</h5>
+												<span class="badge bg-{{ candidature.statut == 'Acceptée' ? 'success' : (candidature.statut == 'Refusée' ? 'danger' : 'warning') }} rounded-pill">
+													{{ candidature.statut|default('En attente') }}
+												</span>
+											</div>
+											<p class="text-muted small mb-3">
+												<i class="far fa-clock me-1"></i>
+												{{ candidature.dateCandidature ? candidature.dateCandidature|date('d/m/Y H:i') : 'Non spécifiée' }}
+											</p>
+											<div class="d-flex flex-wrap gap-2">
+												{% if candidature.cvFile %}
+													<button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#cvModal{{ candidature.id_candidature }}">
+														<i class="fas fa-eye me-1"></i>Voir CV
+													</button>
+												{% endif %}
+												{% if candidature.lettreMotivation %}
+													<button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#motivationLetterModal{{ candidature.id_candidature }}">
+														<i class="fas fa-envelope-open-text me-1"></i>Lettre de Motivation
+													</button>
+												{% endif %}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						{% endfor %}
+					{% else %}
+						<div class="alert alert-info d-flex align-items-center">
+							<i class="fas fa-info-circle me-2"></i>
+							Aucune candidature pour cette offre.
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 
-                                <!-- Applications Tab -->
-                                <div class="tab-pane fade" id="nav-mission" role="tabpanel" 
-                                     aria-labelledby="nav-mission-tab">
-                                    {% if candidatures|length > 0 %}
-                                        {% for candidature in candidatures %}
-                                            <div class="card mb-3 shadow-sm">
-                                                <div class="card-body">
-                                                    <div class="d-flex">
-                                                        <div class="flex-shrink-0">
-                                                            <img src="{{ candidature.user.avatar ?? asset('front/img/avatar.jpg') }}" 
-                                                                 class="img-fluid rounded-circle" 
-                                                                 style="width: 80px; height: 80px; object-fit: cover;" 
-                                                                 alt="Candidat {{ candidature.user.prenom|default('') }} {{ candidature.user.nom|default('') }}">
-                                                        </div>
-                                                        <div class="flex-grow-1 ms-3">
-                                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                                <h5 class="mb-0">
-                                                                    <a href="{{ path('app_candidature_show', { 'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature }) }}" 
-                                                                       class="text-decoration-none text-primary">
-                                                                        {{ candidature.user.prenom|default('Non spécifié') }} {{ candidature.user.nom|default('') }}
-                                                                    </a>
-                                                                </h5>
-                                                                <span class="badge bg-{{ candidature.statut == 'Acceptée' ? 'success' : (candidature.statut == 'Refusée' ? 'danger' : 'warning') }} rounded-pill">
-                                                                    {{ candidature.statut|default('En attente') }}
-                                                                </span>
-                                                            </div>
-                                                            <p class="text-muted small mb-3">
-                                                                <i class="far fa-clock me-1"></i>
-                                                                {{ candidature.dateCandidature ? candidature.dateCandidature|date('d/m/Y H:i') : 'Non spécifiée' }}
-                                                            </p>
-                                                            <div class="d-flex flex-wrap gap-2">
-                                                                {% if candidature.cvFile %}
-                                                                    <button type="button" 
-                                                                            class="btn btn-sm btn-outline-primary" 
-                                                                            data-bs-toggle="modal" 
-                                                                            data-bs-target="#cvModal{{ candidature.id_candidature }}">
-                                                                        <i class="fas fa-eye me-1"></i>Voir CV
-                                                                    </button>
-                                                                {% endif %}
-                                                                {% if candidature.lettreMotivation %}
-                                                                    <button type="button" 
-                                                                            class="btn btn-sm btn-outline-secondary" 
-                                                                            data-bs-toggle="modal" 
-                                                                            data-bs-target="#motivationLetterModal{{ candidature.id_candidature }}">
-                                                                        <i class="fas fa-envelope-open-text me-1"></i>Lettre de Motivation
-                                                                    </button>
-                                                                {% endif %}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        {% endfor %}
-                                    {% else %}
-                                        <div class="alert alert-info d-flex align-items-center">
-                                            <i class="fas fa-info-circle me-2"></i>
-                                            Aucune candidature pour cette offre.
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<!-- Sidebar -->
+<div class="col-lg-4 col-xl-3">
+	<div class="card border-0 shadow-sm sticky-top" style="top: 20px;">
+		<div class="card-body">
+			<h5 class="card-title border-bottom pb-3 mb-4">
+				<i class="fas fa-cog me-2 text-primary"></i>Actions Rapides
+			</h5>
+			<div class="d-grid gap-3">
+				<a href="{{ path('app_offre_index') }}" class="btn btn-outline-secondary text-uppercase">
+					<i class="fas fa-arrow-left me-2"></i>Retour aux Offres
+				</a>
+				<a href="{{ path('app_offre_edit', {'id_offre': offre.id_offre}) }}" class="btn btn-warning text-uppercase" aria-label="Modifier l'offre">
+					<i class="fas fa-edit me-2"></i>Modifier l'Offre
+				</a>
+				<a href="{{ path('app_offre_new') }}" class="btn btn-primary text-uppercase">
+					<i class="fas fa-plus me-2"></i>Créer une Nouvelle Offre
+				</a>
+				{% if is_granted('ROLE_ADMIN') %}
+					<a href="{{ path('app_offre_edit', {'id_offre': offre.id_offre}) }}" class="btn btn-warning btn-lg text-uppercase shadow-sm">
+						<i class="fas fa-edit me-2"></i>Modifier l'Offre
+					</a>
+					{{ include('offre/_delete_form.html.twig') }}
+				{% endif %}
+			</div>
+		</div>
+	</div>
+</div></div><!-- Related Offers Section --><div class="mt-5">
+<h2 class="fw-bold mb-4">
+	<i class="fas fa-briefcase me-2 text-primary"></i>Offres Similaires
+</h2>
+<div class="vesitable">
+	<div class="owl-carousel vegetable-carousel">
+		{% if recommendedOffers|length > 0 %}
+			{% for recommendedOffer in recommendedOffers %}
+				<div class="border border-primary rounded position-relative vesitable-item shadow-sm">
+					<a href="{{ path('app_offre_show', {'id_offre': recommendedOffer.id_offre}) }}" class="text-decoration-none text-dark d-block">
+						<div class="vesitable-img" style="height: 200px;">
+							{% if recommendedOffer.organisationLogo %}
+								<img src="data:image/jpeg;base64,{{ recommendedOffer.organisationLogo|base64_encode }}" class="img-fluid w-100 h-100 rounded-top" alt="Logo {{ recommendedOffer.organisation|default('Organisation') }}" style="object-fit: cover;">
+							{% else %}
+								<img src="{{ asset('front/img/offer-placeholder.png') }}" class="img-fluid w-100 h-100 rounded-top" alt="Placeholder" style="object-fit: cover;">
+							{% endif %}
+						</div>
+						<div class="p-3">
+							<span class="badge bg-primary position-absolute" style="top: 10px; right: 10px;">
+								{{ recommendedOffer.categorie|default('N/A') }}
+							</span>
+							<h5 class="mb-2">{{ recommendedOffer.titre|default('Sans titre') }}</h5>
+							<p class="small text-muted mb-2">
+								{{ recommendedOffer.description|default('')|u.truncate(80, '...') }}
+							</p>
+							<div class="d-flex justify-content-between align-items-center">
+								<span class="fw-bold text-success">
+									{% if recommendedOffer.salaire %}
+										{{ recommendedOffer.salaire|number_format(2, ',', ' ') }}
+										DT
+									{% else %}
+										<span class="text-muted">Non spécifié</span>
+									{% endif %}
+								</span>
+								<span class="badge bg-info rounded-pill">
+									{{ recommendedOffer.typeContrat|default('N/A') }}
+								</span>
+							</div>
+						</div>
+					</a>
+				</div>
+			{% endfor %}
+		{% else %}
+			<div class="alert alert-info d-flex align-items-center">
+				<i class="fas fa-info-circle me-2"></i>
+				Aucune offre similaire trouvée.
+			</div>
+		{% endif %}
+	</div>
+</div></div></div></div><!-- Single Offer End --><!-- CV and Motivation Letter Modals -->{% for candidature in candidatures %}{% if candidature.cvFile %}<div class="modal fade" id="cvModal{{ candidature.id_candidature }}" tabindex="-1" aria-labelledby="cvModalLabel{{ candidature.id_candidature }}" aria-hidden="true">
+<div class="modal-dialog modal-xl">
+	<div class="modal-content">
+		<div class="modal-header bg-primary text-white">
+			<h5 class="modal-title" id="cvModalLabel{{ candidature.id_candidature }}">
+				CV de
+				{{ candidature.user.prenom|default('Non spécifié') }}
+				{{ candidature.user.nom|default('') }}
+			</h5>
+			<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+		</div>
+		<div class="modal-body p-0">
+			<div class="ratio ratio-16x9">
+				<iframe id="cvIframe{{ candidature.id_candidature }}" style="width: 100%; height: 100%; border: none;"></iframe>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<a href="{{ path('app_candidature_download_cv', { 'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature }) }}" class="btn btn-primary">
+				<i class="fas fa-download me-1"></i>Télécharger
+			</a>
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+		</div>
+	</div>
+</div></div>{% endif %}{% if candidature.lettreMotivation %}<div class="modal fade" id="motivationLetterModal{{ candidature.id_candidature }}" tabindex="-1" aria-labelledby="motivationLetterModalLabel{{ candidature.id_candidature }}" aria-hidden="true">
+<div class="modal-dialog modal-lg">
+	<div class="modal-content">
+		<div class="modal-header bg-primary text-white">
+			<h5 class="modal-title" id="motivationLetterModalLabel{{ candidature.id_candidature }}">
+				Lettre de Motivation -
+				{{ candidature.user.prenom|default('Non spécifié') }}
+				{{ candidature.user.nom|default('') }}
+			</h5>
+			<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+		</div>
+		<div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+			<div class="p-4 bg-light rounded">
+				{{ candidature.lettreMotivation|nl2br }}
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+		</div>
+	</div>
+</div></div>{% endif %}{% endfor %}<!-- JavaScript --><script>document.addEventListener('DOMContentLoaded', function () { // Initialize Owl Carousel
+const $carousel = $('.vegetable-carousel');
+if ($carousel.length) {
+$carousel.owlCarousel({
+loop: {{ recommendedOffers|length > 4 ? 'true' : 'false' }},
+margin: 20,
+nav: true,
+dots: true,
+autoplay: true,
+autoplayTimeout: 5000,
+responsive: {
+0: {
+items: 1
+},
+600: {
+items: 2
+},
+1000: {
+items: 3
+},
+1200: {
+items: 4
+}
+}
+});
+}
 
-                <!-- Sidebar -->
-                <div class="col-lg-4 col-xl-3">
-                    <div class="card border-0 shadow-sm sticky-top" style="top: 20px;">
-                        <div class="card-body">
-                            <h5 class="card-title border-bottom pb-3 mb-4">
-                                <i class="fas fa-cog me-2 text-primary"></i>Actions Rapides
-                            </h5>
-                            <div class="d-grid gap-3">
-                                <a href="{{ path('app_offre_index') }}" class="btn btn-outline-secondary text-uppercase">
-                                    <i class="fas fa-arrow-left me-2"></i>Retour aux Offres
-                                </a>
-                                <a href="{{ path('app_offre_new') }}" class="btn btn-primary text-uppercase">
-                                    <i class="fas fa-plus me-2"></i>Créer une Nouvelle Offre
-                                </a>
-                                {% if is_granted('ROLE_ADMIN') %}
-                                    <a href="{{ path('app_offre_edit', {'id_offre': offre.id_offre}) }}" 
-                                       class="btn btn-warning text-uppercase">
-                                        <i class="fas fa-edit me-2"></i>Modifier l'Offre
-                                    </a>
-                                    {{ include('offre/_delete_form.html.twig') }}
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+// Activate candidatures tab if hash is present
+if (window.location.hash === '#candidatures') {
+const tabEl = document.getElementById('nav-mission-tab');
+if (tabEl) {
+new bootstrap.Tab(tabEl).show();
+setTimeout(() => {
+const tabsContainer = document.querySelector('.nav-tabs');
+if (tabsContainer) {
+const headerHeight = document.querySelector('.fixed-top') ?. offsetHeight || 0;
+window.scrollTo({
+top: tabsContainer.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20,
+behavior: 'smooth'
+});
+}
+}, 300);
+}
+}
 
-            <!-- Related Offers Section -->
-            <div class="mt-5">
-                <h2 class="fw-bold mb-4">
-                    <i class="fas fa-briefcase me-2 text-primary"></i>Offres Similaires
-                </h2>
-                <div class="vesitable">
-                    <div class="owl-carousel vegetable-carousel">
-                        {% if recommendedOffers|length > 0 %}
-                            {% for recommendedOffer in recommendedOffers %}
-                                <div class="border border-primary rounded position-relative vesitable-item shadow-sm">
-                                    <a href="{{ path('app_offre_show', {'id_offre': recommendedOffer.id_offre}) }}" 
-                                       class="text-decoration-none text-dark d-block">
-                                        <div class="vesitable-img" style="height: 200px;">
-                                            {% if recommendedOffer.organisationLogo %}
-                                                <img src="data:image/jpeg;base64,{{ recommendedOffer.organisationLogo|base64_encode }}" 
-                                                     class="img-fluid w-100 h-100 rounded-top" 
-                                                     alt="Logo {{ recommendedOffer.organisation|default('Organisation') }}" 
-                                                     style="object-fit: cover;">
-                                            {% else %}
-                                                <img src="{{ asset('front/img/offer-placeholder.png') }}" 
-                                                     class="img-fluid w-100 h-100 rounded-top" 
-                                                     alt="Placeholder" 
-                                                     style="object-fit: cover;">
-                                            {% endif %}
-                                        </div>
-                                        <div class="p-3">
-                                            <span class="badge bg-primary position-absolute" 
-                                                  style="top: 10px; right: 10px;">
-                                                {{ recommendedOffer.categorie|default('N/A') }}
-                                            </span>
-                                            <h5 class="mb-2">{{ recommendedOffer.titre|default('Sans titre') }}</h5>
-                                            <p class="small text-muted mb-2">
-                                                {{ recommendedOffer.description|default('')|u.truncate(80, '...') }}
-                                            </p>
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <span class="fw-bold text-success">
-                                                    {% if recommendedOffer.salaire %}
-                                                        {{ recommendedOffer.salaire|number_format(2, ',', ' ') }} DT
-                                                    {% else %}
-                                                        <span class="text-muted">Non spécifié</span>
-                                                    {% endif %}
-                                                </span>
-                                                <span class="badge bg-info rounded-pill">
-                                                    {{ recommendedOffer.typeContrat|default('N/A') }}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="alert alert-info d-flex align-items-center">
-                                <i class="fas fa-info-circle me-2"></i>
-                                Aucune offre similaire trouvée.
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Single Offer End -->
+// Handle hash changes
+window.addEventListener('hashchange', function () {
+if (window.location.hash === '#candidatures') {
+const tabEl = document.getElementById('nav-mission-tab');
+if (tabEl) {
+new bootstrap.Tab(tabEl).show();
+}
+}
+});
 
-    <!-- CV and Motivation Letter Modals -->
-    {% for candidature in candidatures %}
-        {% if candidature.cvFile %}
-            <div class="modal fade" id="cvModal{{ candidature.id_candidature }}" tabindex="-1" 
-                 aria-labelledby="cvModalLabel{{ candidature.id_candidature }}" aria-hidden="true">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                        <div class="modal-header bg-primary text-white">
-                            <h5 class="modal-title" id="cvModalLabel{{ candidature.id_candidature }}">
-                                CV de {{ candidature.user.prenom|default('Non spécifié') }} {{ candidature.user.nom|default('') }}
-                            </h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" 
-                                    aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body p-0">
-                            <div class="ratio ratio-16x9">
-                                <iframe id="cvIframe{{ candidature.id_candidature }}" 
-                                        style="width: 100%; height: 100%; border: none;"></iframe>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <a href="{{ path('app_candidature_download_cv', { 'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature }) }}" 
-                               class="btn btn-primary">
-                                <i class="fas fa-download me-1"></i>Télécharger
-                            </a>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% endif %}
-
-        {% if candidature.lettreMotivation %}
-            <div class="modal fade" id="motivationLetterModal{{ candidature.id_candidature }}" 
-                 tabindex="-1" aria-labelledby="motivationLetterModalLabel{{ candidature.id_candidature }}" 
-                 aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header bg-primary text-white">
-                            <h5 class="modal-title" id="motivationLetterModalLabel{{ candidature.id_candidature }}">
-                                Lettre de Motivation - {{ candidature.user.prenom|default('Non spécifié') }} {{ candidature.user.nom|default('') }}
-                            </h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" 
-                                    aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
-                            <div class="p-4 bg-light rounded">
-                                {{ candidature.lettreMotivation|nl2br }}
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% endif %}
-    {% endfor %}
-
-    <!-- JavaScript -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Initialize Owl Carousel
-            const $carousel = $('.vegetable-carousel');
-            if ($carousel.length) {
-                $carousel.owlCarousel({
-                    loop: {{ recommendedOffers|length > 4 ? 'true' : 'false' }},
-                    margin: 20,
-                    nav: true,
-                    dots: true,
-                    autoplay: true,
-                    autoplayTimeout: 5000,
-                    responsive: {
-                        0: { items: 1 },
-                        600: { items: 2 },
-                        1000: { items: 3 },
-                        1200: { items: 4 }
-                    }
-                });
-            }
-
-            // Activate candidatures tab if hash is present
-            if (window.location.hash === '#candidatures') {
-                const tabEl = document.getElementById('nav-mission-tab');
-                if (tabEl) {
-                    new bootstrap.Tab(tabEl).show();
-                    setTimeout(() => {
-                        const tabsContainer = document.querySelector('.nav-tabs');
-                        if (tabsContainer) {
-                            const headerHeight = document.querySelector('.fixed-top')?.offsetHeight || 0;
-                            window.scrollTo({
-                                top: tabsContainer.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20,
-                                behavior: 'smooth'
-                            });
-                        }
-                    }, 300);
-                }
-            }
-
-            // Handle hash changes
-            window.addEventListener('hashchange', function () {
-                if (window.location.hash === '#candidatures') {
-                    const tabEl = document.getElementById('nav-mission-tab');
-                    if (tabEl) {
-                        new bootstrap.Tab(tabEl).show();
-                    }
-                }
-            });
-
-            // Load CV iframes on modal show
-            {% for candidature in candidatures %}
-                {% if candidature.cvFile %}
-                    const modal{{ candidature.id_candidature }} = document.getElementById('cvModal{{ candidature.id_candidature }}');
-                    if (modal{{ candidature.id_candidature }}) {
-                        modal{{ candidature.id_candidature }}.addEventListener('show.bs.modal', function () {
-                            const iframe = document.getElementById('cvIframe{{ candidature.id_candidature }}');
-                            iframe.src = "{{ path('app_candidature_view_cv', { 'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature }) }}";
-                        });
-                        modal{{ candidature.id_candidature }}.addEventListener('hidden.bs.modal', function () {
-                            const iframe = document.getElementById('cvIframe{{ candidature.id_candidature }}');
-                            iframe.src = '';
-                        });
-                    }
-                {% endif %}
-            {% endfor %}
-        });
-    </script>
-
-    <!-- Styles -->
-    <style>
-        .vesitable-item {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .vesitable-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important;
-        }
-        .nav-tabs .nav-link {
-            font-weight: 500;
-            color: var(--bs-dark);
-            border: none;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s ease;
-        }
-        .nav-tabs .nav-link.active {
-            color: var(--bs-primary);
-            border-bottom: 2px solid var(--bs-primary);
-        }
-        .nav-tabs .nav-link:hover {
-            color: var(--bs-primary);
-            border-bottom: 2px solid var(--bs-primary);
-        }
-        .card {
-            border-radius: 0.75rem;
-        }
-        .list-group-item {
-            border-left: 0;
-            border-right: 0;
-            transition: background-color 0.2s ease;
-        }
-        .list-group-item:hover {
-            background-color: var(--bs-light);
-        }
-        .list-group-item:first-child {
-            border-top: 0;
-        }
-        .list-group-item:last-child {
-            border-bottom: 0;
-        }
-        .badge {
-            font-size: 0.9rem;
-            padding: 0.5em 1em;
-        }
-        .owl-nav .owl-prev,
-        .owl-nav .owl-next {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.5rem;
-            background: var(--bs-primary) !important;
-            color: var(--bs-white) !important;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            line-height: 40px;
-            text-align: center;
-            opacity: 0.8;
-        }
-        .owl-nav .owl-prev:hover,
-        .owl-nav .owl-next:hover {
-            opacity: 1;
-        }
-        .owl-nav .owl-prev {
-            left: -20px;
-        }
-        .owl-nav .owl-next {
-            right: -20px;
-        }
-        .owl-dots {
-            text-align: center;
-            margin-top: 15px;
-        }
-        .owl-dot {
-            display: inline-block;
-            margin: 0 5px;
-        }
-        .owl-dot span {
-            width: 10px;
-            height: 10px;
-            background: var(--bs-gray-400);
-            border-radius: 50%;
-            display: block;
-            transition: background 0.3s ease;
-        }
-        .owl-dot.active span,
-        .owl-dot:hover span {
-            background: var(--bs-primary);
-        }
-    </style>
-{% endblock %}
+// Load CV iframes on modal show
+{% for candidature in candidatures %}
+{% if candidature.cvFile %}
+const modal {{ candidature.id_candidature }} = document.getElementById('cvModal {{ candidature.id_candidature }}');
+if (modal {{ candidature.id_candidature }}) {
+modal {{ candidature.id_candidature }}.addEventListener('show.bs.modal', function () {
+const iframe = document.getElementById('cvIframe {{ candidature.id_candidature }}');
+iframe.src = "{{ path('app_candidature_view_cv', { 'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature }) }}";
+});
+modal {{ candidature.id_candidature }}.addEventListener('hidden.bs.modal', function () {
+const iframe = document.getElementById('cvIframe {{ candidature.id_candidature }}');
+iframe.src = '';
+});
+}
+{% endif %}
+{% endfor %}
+});</script><!-- Styles --><style>.vesitable-item {
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.vesitable-item:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important;
+}
+.nav-tabs .nav-link {
+	font-weight: 500;
+	color: var(--bs-dark);
+	border: none;
+	border-bottom: 2px solid transparent;
+	transition: all 0.3s ease;
+}
+.nav-tabs .nav-link.active {
+	color: var(--bs-primary);
+	border-bottom: 2px solid var(--bs-primary);
+}
+.nav-tabs .nav-link:hover {
+	color: var(--bs-primary);
+	border-bottom: 2px solid var(--bs-primary);
+}
+.card {
+	border-radius: 0.75rem;
+}
+.list-group-item {
+	border-left: 0;
+	border-right: 0;
+	transition: background-color 0.2s ease;
+}
+.list-group-item:hover {
+	background-color: var(--bs-light);
+}
+.list-group-item:first-child {
+	border-top: 0;
+}
+.list-group-item:last-child {
+	border-bottom: 0;
+}
+.badge {
+	font-size: 0.9rem;
+	padding: 0.5em 1em;
+}
+.btn-warning {
+	background-color: #ffc107;
+	border-color: #ffc107;
+	color: #212529;
+	transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+.btn-warning:hover {
+	background-color: #e0a800;
+	border-color: #d39e00;
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.owl-nav .owl-prev,
+.owl-nav .owl-next {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 1.5rem;
+	background: var(--bs-primary) !important;
+	color: var(--bs-white) !important;
+	border-radius: 50%;
+	width: 40px;
+	height: 40px;
+	line-height: 40px;
+	text-align: center;
+	opacity: 0.8;
+}
+.owl-nav .owl-prev:hover,
+.owl-nav .owl-next:hover {
+	opacity: 1;
+}
+.owl-nav .owl-prev {
+	left: -20px;
+}
+.owl-nav .owl-next {
+	right: -20px;
+}
+.owl-dots {
+	text-align: center;
+	margin-top: 15px;
+}
+.owl-dot {
+	display: inline-block;
+	margin: 0 5px;
+}
+.owl-dot span {
+	width: 10px;
+	height: 10px;
+	background: var(--bs-gray-400);
+	border-radius: 50%;
+	display: block;
+	transition: background 0.3s ease;
+}
+.owl-dot.active span,
+.owl-dot:hover span {
+	background: var(--bs-primary);
+}</style>{% endblock %}
