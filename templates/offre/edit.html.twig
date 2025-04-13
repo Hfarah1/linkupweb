@@ -1,122 +1,130 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier l'Offre - {{ offre.titre|default('Offre') }}{% endblock %}
+{% block title %}Modifier l'Offre -
+	{{ offre.titre|default('Offre') }}
+{% endblock %}
 
 {% block content %}
-    <!-- Single Page Header start -->
-    <div class="container-fluid page-header py-5">
-        <div class="container text-center">
-            <h1 class="text-white display-6">Modifier l'Offre d'Emploi</h1>
-            <ol class="breadcrumb justify-content-center mb-0">
-                <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
-                <li class="breadcrumb-item"><a href="{{ path('app_offre_index') }}">Offres</a></li>
-                <li class="breadcrumb-item"><a href="{{ path('app_offre_show', {'id_offre': offre.id_offre}) }}">{{ offre.titre|default('Offre')|u.truncate(20, '...') }}</a></li>
-                <li class="breadcrumb-item active text-white">Modifier</li>
-            </ol>
-        </div>
-    </div>
-    <!-- Single Page Header End -->
+	<!-- Single Page Header start -->
+	<div class="container-fluid page-header py-5">
+		<div class="container text-center">
+			<h1 class="text-white display-6">Modifier l'Offre d'Emploi</h1>
+			<ol class="breadcrumb justify-content-center mb-0">
+				<li class="breadcrumb-item">
+					<a href="{{ path('app_home') }}">Accueil</a>
+				</li>
+				<li class="breadcrumb-item">
+					<a href="{{ path('app_offre_index') }}">Offres</a>
+				</li>
+				<li class="breadcrumb-item">
+					<a href="{{ path('app_offre_show', {'id_offre': offre.id_offre}) }}">{{ offre.titre|default('Offre')|u.truncate(20, '...') }}</a>
+				</li>
+				<li class="breadcrumb-item active text-white">Modifier</li>
+			</ol>
+		</div>
+	</div>
+	<!-- Single Page Header End -->
 
-    <!-- Edit Offer Page Start -->
-    <div class="container-fluid py-5">
-        <div class="container py-5">
-            <h1 class="mb-4 text-primary fw-bold">Modifier les Détails de l'Offre</h1>
-            
-            <div class="row g-5">
-                <div class="col-12">
-                    {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
-                    
-                    <!-- Basic Information -->
-                    <div class="card border-0 shadow-sm p-4 mb-4">
-                        <h3 class="mb-4 text-dark">Informations de Base</h3>
-                        <div class="row g-4">
-                            <div class="col-md-6">
-                                <div class="form-item w-100">
-                                    {{ form_label(form.titre, 'Titre du Poste*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
-                                    {{ form_widget(form.titre, {'attr': {
+	<!-- Edit Offer Page Start -->
+	<div class="container-fluid py-5">
+		<div class="container py-5">
+			<h1 class="mb-4 text-primary fw-bold">Modifier les Détails de l'Offre</h1>
+
+			<div class="row g-5">
+				<div class="col-12">
+					{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
+
+					<!-- Basic Information -->
+					<div class="card border-0 shadow-sm p-4 mb-4">
+						<h3 class="mb-4 text-dark">Informations de Base</h3>
+						<div class="row g-4">
+							<div class="col-md-6">
+								<div class="form-item w-100">
+									{{ form_label(form.titre, 'Titre du Poste*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
+									{{ form_widget(form.titre, {'attr': {
                                         'class': 'form-control rounded',
                                         'placeholder': 'Ex: Développeur Symfony Senior',
                                         'required': 'required',
                                         'aria-describedby': 'titreHelp'
                                     }}) }}
-                                    <small id="titreHelp" class="form-text text-muted">Entrez un titre clair et précis.</small>
-                                    <div class="invalid-feedback">{{ form_errors(form.titre) }}</div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-item w-100">
-                                    {{ form_label(form.type_contrat, 'Type de Contrat*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
-                                    {{ form_widget(form.type_contrat, {'attr': {
+									<small id="titreHelp" class="form-text text-muted">Entrez un titre clair et précis.</small>
+									<div class="invalid-feedback">{{ form_errors(form.titre) }}</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-item w-100">
+									{{ form_label(form.type_contrat, 'Type de Contrat*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
+									{{ form_widget(form.type_contrat, {'attr': {
                                         'class': 'form-control rounded',
                                         'required': 'required',
                                         'aria-describedby': 'contratHelp'
                                     }}) }}
-                                    <small id="contratHelp" class="form-text text-muted">Sélectionnez le type de contrat.</small>
-                                    <div class="invalid-feedback">{{ form_errors(form.type_contrat) }}</div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-item w-100">
-                                    {{ form_label(form.gouvernorat, 'Gouvernorat*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
-                                    {{ form_widget(form.gouvernorat, {'attr': {
+									<small id="contratHelp" class="form-text text-muted">Sélectionnez le type de contrat.</small>
+									<div class="invalid-feedback">{{ form_errors(form.type_contrat) }}</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-item w-100">
+									{{ form_label(form.gouvernorat, 'Gouvernorat*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
+									{{ form_widget(form.gouvernorat, {'attr': {
                                         'class': 'form-control rounded',
                                         'placeholder': 'Ex: Tunis',
                                         'required': 'required',
                                         'aria-describedby': 'gouvernoratHelp'
                                     }}) }}
-                                    <small id="gouvernoratHelp" class="form-text text-muted">Indiquez la région principale.</small>
-                                    <div class="invalid-feedback">{{ form_errors(form.gouvernorat) }}</div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-item w-100">
-                                    {{ form_label(form.ville, 'Ville*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
-                                    {{ form_widget(form.ville, {'attr': {
+									<small id="gouvernoratHelp" class="form-text text-muted">Indiquez la région principale.</small>
+									<div class="invalid-feedback">{{ form_errors(form.gouvernorat) }}</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-item w-100">
+									{{ form_label(form.ville, 'Ville*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
+									{{ form_widget(form.ville, {'attr': {
                                         'class': 'form-control rounded',
                                         'placeholder': 'Ex: Ariana',
                                         'required': 'required',
                                         'aria-describedby': 'villeHelp'
                                     }}) }}
-                                    <small id="villeHelp" class="form-text text-muted">Précisez la ville.</small>
-                                    <div class="invalid-feedback">{{ form_errors(form.ville) }}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+									<small id="villeHelp" class="form-text text-muted">Précisez la ville.</small>
+									<div class="invalid-feedback">{{ form_errors(form.ville) }}</div>
+								</div>
+							</div>
+						</div>
+					</div>
 
-                    <!-- Description and Organization -->
-                    <div class="card border-0 shadow-sm p-4 mb-4">
-                        <h3 class="mb-4 text-dark">Description et Organisation</h3>
-                        <div class="form-item mb-4">
-                            {{ form_label(form.description, 'Description*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
-                            {{ form_widget(form.description, {'attr': {
+					<!-- Description and Organization -->
+					<div class="card border-0 shadow-sm p-4 mb-4">
+						<h3 class="mb-4 text-dark">Description et Organisation</h3>
+						<div class="form-item mb-4">
+							{{ form_label(form.description, 'Description*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
+							{{ form_widget(form.description, {'attr': {
                                 'class': 'form-control rounded',
                                 'rows': 6,
                                 'placeholder': 'Décrivez en détail le poste, les missions et les responsabilités',
                                 'required': 'required',
                                 'aria-describedby': 'descriptionHelp'
                             }}) }}
-                            <small id="descriptionHelp" class="form-text text-muted">Fournissez une description complète (min. 50 caractères).</small>
-                            <div class="invalid-feedback">{{ form_errors(form.description) }}</div>
-                        </div>
-                        
-                        <div class="row g-4">
-                            <div class="col-md-4">
-                                <div class="form-item w-100">
-                                    {{ form_label(form.organisation, 'Organisation*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
-                                    {{ form_widget(form.organisation, {'attr': {
+							<small id="descriptionHelp" class="form-text text-muted">Fournissez une description complète (min. 50 caractères).</small>
+							<div class="invalid-feedback">{{ form_errors(form.description) }}</div>
+						</div>
+
+						<div class="row g-4">
+							<div class="col-md-4">
+								<div class="form-item w-100">
+									{{ form_label(form.organisation, 'Organisation*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
+									{{ form_widget(form.organisation, {'attr': {
                                         'class': 'form-control rounded',
                                         'placeholder': 'Nom de votre entreprise/organisation',
                                         'required': 'required',
                                         'aria-describedby': 'organisationHelp'
                                     }}) }}
-                                    <small id="organisationHelp" class="form-text text-muted">Nom de l’entreprise ou organisation.</small>
-                                    <div class="invalid-feedback">{{ form_errors(form.organisation) }}</div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-item w-100">
-                                    {{ form_label(form.logoFile, 'Logo de l\'Organisation (optionnel)', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
+									<small id="organisationHelp" class="form-text text-muted">Nom de l’entreprise ou organisation.</small>
+									<div class="invalid-feedback">{{ form_errors(form.organisation) }}</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="form-item w-100">
+									{{ form_label(form.logoFile, 'Logo de l\'Organisation (optionnel)', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
                                     <div class="custom-file">
                                         {{ form_widget(form.logoFile, {'attr': {
                                             'class': 'form-control rounded',
@@ -197,147 +205,155 @@
                                 Mettre à Jour
                             </button>
                         </div>
+                         <div class="col-md-4">
+    <form method="post" action="{{ path('app_offre_delete', {'id_offre': offre.id_offre}) }}" 
+          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?');" 
+          class="d-inline w-100">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ offre.id_offre) }}">
+        <button type="submit" class="btn btn-danger border-secondary py-3 px-4 text-uppercase w-100" 
+                aria-label="Supprimer l'offre">
+            <i class="fas fa-trash-alt me-2"></i>Supprimer
+        </button>
+    </form>
+</div>
                         <div class="col-md-4">
                             <a href="{{ path('app_offre_index') }}" class="btn btn-outline-secondary border-secondary py-3 px-4 text-uppercase w-100">
-                                <i class="fas fa-arrow-left me-2"></i>
-                                Retour à la Liste
-                            </a>
-                        </div>
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <div class="col-md-4">
-                                {{ include('offre/_delete_form.html.twig') }}
-                            </div>
-                        {% endif %}
-                    </div>
-                    
-                    {{ form_end(form) }}
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Edit Offer Page End -->
+									<i class="fas fa-arrow-left me-2"></i>
+									Retour à la Liste
+								</a>
+							</div>
 
-    <!-- JavaScript -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Image Preview Handler
-            window.previewImage = function (input) {
-                const preview = document.getElementById('preview');
-                const previewContainer = document.getElementById('imagePreview');
-                
-                if (input.files && input.files[0]) {
-                    const file = input.files[0];
-                    
-                    // Validate file size (2MB)
-                    if (file.size > 2 * 1024 * 1024) {
-                        alert('Le fichier est trop volumineux (max 2MB).');
-                        input.value = '';
-                        preview.classList.add('d-none');
-                        return;
-                    }
-                    
-                    // Validate file type
-                    if (!file.type.startsWith('image/')) {
-                        alert('Seuls les fichiers image sont acceptés.');
-                        input.value = '';
-                        preview.classList.add('d-none');
-                        return;
-                    }
-                    
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        preview.src = e.target.result;
-                        preview.classList.remove('d-none');
-                        previewContainer.style.display = 'block';
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    preview.classList.add('d-none');
-                    previewContainer.style.display = 'block';
-                }
-            };
+						</div>
 
-            // Client-side form validation
-            const form = document.querySelector('form.needs-validation');
-            form.addEventListener('submit', function(event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            }, false);
+						{{ form_end(form) }}
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Edit Offer Page End -->
 
-            // Description character counter
-            const description = document.querySelector('textarea[name="offre[description]"]');
-            if (description) {
-                const charCounter = document.createElement('div');
-                charCounter.className = 'form-text text-muted mt-2';
-                description.parentNode.appendChild(charCounter);
-                
-                const updateCounter = () => {
-                    const length = description.value.length;
-                    charCounter.textContent = `${length}/5000 caractères`;
-                    if (length < 50) {
-                        charCounter.classList.add('text-danger');
-                        charCounter.classList.remove('text-success');
-                    } else {
-                        charCounter.classList.remove('text-danger');
-                        charCounter.classList.add('text-success');
-                    }
-                };
-                description.addEventListener('input', updateCounter);
-                updateCounter();
-            }
-        });
-    </script>
+		<!-- JavaScript -->
+		<script>
+			document.addEventListener('DOMContentLoaded', function () { // Image Preview Handler
+window.previewImage = function (input) {
+const preview = document.getElementById('preview');
+const previewContainer = document.getElementById('imagePreview');
 
-    <!-- Styles -->
-    <style>
-        .card {
-            border-radius: 0.75rem;
-        }
-        .form-control, .form-select {
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        .form-control:focus, .form-select:focus {
-            border-color: var(--bs-primary);
-            box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
-        }
-        .form-item {
-            position: relative;
-        }
-        .invalid-feedback {
-            font-size: 0.875rem;
-            display: none;
-        }
-        .was-validated .form-control:invalid,
-        .form-control.is-invalid,
-        .was-validated .form-select:invalid,
-        .form-select.is-invalid {
-            border-color: var(--bs-danger);
-            background-image: none;
-        }
-        .was-validated .form-control:invalid:focus,
-        .form-control.is-invalid:focus,
-        .was-validated .form-select:invalid:focus,
-        .form-select.is-invalid:focus {
-            box-shadow: 0 0 0 0.25rem rgba(var(--bs-danger-rgb), 0.25);
-        }
-        .was-validated :invalid ~ .invalid-feedback,
-        .is-invalid ~ .invalid-feedback {
-            display: block;
-        }
-        .btn {
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-        .form-text {
-            font-size: 0.875rem;
-        }
-        #imagePreview img {
-            transition: opacity 0.3s ease;
-        }
-    </style>
-{% endblock %}
+if (input.files && input.files[0]) {
+const file = input.files[0];
+
+// Validate file size (2MB)
+if (file.size > 2 * 1024 * 1024) {
+alert('Le fichier est trop volumineux (max 2MB).');
+input.value = '';
+preview.classList.add('d-none');
+return;
+}
+
+// Validate file type
+if (! file.type.startsWith('image/')) {
+alert('Seuls les fichiers image sont acceptés.');
+input.value = '';
+preview.classList.add('d-none');
+return;
+}
+
+const reader = new FileReader();
+reader.onload = function (e) {
+preview.src = e.target.result;
+preview.classList.remove('d-none');
+previewContainer.style.display = 'block';
+};
+reader.readAsDataURL(file);
+} else {
+preview.classList.add('d-none');
+previewContainer.style.display = 'block';
+}
+};
+
+// Client-side form validation
+const form = document.querySelector('form.needs-validation');
+form.addEventListener('submit', function (event) {
+if (! form.checkValidity()) {
+event.preventDefault();
+event.stopPropagation();
+}
+form.classList.add('was-validated');
+}, false);
+
+// Description character counter
+const description = document.querySelector('textarea[name="offre[description]"]');
+if (description) {
+const charCounter = document.createElement('div');
+charCounter.className = 'form-text text-muted mt-2';
+description.parentNode.appendChild(charCounter);
+
+const updateCounter = () => {
+const length = description.value.length;
+charCounter.textContent = `${length}/5000 caractères`;
+if (length < 50) {
+charCounter.classList.add('text-danger');
+charCounter.classList.remove('text-success');
+} else {
+charCounter.classList.remove('text-danger');
+charCounter.classList.add('text-success');
+}
+};
+description.addEventListener('input', updateCounter);
+updateCounter();
+}
+});
+		</script>
+
+		<!-- Styles -->
+		<style>
+			.card {
+				border-radius: 0.75rem;
+			}
+			.form-control,
+			.form-select {
+				transition: border-color 0.3s ease, box-shadow 0.3s ease;
+			}
+			.form-control:focus,
+			.form-select:focus {
+				border-color: var(--bs-primary);
+				box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+			}
+			.form-item {
+				position: relative;
+			}
+			.invalid-feedback {
+				font-size: 0.875rem;
+				display: none;
+			}
+			.was-validated .form-control:invalid,
+			.form-control.is-invalid,
+			.was-validated .form-select:invalid,
+			.form-select.is-invalid {
+				border-color: var(--bs-danger);
+				background-image: none;
+			}
+			.was-validated .form-control:invalid:focus,
+			.form-control.is-invalid:focus,
+			.was-validated .form-select:invalid:focus,
+			.form-select.is-invalid:focus {
+				box-shadow: 0 0 0 0.25rem rgba(var(--bs-danger-rgb), 0.25);
+			}
+			.was-validated:invalid ~ .invalid-feedback,
+			.is-invalid ~ .invalid-feedback {
+				display: block;
+			}
+			.btn {
+				transition: background-color 0.3s ease, transform 0.2s ease;
+			}
+			.btn:hover {
+				transform: translateY(-2px);
+			}
+			.form-text {
+				font-size: 0.875rem;
+			}
+			#imagePreview img {
+				transition: opacity 0.3s ease;
+			}
+		</style>
+	{% endblock %}
