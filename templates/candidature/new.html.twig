@@ -1,261 +1,343 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Postuler à l'offre
-{% endblock %}
+{% block title %}Postuler à l'Offre - {{ offre.titre|default('Candidature') }}{% endblock %}
 
 {% block content %}
-	<!-- Single Page Header start -->
-	<div class="container-fluid page-header py-5">
-		<h1 class="text-center text-white display-6">Postuler à l'offre</h1>
-		<ol class="breadcrumb justify-content-center mb-0">
-			<li class="breadcrumb-item">
-				<a href="{{ path('app_home') }}">Accueil</a>
-			</li>
-			<li class="breadcrumb-item">
-				<a href="{{ path('app_offre_index') }}">Offres</a>
-			</li>
-			<li class="breadcrumb-item active text-white">Postuler</li>
-		</ol>
-	</div>
-	<!-- Single Page Header End -->
+    <!-- Single Page Header start -->
+    <div class="container-fluid page-header py-5">
+        <div class="container text-center">
+            <h1 class="text-white display-6">Postuler à l'Offre</h1>
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_offre_index') }}">Offres</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_offre_show', {'id_offre': offre.id_offre}) }}">{{ offre.titre|default('Offre')|u.truncate(20, '...') }}</a></li>
+                <li class="breadcrumb-item active text-white">Postuler</li>
+            </ol>
+        </div>
+    </div>
+    <!-- Single Page Header End -->
 
-	<!-- Application Form Start -->
-	<div class="container-fluid py-5">
-		<div class="container py-5">
-			<div
-				class="row g-5">
-				<!-- Main Form Column -->
-				<div class="col-lg-8">
-					<div class="bg-light rounded p-4">
-						<h2 class="mb-4">Votre candidature</h2>
-						{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
+    <!-- Application Form Start -->
+    <div class="container-fluid py-5">
+        <div class="container py-5">
+            <div class="row g-5">
+                <!-- Main Form Column -->
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm p-5 bg-light rounded">
+                        <h2 class="mb-4 text-primary fw-bold">Votre Candidature</h2>
+                        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
 
-						<!-- CV File Input with PDF Preview -->
-						<div class="form-item mb-4">
-							{{ form_label(form.cv_upload, 'Téléverser votre CV (PDF uniquement)', {
-                                'label_attr': {'class': 'form-label mb-3 fw-bold'}
+                        <!-- CV File Input with PDF Preview -->
+                        <div class="mb-4">
+                            {{ form_label(form.cv_upload, 'Téléverser votre CV (PDF uniquement)', {
+                                'label_attr': {'class': 'form-label mb-2 fw-bold'}
                             }) }}
-							<div class="custom-file">
-								{{ form_widget(form.cv_upload, {
+                            <div class="custom-file">
+                                {{ form_widget(form.cv_upload, {
                                     'attr': {
-                                        'class': 'form-control',
+                                        'class': 'form-control form-control-lg',
                                         'accept': 'application/pdf',
-                                        'onchange': 'previewPDF(this)'
+                                        'onchange': 'previewPDF(this)',
+                                        'aria-describedby': 'cvHelp'
                                     }
                                 }) }}
-								{{ form_errors(form.cv_upload) }}
-							</div>
-							<small class="text-muted">Taille maximale : 2MB</small>
+                                {{ form_errors(form.cv_upload, {'attr': {'class': 'text-danger small'}}) }}
+                            </div>
+                            <small id="cvHelp" class="text-muted form-text">Taille maximale : 2MB. Formats acceptés : PDF.</small>
 
-							<!-- PDF Preview Container -->
-							<div class="mt-3" id="pdfPreviewContainer" style="display:none;">
-								<div class="d-flex align-items-center">
-									<i class="far fa-file-pdf text-danger me-2" style="font-size: 2rem;"></i>
-									<div>
-										<p class="mb-1" id="pdfFileName"></p>
-										<small class="text-muted" id="pdfFileSize"></small>
-									</div>
-								</div>
-								<div class="mt-2">
-									<button type="button" class="btn btn-sm btn-outline-danger" id="viewPdfBtn" style="display:none;">
-										<i class="far fa-eye me-1"></i>
-										Aperçu
-									</button>
-									<button type="button" class="btn btn-sm btn-outline-secondary ms-2" id="removePdfBtn">
-										<i class="far fa-trash-alt me-1"></i>
-										Supprimer
-									</button>
-								</div>
-								<iframe id="pdfPreview" class="mt-3 w-100 d-none" style="height: 500px; border: 1px solid #eee;"></iframe>
-							</div>
-						</div>
+                            <!-- PDF Preview Container -->
+                            <div class="mt-3" id="pdfPreviewContainer" style="display: none;">
+                                <div class="d-flex align-items-center p-3 bg-white rounded border">
+                                    <i class="far fa-file-pdf text-danger me-3" style="font-size: 2rem;"></i>
+                                    <div class="flex-grow-1">
+                                        <p class="mb-1 fw-medium" id="pdfFileName"></p>
+                                        <small class="text-muted" id="pdfFileSize"></small>
+                                    </div>
+                                </div>
+                                <div class="mt-3 d-flex gap-2">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" id="viewPdfBtn" style="display: none;">
+                                        <i class="fas fa-eye me-1"></i>Aperçu
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" id="removePdfBtn">
+                                        <i class="fas fa-trash-alt me-1"></i>Supprimer
+                                    </button>
+                                </div>
+                                <iframe id="pdfPreview" class="mt-3 w-100 d-none rounded" style="height: 500px; border: 1px solid #dee2e6;"></iframe>
+                            </div>
+                        </div>
 
-						<!-- Cover Letter -->
-						<div class="form-item mb-4">
-							{{ form_label(form.lettre_motivation, 'Lettre de motivation', {
-                                'label_attr': {'class': 'form-label mb-3 fw-bold'}
+                        <!-- Cover Letter -->
+                        <div class="mb-4">
+                            {{ form_label(form.lettre_motivation, 'Lettre de Motivation', {
+                                'label_attr': {'class': 'form-label mb-2 fw-bold'}
                             }) }}
-							{{ form_widget(form.lettre_motivation, {
+                            {{ form_widget(form.lettre_motivation, {
                                 'attr': {
                                     'class': 'form-control',
                                     'rows': 8,
-                                    'placeholder': 'Expliquez pourquoi vous êtes le candidat idéal pour ce poste...'
+                                    'placeholder': 'Expliquez pourquoi vous êtes le candidat idéal pour ce poste...',
+                                    'aria-describedby': 'motivationHelp'
                                 }
                             }) }}
-							{{ form_errors(form.lettre_motivation) }}
-						</div>
+                            {{ form_errors(form.lettre_motivation, {'attr': {'class': 'text-danger small'}}) }}
+                            <div class="d-flex justify-content-between mt-2">
+                                <small id="motivationHelp" class="text-muted form-text">Minimum 20 caractères, maximum 2000.</small>
+                                <small id="charCounter" class="text-muted form-text">0/2000 caractères</small>
+                            </div>
+                        </div>
 
-						<div class="row g-4 text-center align-items-center justify-content-center pt-4">
-							<button type="submit" class="btn btn-primary py-3 px-5">
-								<i class="fa fa-paper-plane me-2"></i>
-								Soumettre ma candidature
-							</button>
-						</div>
+                        <!-- Submit Button -->
+                        <div class="text-center pt-4">
+                            <button type="submit" class="btn btn-primary btn-lg py-3 px-5 rounded-pill text-uppercase">
+                                <i class="fas fa-paper-plane me-2"></i>Soumettre ma Candidature
+                            </button>
+                        </div>
 
-						{{ form_end(form) }}
-					</div>
-				</div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
 
-				<!-- Offer Details Sidebar -->
-				<div class="col-lg-4">
-					<div class="bg-light rounded p-4">
-						<h4 class="mb-4">Détails de l'offre</h4>
+                <!-- Offer Details Sidebar -->
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm p-4 bg-light rounded sticky-top" style="top: 20px;">
+                        <h4 class="mb-4 text-primary fw-bold">Détails de l'Offre</h4>
 
-						<div class="d-flex align-items-center mb-3">
-							{% if offre.organisationLogo %}
-								<img src="data:image/jpeg;base64,{{ offre.organisationLogo|base64_encode }}" class="img-fluid rounded-circle me-3" style="width: 80px; height: 80px; object-fit: cover;" alt="{{ offre.organisation }}">
-							{% endif %}
-							<div>
-								<h5>{{ offre.titre }}</h5>
-								<p class="mb-0 text-primary">{{ offre.organisation }}</p>
-							</div>
-						</div>
+                        <div class="d-flex align-items-center mb-4">
+                            {% if offre.organisationLogo %}
+                                <img src="data:image/jpeg;base64,{{ offre.organisationLogo|base64_encode }}" 
+                                     class="img-fluid rounded-circle me-3" 
+                                     style="width: 80px; height: 80px; object-fit: cover;" 
+                                     alt="{{ offre.organisation|default('Organisation') }}">
+                            {% else %}
+                                <div class="bg-secondary rounded-circle me-3 d-flex align-items-center justify-content-center" 
+                                     style="width: 80px; height: 80px;">
+                                    <i class="fas fa-briefcase fa-2x text-white"></i>
+                                </div>
+                            {% endif %}
+                            <div>
+                                <h5 class="mb-1">{{ offre.titre|default('Sans titre') }}</h5>
+                                <p class="mb-0 text-primary">{{ offre.organisation|default('Non spécifiée') }}</p>
+                            </div>
+                        </div>
 
-						<div class="offer-details">
-							<div class="detail-item mb-3">
-								<h6>
-									<i class="fa fa-map-marker-alt me-2"></i>
-									Localisation</h6>
-								<p>{{ offre.ville }},
-									{{ offre.gouvernorat }}</p>
-							</div>
+                        <div class="offer-details">
+                            <div class="detail-item mb-3 pb-3 border-bottom">
+                                <h6 class="fw-bold mb-2">
+                                    <i class="fas fa-map-marker-alt me-2 text-primary"></i>Localisation
+                                </h6>
+                                <p class="mb-0">
+                                    {% if offre.ville and offre.gouvernorat %}
+                                        {{ offre.ville }}, {{ offre.gouvernorat }}
+                                    {% elseif offre.gouvernorat %}
+                                        {{ offre.gouvernorat }}
+                                    {% elseif offre.ville %}
+                                        {{ offre.ville }}
+                                    {% else %}
+                                        Non spécifiée
+                                    {% endif %}
+                                </p>
+                            </div>
 
-							<div class="detail-item mb-3">
-								<h6>
-									<i class="fa fa-file-contract me-2"></i>
-									Type de contrat</h6>
-								<p>{{ offre.typeContrat }}</p>
-							</div>
+                            <div class="detail-item mb-3 pb-3 border-bottom">
+                                <h6 class="fw-bold mb-2">
+                                    <i class="fas fa-file-contract me-2 text-primary"></i>Type de Contrat
+                                </h6>
+                                <p class="mb-0">{{ offre.typeContrat|default('Non spécifié') }}</p>
+                            </div>
 
-							{% if offre.salaire %}
-								<div class="detail-item mb-3">
-									<h6>
-										<i class="fa fa-money-bill-wave me-2"></i>
-										Salaire</h6>
-									<p>{{ offre.salaire|number_format(2, ',', ' ') }}
-										TND</p>
-								</div>
-							{% endif %}
+                            {% if offre.salaire %}
+                                <div class="detail-item mb-3 pb-3 border-bottom">
+                                    <h6 class="fw-bold mb-2">
+                                        <i class="fas fa-money-bill-wave me-2 text-primary"></i>Salaire
+                                    </h6>
+                                    <p class="mb-0">{{ offre.salaire|number_format(2, ',', ' ') }} TND</p>
+                                </div>
+                            {% endif %}
 
-							<div class="detail-item mb-3">
-								<h6>
-									<i class="fa fa-calendar-alt me-2"></i>
-									Date de publication</h6>
-								<p>{{ offre.datePublication|date('d/m/Y') }}</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- Application Form End -->
+                            <div class="detail-item mb-3">
+                                <h6 class="fw-bold mb-2">
+                                    <i class="fas fa-calendar-alt me-2 text-primary"></i>Date de Publication
+                                </h6>
+                                <p class="mb-0">{{ offre.datePublication ? offre.datePublication|date('d/m/Y') : 'Non spécifiée' }}</p>
+                            </div>
+                        </div>
 
-	<script>
-		function previewPDF(input) {
-const container = document.getElementById('pdfPreviewContainer');
-const fileName = document.getElementById('pdfFileName');
-const fileSize = document.getElementById('pdfFileSize');
-const viewBtn = document.getElementById('viewPdfBtn');
-const iframe = document.getElementById('pdfPreview');
+                        <div class="d-grid gap-3 mt-4">
+                            <a href="{{ path('app_offre_show', {'id_offre': offre.id_offre}) }}" 
+                               class="btn btn-outline-secondary text-uppercase">
+                                <i class="fas fa-arrow-left me-2"></i>Retour à l'Offre
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Application Form End -->
 
-if (input.files && input.files[0]) {
-const file = input.files[0];
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // PDF Preview Handler
+            window.previewPDF = function (input) {
+                const container = document.getElementById('pdfPreviewContainer');
+                const fileName = document.getElementById('pdfFileName');
+                const fileSize = document.getElementById('pdfFileSize');
+                const viewBtn = document.getElementById('viewPdfBtn');
+                const removeBtn = document.getElementById('removePdfBtn');
+                const iframe = document.getElementById('pdfPreview');
 
-// Validate file type
-if (file.type !== 'application/pdf') {
-alert('Seuls les fichiers PDF sont acceptés');
-input.value = '';
-container.style.display = 'none';
-return;
-}
+                if (input.files && input.files[0]) {
+                    const file = input.files[0];
 
-// Validate file size (2MB)
-if (file.size > 2 * 1024 * 1024) {
-alert('Le fichier est trop volumineux (max 2MB)');
-input.value = '';
-container.style.display = 'none';
-return;
-}
+                    // Validate file type
+                    if (file.type !== 'application/pdf') {
+                        alert('Seuls les fichiers PDF sont acceptés.');
+                        input.value = '';
+                        container.style.display = 'none';
+                        iframe.classList.add('d-none');
+                        return;
+                    }
 
-// Show file info
-fileName.textContent = file.name;
-fileSize.textContent = formatFileSize(file.size);
-container.style.display = 'block';
-viewBtn.style.display = 'inline-block';
+                    // Validate file size (2MB)
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert('Le fichier est trop volumineux (max 2MB).');
+                        input.value = '';
+                        container.style.display = 'none';
+                        iframe.classList.add('d-none');
+                        return;
+                    }
 
-// Set up preview button
-viewBtn.onclick = function () {
-iframe.src = URL.createObjectURL(file);
-iframe.classList.remove('d-none');
-};
+                    // Show file info
+                    fileName.textContent = file.name;
+                    fileSize.textContent = formatFileSize(file.size);
+                    container.style.display = 'block';
+                    viewBtn.style.display = 'inline-block';
 
-// Set up remove button
-document.getElementById('removePdfBtn').onclick = function () {
-input.value = '';
-container.style.display = 'none';
-iframe.classList.add('d-none');
-};
-} else {
-container.style.display = 'none';
-}
-}
+                    // Set up preview button
+                    viewBtn.onclick = function () {
+                        iframe.src = URL.createObjectURL(file);
+                        iframe.classList.remove('d-none');
+                        window.scrollTo({
+                            top: iframe.getBoundingClientRect().top + window.pageYOffset - 100,
+                            behavior: 'smooth'
+                        });
+                    };
 
-function formatFileSize(bytes) {
-if (bytes === 0) 
-return '0 Bytes';
+                    // Set up remove button
+                    removeBtn.onclick = function () {
+                        input.value = '';
+                        container.style.display = 'none';
+                        iframe.classList.add('d-none');
+                        iframe.src = '';
+                        viewBtn.style.display = 'none';
+                    };
+                } else {
+                    container.style.display = 'none';
+                    iframe.classList.add('d-none');
+                    viewBtn.style.display = 'none';
+                }
+            };
 
+            // Format file size
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
 
-const k = 1024;
-const sizes = ['Bytes', 'KB', 'MB'];
-const i = Math.floor(Math.log(bytes) / Math.log(k));
-return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}
-document.addEventListener('DOMContentLoaded', function () {
-const textarea = document.querySelector('textarea[name="candidature[lettre_motivation]"]');
-const charCounter = document.createElement('div');
-charCounter.className = 'text-muted small mt-1';
-textarea.parentNode.appendChild(charCounter);
+            // Character Counter for Cover Letter
+            const textarea = document.querySelector('textarea[name="candidature[lettre_motivation]"]');
+            const charCounter = document.getElementById('charCounter');
+            if (textarea && charCounter) {
+                const updateCounter = () => {
+                    const length = textarea.value.length;
+                    charCounter.textContent = `${length}/2000 caractères`;
+                    if (length < 20 || length > 2000) {
+                        charCounter.classList.add('text-danger');
+                        charCounter.classList.remove('text-success');
+                    } else {
+                        charCounter.classList.remove('text-danger');
+                        charCounter.classList.add('text-success');
+                    }
+                };
+                textarea.addEventListener('input', updateCounter);
+                updateCounter(); // Initial update
+            }
 
-textarea.addEventListener('input', function () {
-const length = this.value.length;
-charCounter.textContent = `${length}/2000 caractères`;
+            // Bootstrap form validation
+            const form = document.querySelector('.needs-validation');
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    </script>
 
-if (length < 20) {
-charCounter.classList.add('text-danger');
-charCounter.classList.remove('text-success');
-} else {
-charCounter.classList.remove('text-danger');
-charCounter.classList.add('text-success');
-}
-});
-});
-	</script>
-
-	<style>
-		#pdfPreviewContainer {
-			border: 1px dashed #ddd;
-			padding: 15px;
-			border-radius: 5px;
-			background-color: #f9f9f9;
-		}
-		#pdfPreview {
-			background-color: white;
-		}
-		.offer-details .detail-item {
-			padding-bottom: 15px;
-			border-bottom: 1px dashed #eee;
-		}
-		.offer-details .detail-item:last-child {
-			border-bottom: none;
-		}
-		.custom-file {
-			position: relative;
-			display: inline-block;
-			width: 100%;
-		}
-		.form-control[type="file"] {
-			padding: 0.375rem 0.75rem;
-		}
-	</style>
+    <!-- Styles -->
+    <style>
+        .card {
+            border-radius: 0.75rem;
+        }
+        .custom-file .form-control {
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .custom-file .form-control:focus {
+            border-color: var(--bs-primary);
+            box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+        }
+        #pdfPreviewContainer {
+            border: 1px dashed #dee2e6;
+            padding: 15px;
+            border-radius: 0.5rem;
+            background-color: #f8f9fa;
+            transition: background-color 0.3s ease;
+        }
+        #pdfPreviewContainer:hover {
+            background-color: #e9ecef;
+        }
+        #pdfPreview {
+            background-color: #fff;
+            border-radius: 0.5rem;
+        }
+        .offer-details .detail-item {
+            transition: background-color 0.2s ease;
+        }
+        .offer-details .detail-item:hover {
+            background-color: #f8f9fa;
+        }
+        .btn-primary {
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+        .form-label {
+            color: var(--bs-dark);
+        }
+        .form-text {
+            font-size: 0.875rem;
+        }
+        .form-control.is-invalid,
+        .form-control:invalid {
+            background-image: none;
+        }
+        .was-validated .form-control:invalid,
+        .form-control.is-invalid {
+            border-color: var(--bs-danger);
+            background-image: none;
+        }
+        .was-validated .form-control:invalid:focus,
+        .form-control.is-invalid:focus {
+            box-shadow: 0 0 0 0.25rem rgba(var(--bs-danger-rgb), 0.25);
+        }
+        .invalid-feedback {
+            font-size: 0.875rem;
+        }
+    </style>
 {% endblock %}

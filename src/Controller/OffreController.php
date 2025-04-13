@@ -8,33 +8,160 @@ use App\Form\OffreType;
 use App\Repository\OffreRepository;
 use App\Repository\CandidatureRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/offre')]
 final class OffreController extends AbstractController
 {
-    #[Route(name: 'app_offre_index', methods: ['GET'])]
-    public function index(OffreRepository $offreRepository): Response
+    #[Route('/{id_offre<\d+>}', name: 'app_offre_show', methods: ['GET'])]
+    public function show(int $id_offre, OffreRepository $offreRepository, CandidatureRepository $candidatureRepository): Response
+    {
+        $offre = $offreRepository->find($id_offre);
+        if (!$offre) {
+            throw new NotFoundHttpException('Offre non trouvée.');
+        }
+
+        $recommendedOffers = [];
+        $maxResults = 4;
+
+        // Same category
+        $recommendedOffers = $offreRepository->createQueryBuilder('o')
+            ->where('o.categorie = :categorie')
+            ->andWhere('o.id_offre != :currentId')
+            ->setParameter('categorie', $offre->getCategorie())
+            ->setParameter('currentId', $offre->getIdOffre())
+            ->orderBy('o.date_publication', 'DESC')
+            ->setMaxResults($maxResults)
+            ->getQuery()
+            ->getResult();
+
+        // Same ville
+        if (count($recommendedOffers) < $maxResults) {
+            $remaining = $maxResults - count($recommendedOffers);
+            $villeOffers = $offreRepository->createQueryBuilder('o')
+                ->where('o.ville = :ville')
+                ->andWhere('o.id_offre != :currentId')
+                ->andWhere('o NOT IN (:existingOffers)')
+                ->setParameter('ville', $offre->getVille())
+                ->setParameter('currentId', $offre->getIdOffre())
+                ->setParameter('existingOffers', $recommendedOffers)
+                ->orderBy('o.date_publication', 'DESC')
+                ->setMaxResults($remaining)
+                ->getQuery()
+                ->getResult();
+
+            $recommendedOffers = array_merge($recommendedOffers, $villeOffers);
+        }
+
+        // Same gouvernorat
+        if (count($recommendedOffers) < $maxResults) {
+            $remaining = $maxResults - count($recommendedOffers);
+            $gouvernoratOffers = $offreRepository->createQueryBuilder('o')
+                ->where('o.gouvernorat = :gouvernorat')
+                ->andWhere('o.id_offre != :currentId')
+                ->andWhere('o NOT IN (:existingOffers)')
+                ->setParameter('gouvernorat', $offre->getGouvernorat())
+                ->setParameter('currentId', $offre->getIdOffre())
+                ->setParameter('existingOffers', $recommendedOffers)
+                ->orderBy('o.date_publication', 'DESC')
+                ->setMaxResults($remaining)
+                ->getQuery()
+                ->getResult();
+
+            $recommendedOffers = array_merge($recommendedOffers, $gouvernoratOffers);
+        }
+
+        // Same type contrat
+        if (count($recommendedOffers) < $maxResults) {
+            $remaining = $maxResults - count($recommendedOffers);
+            $typeContratOffers = $offreRepository->createQueryBuilder('o')
+                ->where('o.type_contrat = :typeContrat')
+                ->andWhere('o.id_offre != :currentId')
+                ->andWhere('o NOT IN (:existingOffers)')
+                ->setParameter('typeContrat', $offre->getTypeContrat())
+                ->setParameter('currentId', $offre->getIdOffre())
+                ->setParameter('existingOffers', $recommendedOffers)
+                ->orderBy('o.date_publication', 'DESC')
+                ->setMaxResults($remaining)
+                ->getQuery()
+                ->getResult();
+
+            $recommendedOffers = array_merge($recommendedOffers, $typeContratOffers);
+        }
+
+        $candidatures = $candidatureRepository->findBy(['offre' => $offre]);
+
+        return $this->render('offre/show.html.twig', [
+            'offre' => $offre,
+            'candidatures' => $candidatures,
+            'recommendedOffers' => $recommendedOffers,
+        ]);
+    }
+
+    #[Route('/{page<\d+>}', name: 'app_offre_index', methods: ['GET'], defaults: ['page' => 1])]
+    public function index(Request $request, OffreRepository $offreRepository, int $page): Response
     {
         $categories = [
-            'Marketing & Communication' => '0',
-            'Sponsoring & Partenariats' => '2',
-            'Animation & Production Artistique' => '0',
-            'Technique & Audiovisuel' => '14',
-            'Logistique & Opérations' => '1',
-            'Relationnel & Accueil' => '3',
-            'Digital & Innovation' => '22',
+            'Marketing & Communication' => 0,
+            'Sponsoring & Partenariats' => 2,
+            'Animation & Production Artistique' => 0,
+            'Technique & Audiovisuel' => 14,
+            'Logistique & Opérations' => 1,
+            'Relationnel & Accueil' => 3,
+            'Digital & Innovation' => 22,
         ];
 
         $regions = ['Tunis', 'Sousse', 'Sfax', 'Gabes'];
 
+        // Pagination parameters
+        $itemsPerPage = 9;
+        $queryBuilder = $offreRepository->createQueryBuilder('o')
+            ->orderBy('o.date_publication', 'DESC');
+
+        // Apply filters
+        if ($search = $request->query->get('search')) {
+            $queryBuilder->andWhere('o.titre LIKE :search OR o.description LIKE :search')
+                ->setParameter('search', "%$search%");
+        }
+        if ($category = $request->query->get('category')) {
+            $queryBuilder->andWhere('o.categorie = :category')
+                ->setParameter('category', $category);
+        }
+        if ($region = $request->query->get('region')) {
+            $queryBuilder->andWhere('o.gouvernorat = :region')
+                ->setParameter('region', $region);
+        }
+        if ($salary = $request->query->get('salary')) {
+            $queryBuilder->andWhere('o.salaire >= :salary')
+                ->setParameter('salary', $salary);
+        }
+
+        // Paginate
+        $query = $queryBuilder->getQuery()
+            ->setFirstResult(($page - 1) * $itemsPerPage)
+            ->setMaxResults($itemsPerPage);
+
+        $paginator = new Paginator($query, true);
+        $totalItems = count($paginator);
+        $totalPages = (int) ceil($totalItems / $itemsPerPage);
+
         return $this->render('offre/index.html.twig', [
-            'offres' => $offreRepository->findAll(),
+            'offres' => $paginator,
             'categories' => $categories,
-            'regions' => $regions
+            'regions' => $regions,
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'filters' => [
+                'search' => $search ?? '',
+                'category' => $category ?? '',
+                'region' => $region ?? '',
+                'salary' => $salary ?? 0,
+            ],
         ]);
     }
 
@@ -64,86 +191,6 @@ final class OffreController extends AbstractController
         ]);
     }
 
-    #[Route('/{id_offre}', name: 'app_offre_show', methods: ['GET'])]
-    public function show(Offre $offre, OffreRepository $offreRepository, CandidatureRepository $candidatureRepository): Response
-{
-    $recommendedOffers = [];
-    $maxResults = 4; // Number of recommended offers we want
-    
-    // 1. First try: Same category
-    $recommendedOffers = $offreRepository->createQueryBuilder('o')
-        ->where('o.categorie = :categorie')
-        ->andWhere('o.id_offre != :currentId')
-        ->setParameter('categorie', $offre->getCategorie())
-        ->setParameter('currentId', $offre->getIdOffre())
-        ->orderBy('o.date_publication', 'DESC')
-        ->setMaxResults($maxResults)
-        ->getQuery()
-        ->getResult();
-
-    // 2. If not enough, add offers from same ville
-    if (count($recommendedOffers) < $maxResults) {
-        $remaining = $maxResults - count($recommendedOffers);
-        $villeOffers = $offreRepository->createQueryBuilder('o')
-            ->where('o.ville = :ville')
-            ->andWhere('o.id_offre != :currentId')
-            ->andWhere('o NOT IN (:existingOffers)')
-            ->setParameter('ville', $offre->getVille())
-            ->setParameter('currentId', $offre->getIdOffre())
-            ->setParameter('existingOffers', $recommendedOffers)
-            ->orderBy('o.date_publication', 'DESC')
-            ->setMaxResults($remaining)
-            ->getQuery()
-            ->getResult();
-
-        $recommendedOffers = array_merge($recommendedOffers, $villeOffers);
-    }
-
-    // 3. If still not enough, add offers from same gouvernorat
-    if (count($recommendedOffers) < $maxResults) {
-        $remaining = $maxResults - count($recommendedOffers);
-        $gouvernoratOffers = $offreRepository->createQueryBuilder('o')
-            ->where('o.gouvernorat = :gouvernorat')
-            ->andWhere('o.id_offre != :currentId')
-            ->andWhere('o NOT IN (:existingOffers)')
-            ->setParameter('gouvernorat', $offre->getGouvernorat())
-            ->setParameter('currentId', $offre->getIdOffre())
-            ->setParameter('existingOffers', $recommendedOffers)
-            ->orderBy('o.date_publication', 'DESC')
-            ->setMaxResults($remaining)
-            ->getQuery()
-            ->getResult();
-
-        $recommendedOffers = array_merge($recommendedOffers, $gouvernoratOffers);
-    }
-
-    // 4. If still not enough, add offers with same type contrat
-    if (count($recommendedOffers) < $maxResults) {
-        $remaining = $maxResults - count($recommendedOffers);
-        $typeContratOffers = $offreRepository->createQueryBuilder('o')
-            ->where('o.type_contrat = :typeContrat')
-            ->andWhere('o.id_offre != :currentId')
-            ->andWhere('o NOT IN (:existingOffers)')
-            ->setParameter('typeContrat', $offre->getTypeContrat())
-            ->setParameter('currentId', $offre->getIdOffre())
-            ->setParameter('existingOffers', $recommendedOffers)
-            ->orderBy('o.date_publication', 'DESC')
-            ->setMaxResults($remaining)
-            ->getQuery()
-            ->getResult();
-
-        $recommendedOffers = array_merge($recommendedOffers, $typeContratOffers);
-    }
-
-    $candidatures = $candidatureRepository->findBy(['offre' => $offre]);
-
-    return $this->render('offre/show.html.twig', [
-        'offre' => $offre,
-        'candidatures' => $candidatures,
-        'recommendedOffers' => $recommendedOffers,
-    ]);
-}
-
     #[Route('/{id_offre}/edit', name: 'app_offre_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Offre $offre, EntityManagerInterface $entityManager): Response
     {
@@ -151,6 +198,11 @@ final class OffreController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $logoFile = $form->get('logoFile')->getData();
+            if ($logoFile) {
+                $fileContent = file_get_contents($logoFile->getPathname());
+                $offre->setOrganisationLogo($fileContent);
+            }
             $entityManager->flush();
 
             return $this->redirectToRoute('app_offre_index', [], Response::HTTP_SEE_OTHER);
@@ -165,7 +217,7 @@ final class OffreController extends AbstractController
     #[Route('/{id_offre}', name: 'app_offre_delete', methods: ['POST'])]
     public function delete(Request $request, Offre $offre, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$offre->getId_offre(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$offre->getIdOffre(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($offre);
             $entityManager->flush();
         }

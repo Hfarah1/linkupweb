@@ -1,198 +1,313 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des Offres
-{% endblock %}
+{% block title %}Liste des Offres{% endblock %}
 
 {% block content %}
-	<!-- Single Page Header start -->
-	<div class="container-fluid page-header py-5">
-		<h1 class="text-center text-white display-6">Offres d'emploi</h1>
-		<ol class="breadcrumb justify-content-center mb-0">
-			<li class="breadcrumb-item">
-				<a href="{{ path('app_home') }}">Accueil</a>
-			</li>
-			<li class="breadcrumb-item active text-white">Offres</li>
-		</ol>
-	</div>
-	<!-- Single Page Header End -->
+    <!-- Single Page Header start -->
+    <div class="container-fluid page-header py-5">
+        <div class="container text-center">
+            <h1 class="text-white display-4">Offres d'Emploi</h1>
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li class="breadcrumb-item active text-white">Offres</li>
+            </ol>
+        </div>
+    </div>
+    <!-- Single Page Header End -->
 
-	<!-- Fruits Shop Start-->
-	<div class="container-fluid fruite py-5">
-		<div class="container py-5">
-			<h1 class="mb-4">Liste des offres</h1>
-			<div class="row g-4">
-				<div class="col-lg-12">
-					<div class="row g-4">
-						<div class="col-xl-3">
-							<div class="input-group w-100 mx-auto d-flex">
-								<input type="search" class="form-control p-3" placeholder="Mots-clés" aria-describedby="search-icon-1">
-								<span id="search-icon-1" class="input-group-text p-3">
-									<i class="fa fa-search"></i>
-								</span>
-							</div>
-						</div>
-						<div class="col-6"></div>
-						<div class="col-xl-3">
-							<div class="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
-								<label for="sorting">Trier par:</label>
-								<select id="sorting" name="sorting" class="border-0 form-select-sm bg-light me-3">
-									<option value="default">Par défaut</option>
-									<option value="popular">Popularité</option>
-									<option value="salary">Salaire</option>
-									<option value="recent">Récent</option>
-								</select>
-							</div>
-						</div>
-					</div>
-					<div class="row g-4">
-						<div
-							class="col-lg-3">
-							<!-- Filters Sidebar -->
-							<div class="row g-4">
-								<div class="col-lg-12">
-									<div class="mb-3">
-										<h4>Catégories</h4>
-										<ul class="list-unstyled fruite-categorie">
-											{% for name, count in categories %}
-												<li>
-													<div class="d-flex justify-content-between fruite-name">
-														<a href="#">
-															<i class="fas fa-briefcase me-2"></i>
-															{{ name }}</a>
-														<span>({{ count }})</span>
-													</div>
-												</li>
-											{% endfor %}
-										</ul>
-									</div>
-								</div>
-								<div class="col-lg-12">
-									<div class="mb-3">
-										<h4 class="mb-2">Salaire</h4>
-										<input type="range" class="form-range w-100" id="salaryRange" min="0" max="5000" value="0" step="100" oninput="salaryValue.value=salaryRange.value">
-										<div class="d-flex justify-content-between">
-											<span>0 DT</span>
-											<output id="salaryValue">0</output>
-											<span>5000+ DT</span>
-										</div>
-									</div>
-								</div>
-								<div class="col-lg-12">
-									<div class="mb-3">
-										<h4>Gouvernorat</h4>
-										{% for region in regions %}
-											<div class="mb-2">
-												<input type="checkbox" class="me-2 region-filter" id="region-{{ loop.index }}" value="{{ region }}">
-												<label for="region-{{ loop.index }}">{{ region }}</label>
-											</div>
-										{% endfor %}
-									</div>
-								</div>
-							</div>
-						</div>
-						<div
-							class="col-lg-9">
-							<!-- Offers Listing -->
-							<div class="row g-4 justify-content-center">
-								{% for offre in offres %}
-									<div class="col-md-6 col-lg-6 col-xl-4">
-										<a href="{{ path('app_offre_show', {'id_offre': offre.id_offre}) }}" class="text-decoration-none">
-											<div class="rounded position-relative fruite-item">
-												<div class="fruite-img">
-													{% if offre.organisationLogo %}
-														{% set logoContent = offre.getOrganisationLogo() %}
-														<img src="data:image/jpeg;base64,{{ logoContent|base64_encode }}" class="img-fluid w-100 rounded-top" alt="Logo {{ offre.organisation }}" style="height: 200px; object-fit: cover;">
-													{% else %}
-														<img src="{{ asset('front/img/offer-placeholder.png') }}" class="img-fluid w-100 rounded-top bg-light" alt="Offre {{ offre.titre }}" style="height: 200px; object-fit: cover;">
-													{% endif %}
-												</div>
-												<div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">
-													{{ offre.categorie|upper }}
-												</div>
-												<div class="p-4 border border-secondary border-top-0 rounded-bottom">
-													<h4>{{ offre.titre }}</h4>
-													<p>{{ offre.description|u.truncate(100, '...') }}</p>
-													<div class="d-flex justify-content-between flex-lg-wrap">
-														<p class="text-dark fs-5 fw-bold mb-0">
-															{% if offre.gouvernorat or offre.ville %}
-																<i class="fas fa-map-marker-alt text-secondary me-2"></i>
-																{% if offre.gouvernorat %}
-																	{{ offre.gouvernorat }}
-																	{% if offre.ville %}
-																		,
-																		{{ offre.ville }}
-																	{% endif %}
-																{% else %}
-																	{{ offre.ville }}
-																{% endif %}
-															{% else %}
-																<span class="text-muted">Lieu non spécifié</span>
-															{% endif %}
-														</p>
-													</a>
-												</div>
-											</div>
-										</div>
-									</div>
-								{% else %}
-									<div class="col-12 text-center py-5">
-										<p class="text-muted">Aucune offre disponible pour le moment</p>
-									</div>
-								{% endfor %}
-							</div>
+    <!-- Offers Listing Start -->
+    <div class="container-fluid py-5">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="text-primary">Nos Offres d'Emploi</h2>
+                <a href="{{ path('app_offre_new') }}" class="btn btn-primary border-secondary py-2 px-4 text-uppercase">
+                    <i class="fas fa-plus me-2"></i>Créer une Nouvelle Offre
+                </a>
+            </div>
+            <div class="row g-4">
+                <!-- Main Content -->
+                <div class="col-lg-9 order-lg-2">
+                    <!-- Search and Sort Bar -->
+                    <div class="card shadow-sm p-4 mb-4">
+                        <form action="{{ path('app_offre_index') }}" method="get" id="filterForm">
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <div class="input-group">
+                                        <input type="search" 
+                                               name="search"
+                                               value="{{ filters.search }}"
+                                               class="form-control form-control-lg rounded-start" 
+                                               placeholder="Rechercher par titre, compétences..." 
+                                               aria-label="Rechercher des offres">
+                                        <button class="btn btn-primary px-4" type="submit">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select form-select-lg shadow-sm" name="sort" aria-label="Trier les offres" id="sortSelect">
+                                        <option value="recent" {{ app.request.query.get('sort') == 'recent' or not app.request.query.get('sort') ? 'selected' }}>Plus récentes</option>
+                                        <option value="salary-desc" {{ app.request.query.get('sort') == 'salary-desc' ? 'selected' }}>Salaire (haut à bas)</option>
+                                        <option value="salary-asc" {{ app.request.query.get('sort') == 'salary-asc' ? 'selected' }}>Salaire (bas à haut)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
 
-							<!-- Pagination -->
-							<div class="col-12">
-								<div class="pagination d-flex justify-content-center mt-5">
-									<a href="#" class="rounded">&laquo;</a>
-									<a href="#" class="active rounded">1</a>
-									<a href="#" class="rounded">2</a>
-									<a href="#" class="rounded">3</a>
-									<a href="#" class="rounded">4</a>
-									<a href="#" class="rounded">5</a>
-									<a href="#" class="rounded">&raquo;</a>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- Fruits Shop End-->
+                    <!-- Active Filters -->
+                    <div class="mb-4">
+                        <div class="d-flex flex-wrap gap-2" id="activeFilters">
+                            {% if filters.search %}
+                                <span class="badge bg-light text-dark p-2">
+                                    Recherche: {{ filters.search }}
+                                    <a href="{{ path('app_offre_index', app.request.query.all|merge({'search': null})) }}" class="btn-close btn-close-black ms-2" style="font-size: 0.5rem;"></a>
+                                </span>
+                            {% endif %}
+                            {% if filters.category %}
+                                <span class="badge bg-light text-dark p-2">
+                                    Catégorie: {{ filters.category }}
+                                    <a href="{{ path('app_offre_index', app.request.query.all|merge({'category': null})) }}" class="btn-close btn-close-black ms-2" style="font-size: 0.5rem;"></a>
+                                </span>
+                            {% endif %}
+                            {% if filters.region %}
+                                <span class="badge bg-light text-dark p-2">
+                                    Région: {{ filters.region }}
+                                    <a href="{{ path('app_offre_index', app.request.query.all|merge({'region': null})) }}" class="btn-close btn-close-black ms-2" style="font-size: 0.5rem;"></a>
+                                </span>
+                            {% endif %}
+                            {% if filters.salary > 0 %}
+                                <span class="badge bg-light text-dark p-2">
+                                    Salaire ≥ {{ filters.salary }} DT
+                                    <a href="{{ path('app_offre_index', app.request.query.all|merge({'salary': null})) }}" class="btn-close btn-close-black ms-2" style="font-size: 0.5rem;"></a>
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Offers Grid -->
+                    <div class="row g-4">
+                        {% for offre in offres %}
+                            <div class="col-md-6 col-xl-4">
+                                <div class="card h-100 border-0 shadow-sm offer-card fruite-item">
+                                    <div class="position-relative fruite-img">
+                                        {% if offre.organisationLogo %}
+                                            <img src="data:image/jpeg;base64,{{ offre.organisationLogo|base64_encode }}" 
+                                                 class="card-img-top rounded-top" 
+                                                 alt="{{ offre.organisation|default('Logo') }}"
+                                                 style="height: 200px; object-fit: cover;">
+                                        {% else %}
+                                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center rounded-top" 
+                                                 style="height: 200px;">
+                                                <i class="fas fa-briefcase fa-4x text-muted"></i>
+                                            </div>
+                                        {% endif %}
+                                        <span class="badge bg-primary position-absolute" style="top: 15px; left: 15px;">
+                                            {{ offre.categorie|default('N/A') }}
+                                        </span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <h5 class="card-title mb-0">{{ offre.titre|default('Sans titre') }}</h5>
+                                            {% if offre.salaire %}
+                                                <span class="badge bg-success rounded-pill">
+                                                    {{ offre.salaire|number_format(2, ',', ' ') }} DT
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                        <p class="text-muted small mb-2">
+                                            <i class="fas fa-building me-2"></i>{{ offre.organisation|default('Non spécifié') }}
+                                        </p>
+                                        <p class="card-text text-truncate-3 mb-3">
+                                            {{ offre.description|default('Aucune description')|u.truncate(100, '...') }}
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center small text-muted">
+                                            <span>
+                                                <i class="fas fa-map-marker-alt me-2"></i>
+                                                {% if offre.gouvernorat and offre.ville %}
+                                                    {{ offre.ville }}, {{ offre.gouvernorat }}
+                                                {% elseif offre.gouvernorat %}
+                                                    {{ offre.gouvernorat }}
+                                                {% elseif offre.ville %}
+                                                    {{ offre.ville }}
+                                                {% else %}
+                                                    Lieu non spécifié
+                                                {% endif %}
+                                            </span>
+                                            <span>
+                                                <i class="far fa-clock me-2"></i>
+                                                {{ offre.datePublication ? offre.datePublication|date('d/m/Y') : 'N/A' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-top-0">
+                                        <a href="{{ path('app_offre_show', {'id_offre': offre.id_offre}) }}" 
+                                           class="btn btn-primary border-secondary w-100 text-uppercase">
+                                            Voir Détails
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="col-12">
+                                <div class="card shadow-sm text-center py-5">
+                                    <div class="card-body">
+                                        <i class="fas fa-briefcase fa-4x text-muted mb-4"></i>
+                                        <h4 class="text-muted">Aucune Offre Disponible</h4>
+                                        <p class="text-muted mb-4">Il n'y a actuellement aucune offre correspondant à vos critères.</p>
+                                        <a href="{{ path('app_offre_index') }}" class="btn btn-primary">Réinitialiser les Filtres</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Pagination -->
+                    {% if totalPages > 1 %}
+                        <div class="col-12 mt-5">
+                            <div class="pagination d-flex justify-content-center">
+                                {% if currentPage > 1 %}
+                                    <a href="{{ path('app_offre_index', app.request.query.all|merge({'page': currentPage - 1})) }}" class="rounded">«</a>
+                                {% endif %}
+                                {% for i in 1..totalPages %}
+                                    <a href="{{ path('app_offre_index', app.request.query.all|merge({'page': i})) }}" 
+                                       class="{{ currentPage == i ? 'active' : '' }} rounded">{{ i }}</a>
+                                {% endfor %}
+                                {% if currentPage < totalPages %}
+                                    <a href="{{ path('app_offre_index', app.request.query.all|merge({'page': currentPage + 1})) }}" class="rounded">»</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Filters Sidebar -->
+                <div class="col-lg-3 order-lg-1">
+                    <div class="card border-0 shadow-sm sticky-top" style="top: 20px;">
+                        <div class="card-body">
+                            <h5 class="card-title border-bottom pb-3 mb-4">
+                                <i class="fas fa-filter me-2"></i>Filtres
+                            </h5>
+
+                            <!-- Categories Filter -->
+                            <div class="mb-4">
+                                <h6 class="mb-3 fw-bold">
+                                    <i class="fas fa-tags me-2"></i>Catégories
+                                </h6>
+                                <div class="list-group list-group-flush">
+                                    {% for name, count in categories %}
+                                        <a href="{{ path('app_offre_index', app.request.query.all|merge({'category': name, 'page': 1})) }}"
+                                           class="list-group-item d-flex justify-content-between align-items-center {{ filters.category == name ? 'bg-light' : '' }}">
+                                            <span>{{ name }}</span>
+                                            <span class="badge bg-primary rounded-pill">{{ count }}</span>
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Salary Filter -->
+                            <div class="mb-4">
+                                <h6 class="mb-3 fw-bold">
+                                    <i class="fas fa-money-bill-wave me-2"></i>Salaire
+                                </h6>
+                                <div class="px-2">
+                                    <input type="range" 
+                                           class="form-range" 
+                                           name="salary"
+                                           min="0" 
+                                           max="5000" 
+                                           step="100" 
+                                           value="{{ filters.salary }}" 
+                                           id="salaryRange"
+                                           form="filterForm">
+                                    <div class="d-flex justify-content-between mt-2 small">
+                                        <span>0 DT</span>
+                                        <span><span id="salaryValue">{{ filters.salary }}</span> DT</span>
+                                        <span>5000+ DT</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Location Filter -->
+                            <div class="mb-4">
+                                <h6 class="mb-3 fw-bold">
+                                    <i class="fas fa-map-marker-alt me-2"></i>Gouvernorat
+                                </h6>
+                                <div class="list-group list-group-flush">
+                                    {% for region in regions %}
+                                        <a href="{{ path('app_offre_index', app.request.query.all|merge({'region': region, 'page': 1})) }}"
+                                           class="list-group-item d-flex justify-content-between align-items-center {{ filters.region == region ? 'bg-light' : '' }}">
+                                            <span>{{ region }}</span>
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Filter Buttons -->
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary border-secondary text-uppercase" type="submit" form="filterForm">
+                                    <i class="fas fa-filter me-2"></i>Appliquer
+                                </button>
+                                <a href="{{ path('app_offre_index') }}" class="btn btn-outline-secondary text-uppercase">
+                                    <i class="fas fa-undo me-2"></i>Réinitialiser
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Offers Listing End -->
 {% endblock %}
 
 {% block javascripts %}
-	{{ parent() }}
-	<script>
-		// Filtering functionality
-document.addEventListener('DOMContentLoaded', function () {
-const searchInput = document.querySelector('input[type="search"]');
-const categoryLinks = document.querySelectorAll('.fruite-categorie a');
-const regionFilters = document.querySelectorAll('.region-filter');
-const salaryRange = document.getElementById('salaryRange');
-const sortingSelect = document.getElementById('sorting');
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Salary range display
+            const salaryRange = document.getElementById('salaryRange');
+            const salaryValue = document.getElementById('salaryValue');
+            salaryRange.addEventListener('input', function() {
+                salaryValue.textContent = this.value;
+            });
 
-// Add event listeners for filtering
-searchInput.addEventListener('input', filterOffers);
-categoryLinks.forEach(link => link.addEventListener('click', filterByCategory));
-regionFilters.forEach(filter => filter.addEventListener('change', filterOffers));
-salaryRange.addEventListener('input', filterOffers);
-sortingSelect.addEventListener('change', sortOffers);
+            // Sort select submits form
+            document.getElementById('sortSelect').addEventListener('change', function() {
+                this.form.submit();
+            });
+        });
+    </script>
 
-function filterOffers() { // Implement filtering logic here
-console.log('Filtering offers...');
-}
-
-function filterByCategory(e) {
-e.preventDefault();
-// Implement category filtering
-console.log('Filtering by category...');
-}
-
-function sortOffers() { // Implement sorting logic
-console.log('Sorting offers...');
-}
-});
-	</script>
+    <style>
+        .offer-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .offer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important;
+        }
+        .text-truncate-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .list-group-item:hover {
+            background-color: var(--bs-light);
+        }
+        .form-range::-webkit-slider-thumb {
+            background: var(--bs-primary);
+        }
+        .form-range::-moz-range-thumb {
+            background: var(--bs-primary);
+        }
+        .form-range::-ms-thumb {
+            background: var(--bs-primary);
+        }
+        .badge.bg-primary {
+            font-size: 0.9rem;
+            padding: 0.5em 1em;
+        }
+    </style>
 {% endblock %}
