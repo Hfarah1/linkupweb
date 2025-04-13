@@ -60,11 +60,44 @@ final class CandidatureController extends AbstractController
     }
 
     #[Route('/{id_candidature}', name: 'app_candidature_show', methods: ['GET'])]
-    public function show(Candidature $candidature, Offre $offre): Response
-    {
+    public function show(
+        Candidature $candidature,
+        Offre $offre,
+        CandidatureRepository $candidatureRepository
+    ): Response {
+        $allCandidatures = $candidatureRepository->findBy(
+            ['offre' => $offre],
+            ['date_candidature' => 'ASC']
+        );
+
+        // Find current position in the list
+        $loopPosition = array_search($candidature, $allCandidatures) + 1;
+
+        // Get previous and next candidatures
+        $previousCandidature = null;
+        $nextCandidature = null;
+        $currentIndex = array_search($candidature, $allCandidatures);
+
+        if ($currentIndex > 0) {
+            $previousCandidature = $allCandidatures[$currentIndex - 1];
+        }
+
+        if ($currentIndex < count($allCandidatures) - 1) {
+            $nextCandidature = $allCandidatures[$currentIndex + 1];
+        }
+
+        // Get other candidatures for the same offre (excluding current one)
+        $otherCandidatures = array_filter($allCandidatures, function ($c) use ($candidature) {
+            return $c->getIdCandidature() !== $candidature->getIdCandidature();
+        });
+
         return $this->render('candidature/show.html.twig', [
             'candidature' => $candidature,
+            'loopPosition' => $loopPosition,
+            'previousCandidature' => $previousCandidature,
+            'nextCandidature' => $nextCandidature,
             'offre' => $offre,
+            'otherCandidatures' => $otherCandidatures, // Add this
         ]);
     }
 

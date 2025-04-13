@@ -1,33 +1,271 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Candidature{% endblock %}
+{% block title %}Détails de la candidature
+{% endblock %}
 
-{% block body %}
-    <h1>Candidature</h1>
+{% block content %}
+	<!-- Single Page Header start -->
+	<div class="container-fluid page-header py-5">
+		<h1 class="text-center text-white display-6">Candidature #{{ loopPosition }}</h1>
+		<ol class="breadcrumb justify-content-center mb-0">
+			<li class="breadcrumb-item">
+				<a href="{{ path('app_home') }}">Accueil</a>
+			</li>
+			<li class="breadcrumb-item">
+				<a href="{{ path('app_offre_show', {'id_offre': candidature.offre.id_offre}) }}">Offre</a>
+			</li>
+			<li class="breadcrumb-item active text-white">Candidature #{{ loopPosition }}</li>
+		</ol>
+	</div>
+	<!-- Single Page Header End -->
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id_candidature</th>
-                <td>{{ candidature.idCandidature }}</td>
-            </tr>
-            <tr>
-                <th>Date_candidature</th>
-                <td>{{ candidature.dateCandidature ? candidature.dateCandidature|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Statut</th>
-                <td>{{ candidature.statut }}</td>
-            </tr>
-            <tr>
-                <th>Cv_file</th>
-                <td>{{ candidature.cvFile }}</td>
-            </tr>
-            <tr>
-                <th>Lettre_motivation</th>
-                <td>{{ candidature.lettreMotivation }}</td>
-            </tr>
-        </tbody>
-    </table>
+	<!-- Candidature Details Start -->
+	<div class="container-fluid py-5">
+		<div class="container py-5">
+			<div class="row g-5">
+				<div class="col-lg-8">
+					<div class="bg-light rounded p-4">
+						<div class="d-flex align-items-center mb-4">
+							<div class="flex-shrink-0">
+								<img src="{{ asset('front/img/avatar.jpg') }}" class="img-fluid rounded-circle" style="width: 80px; height: 80px; object-fit: cover;" alt="Candidat">
+							</div>
+							<div class="flex-grow-1 ms-3">
+								<h4>{{ candidature.user.prenom }}
+									{{ candidature.user.nom }}</h4>
+								<p class="mb-0 text-muted">
+									Postulé le:
+									{{ candidature.date_candidature|date('d/m/Y à H:i') }}
+								</p>
+								<div class="mt-2">
+									{% if candidature.user.email %}
+										<a href="mailto:{{ candidature.user.email }}" class="text-decoration-none me-3">
+											<i class="fas fa-envelope me-1"></i>
+											{{ candidature.user.email }}
+										</a>
+									{% endif %}
+									{% if candidature.user.telephone %}
+										<a href="tel:{{ candidature.user.telephone }}" class="text-decoration-none">
+											<i class="fas fa-phone me-1"></i>
+											{{ candidature.user.telephone }}
+										</a>
+									{% endif %}
+								</div>
+							</div>
+							<span class="badge bg-{{ candidature.statut == 'Acceptée' ? 'success' : (candidature.statut == 'Refusée' ? 'danger' : 'warning') }} fs-6">
+								{{ candidature.statut }}
+							</span>
+						</div>
 
+						<div class="row g-4 mb-4">
+							<div class="col-md-6">
+								<div class="bg-white p-3 rounded border">
+									<h5 class="mb-3">
+										<i class="fas fa-file-alt me-2"></i>Lettre de motivation
+									</h5>
+									<div class="p-3 bg-light rounded">
+										{{ candidature.lettreMotivation|nl2br }}
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="bg-white p-3 rounded border h-100">
+									<h5 class="mb-3">
+										<i class="fas fa-file-pdf me-2 text-danger"></i>Curriculum Vitae
+									</h5>
+									{% if candidature.cvFile %}
+										<div class="text-center">
+											<button type="button" class="btn btn-outline-primary mb-3" data-bs-toggle="modal" data-bs-target="#cvModal">
+												<i class="fas fa-eye me-1"></i>Voir le CV
+											</button>
+											<a href="{{ path('app_candidature_download_cv', { 'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature }) }}" class="btn btn-primary mb-3">
+												<i class="fas fa-download me-1"></i>Télécharger
+											</a>
+										</div>
+									{% else %}
+										<p class="text-muted">Aucun CV disponible</p>
+									{% endif %}
+								</div>
+							</div>
+						</div>
+
+						<div class="bg-white p-3 rounded border">
+							<h5 class="mb-3">
+								<i class="fas fa-info-circle me-2"></i>Détails supplémentaires
+							</h5>
+							<div class="row">
+								<div class="col-md-6">
+									<p>
+										<strong>Nom complet:</strong>
+										{{ candidature.user.prenom }}
+										{{ candidature.user.nom }}
+									</p>
+									<p>
+										<strong>Email:</strong>
+										<a href="mailto:{{ candidature.user.email }}">{{ candidature.user.email }}</a>
+									</p>
+									{% if candidature.user.telephone %}
+										<p>
+											<strong>Téléphone:</strong>
+											<a href="tel:{{ candidature.user.telephone }}">{{ candidature.user.telephone }}</a>
+										</p>
+									{% endif %}
+								</div>
+								<div class="col-md-6">
+									<p>
+										<strong>Offre:</strong>
+										<a href="{{ path('app_offre_show', {'id_offre': candidature.offre.id_offre}) }}">
+											{{ candidature.offre.titre }}
+										</a>
+									</p>
+									<p>
+										<strong>Organisation:</strong>
+										{{ candidature.offre.organisation }}</p>
+									<p>
+										<strong>Type de contrat:</strong>
+										{{ candidature.offre.typeContrat }}</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-lg-4">
+					<div class="bg-light rounded p-4">
+						<h4 class="mb-4">Actions</h4>
+						<!-- Previous/Next Navigation -->
+						<div class="btn-group" role="group">
+							{% if previousCandidature %}
+								<a href="{{ path('app_candidature_show', { 'id_offre': candidature.offre.id_offre, 'id_candidature': previousCandidature.id_candidature }) }}" class="btn btn-outline-primary">
+									<i class="fas fa-chevron-left me-1"></i>
+									Précédente
+								</a>
+							{% else %}
+								<button class="btn btn-outline-primary" disabled>
+									<i class="fas fa-chevron-left me-1"></i>
+									Précédente
+								</button>
+							{% endif %}
+
+							<a href="{{ path('app_offre_show', {'id_offre': candidature.offre.id_offre}) }}#candidatures" class="btn btn-outline-secondary">
+								<i class="fas fa-list me-1"></i>
+								Liste
+							</a>
+
+							{% if nextCandidature %}
+								<a href="{{ path('app_candidature_show', { 'id_offre': candidature.offre.id_offre, 'id_candidature': nextCandidature.id_candidature }) }}#candidatures" class="btn btn-outline-primary">
+									Suivante
+									<i class="fas fa-chevron-right ms-1"></i>
+								</a>
+							{% else %}
+								<button class="btn btn-outline-primary" disabled>
+									Suivante
+									<i class="fas fa-chevron-right ms-1"></i>
+								</button>
+							{% endif %}
+						</div>
+						<div class="d-grid gap-2 mb-4">
+							<a href="{{ path('app_offre_show', {'id_offre': candidature.offre.id_offre}) }}" class="btn btn-outline-secondary">
+								<i class="fas fa-arrow-left me-1"></i>
+								Retour à l'offre
+							</a>
+
+							{% if is_granted('ROLE_ADMIN') %}
+								<a href="{{ path('app_candidature_edit', { 'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature }) }}" class="btn btn-warning">
+									<i class="fas fa-edit me-1"></i>
+									Modifier le statut
+								</a>
+
+								{{ include('candidature/_delete_form.html.twig') }}
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Candidature Details End -->
+
+	<!-- CV Modal -->
+	{% if candidature.cvFile %}
+		<div class="modal fade" id="cvModal" tabindex="-1" aria-hidden="true">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">CV de
+							{{ candidature.user.prenom }}
+							{{ candidature.user.nom }}</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="ratio ratio-16x9">
+							<iframe src="{{ path('app_candidature_view_cv', { 'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature }) }}" style="width: 100%; height: 100%; border: none;"></iframe>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Other Candidatures Section -->
+		<div class="mt-5">
+			<h1 class="fw-bold mb-4">Autres candidatures pour l'offre 
+								"{{ candidature.offre.titre}}"</h1>
+			<div class="vesitable">
+				<div class="owl-carousel vegetable-carousel justify-content-center">
+					{% if otherCandidatures|length > 0 %}
+						{% for otherCand in otherCandidatures %}
+							{% if otherCand.id_candidature != candidature.id_candidature %}
+								<div class="border border-primary rounded position-relative vesitable-item d-flex flex-column h-100">
+									<a href="{{ path('app_candidature_show', {'id_offre': otherCand.offre.id_offre, 'id_candidature': otherCand.id_candidature}) }}" class="d-flex flex-column h-100 text-decoration-none">
+										<div class="vesitable-img" style="height: 200px; overflow: hidden;">
+											<img src="{{ asset('front/img/avatar.jpg') }}" class="img-fluid w-100 h-100 rounded-top" alt="Photo de profile {{ otherCand.user.prenom }} {{ otherCand.user.nom }}" style="object-fit: cover;">
+										</div>
+										<div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 10px; right: 10px;">
+											{{ otherCand.statut }}
+										</div>
+										<div class="p-3 flex-grow-1 d-flex flex-column">
+											<h4 class="mb-2">{{ otherCand.user.prenom }}
+												{{ otherCand.user.nom }}</h4>
+											<p class="mb-2">
+												<small>Postulé le:
+													{{ otherCand.date_candidature|date('d/m/Y') }}</small>
+											</p>
+										</div>
+									</a>
+								</div>
+							{% endif %}
+						{% endfor %}
+					{% else %}
+						<div class="alert alert-info">Aucune autre candidature trouvée pour ce candidat.</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+		<!-- End Other Candidatures Section -->
+	{% endif %}
+
+	<style>
+		.badge {
+			font-size: 0.9rem;
+			padding: 0.5em 0.75em;
+		}
+		.border {
+			border-color: #dee2e6 !important;
+		}
+	</style>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () { // Clean up iframe when modal closes
+const cvModal = document.getElementById('cvModal');
+if (cvModal) {
+cvModal.addEventListener('hidden.bs.modal', function () {
+const iframe = this.querySelector('iframe');
+if (iframe) {
+iframe.src = '';
+}
+});
+}
+});
+	</script>
 {% endblock %}
