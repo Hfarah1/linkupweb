@@ -205,16 +205,12 @@
                                 Mettre à Jour
                             </button>
                         </div>
-                         <div class="col-md-4">
-    <form method="post" action="{{ path('app_offre_delete', {'id_offre': offre.id_offre}) }}" 
-          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?');" 
-          class="d-inline w-100">
-        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ offre.id_offre) }}">
-        <button type="submit" class="btn btn-danger border-secondary py-3 px-4 text-uppercase w-100" 
-                aria-label="Supprimer l'offre">
-            <i class="fas fa-trash-alt me-2"></i>Supprimer
-        </button>
-    </form>
+                        <div class="col-md-4">
+    <button data-delete-url="{{ path('app_offre_delete', {'id_offre': offre.id_offre}) }}" 
+            class="btn btn-danger border-secondary py-3 px-4 text-uppercase w-100"
+            aria-label="Supprimer l'offre">
+        <i class="fas fa-trash-alt me-2"></i>Supprimer
+    </button>
 </div>
                         <div class="col-md-4">
                             <a href="{{ path('app_offre_index') }}" class="btn btn-outline-secondary border-secondary py-3 px-4 text-uppercase w-100">
@@ -222,7 +218,6 @@
 									Retour à la Liste
 								</a>
 							</div>
-
 						</div>
 
 						{{ form_end(form) }}
@@ -231,7 +226,24 @@
 			</div>
 		</div>
 		<!-- Edit Offer Page End -->
+		<div id="deleteConfirmationModal" class="modal fade" tabindex="-1" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content border-0 shadow-sm">
+					<div class="modal-header border-0">
+						<h5 class="modal-title text-dark">Confirmation</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body py-4">
+						<p class="mb-0">Êtes-vous sûr de vouloir supprimer cette offre ?</p>
+					</div>
+					<div class="modal-footer border-0">
+						<button id="confirmDeleteBtn" type="button" class="btn btn-danger">Supprimer</button>
 
+						<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+					</div>
+				</div>
+			</div>
+		</div>
 		<!-- JavaScript -->
 		<script>
 			document.addEventListener('DOMContentLoaded', function () { // Image Preview Handler
@@ -303,6 +315,36 @@ description.addEventListener('input', updateCounter);
 updateCounter();
 }
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
+let deleteUrl = '';
+
+// Set up delete buttons
+document.querySelectorAll('[data-delete-url]').forEach(button => {
+button.addEventListener('click', function (e) {
+e.preventDefault();
+deleteUrl = this.getAttribute('data-delete-url');
+deleteModal.show();
+});
+});
+
+// Confirm deletion
+document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+fetch(deleteUrl, {
+method: 'POST',
+headers: {
+'X-Requested-With': 'XMLHttpRequest',
+'Content-Type': 'application/x-www-form-urlencoded'
+}
+}).then(response => {
+if (response.redirected) {
+window.location.href = response.url;
+}
+deleteModal.hide();
+});
+});
+});
 		</script>
 
 		<!-- Styles -->
@@ -354,6 +396,44 @@ updateCounter();
 			}
 			#imagePreview img {
 				transition: opacity 0.3s ease;
+			}
+			/* Custom Modal Styling */
+			#deleteConfirmationModal .modal-content {
+				border-radius: 0.75rem;
+				box-shadow: 0 0 55px rgba(0, 0, 0, 0.4);
+			}
+
+			#deleteConfirmationModal .modal-header {
+				padding: 1.5rem 1.5rem 0.5rem;
+			}
+
+			#deleteConfirmationModal .modal-body {
+				padding: 0 1.5rem;
+				color: var(--bs-dark);
+			}
+
+			#deleteConfirmationModal .modal-footer {
+				padding: 1.5rem;
+				justify-content: center;
+			}
+
+			#deleteConfirmationModal .btn-danger {
+				background: var(--bs-danger);
+				border-color: var(--bs-danger);
+				transition: all 0.5s;
+			}
+
+			#deleteConfirmationModal .btn-danger:hover {
+				background: #dc3545;
+				transform: translateY(-2px);
+			}
+
+			#deleteConfirmationModal .btn-outline-secondary {
+				transition: all 0.5s;
+			}
+
+			#deleteConfirmationModal .btn-outline-secondary:hover {
+				transform: translateY(-2px);
 			}
 		</style>
 	{% endblock %}
