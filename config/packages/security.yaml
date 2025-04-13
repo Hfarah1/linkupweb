@@ -1,0 +1,56 @@
+security:
+  # Password hashing configuration
+  password_hashers:
+    # Use plain text for your Utilisateur entity
+    App\Entity\Utilisateur:
+      algorithm: plaintext
+
+    # Default auto hasher for Symfony interfaces
+    Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: auto
+
+  # User provider using your database entity
+  providers:
+    utilisateur_provider:
+      entity:
+        class: App\Entity\Utilisateur
+        property: email
+
+  # Firewalls configuration
+  firewalls:
+    # Allow Symfony toolbar, assets, etc. without security
+    dev:
+      pattern: ^/(_(profiler|wdt)|css|images|js)/
+      security: false
+
+    # Main security firewall for your app
+    main:
+      lazy: true
+      provider: utilisateur_provider
+      custom_authenticator: App\Security\LoginFormAuthenticator
+      logout:
+        path: app_logout
+        # Optionally set redirect after logout
+        # target: app_login
+
+      # Remember-me functionality (optional)
+      remember_me:
+        secret: "%kernel.secret%"
+        lifetime: 604800 # one week in seconds
+        path: /
+        # Uncomment this if you always want remember-me active
+        # always_remember_me: true
+
+  # Access control rules (optional — add as needed)
+  access_control:
+    # Example:
+    # - { path: ^/admin, roles: ROLE_ADMIN }
+    # - { path: ^/profile, roles: ROLE_USER }
+
+when@test:
+  security:
+    password_hashers:
+      App\Entity\Utilisateur:
+        algorithm: plaintext
+        cost: 4
+        time_cost: 3
+        memory_cost: 10

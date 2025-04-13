@@ -1,0 +1,42 @@
+{% extends 'basefront.html.twig' %}
+
+{% block title %}Log in{% endblock %}
+
+{% block body %}
+<div class="container py-5 mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1 class="h3 mb-4 text-center">Please sign in</h1>
+
+            {% if error %}
+                <div class="alert alert-danger">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
+            <form method="post">
+                <div class="form-group mb-3">
+                    <label for="inputEmail">Email</label>
+                    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="inputPwd">Password</label>
+                    <input type="password" name="pwd" id="inputPwd" class="form-control" autocomplete="current-password" required>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" id="rememberMe" name="_remember_me">
+                    <label class="form-check-label" for="rememberMe">Remember me</label>
+                </div>
+
+                <div class="text-center">
+                    <button class="btn btn-primary btn-lg w-100" type="submit">Sign in</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

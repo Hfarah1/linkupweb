@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Users List{% endblock %}
+{% block page_title %}Users{% endblock %}
+{% block breadcrumbs_title %}User Management{% endblock %}
+
+{% block body %}
+  {% for message in app.flashes('message') %}
+    <div class="alert alert-success">
+      {{ message }}
+    </div>
+  {% endfor %}
+
+  <div class="card">
+    <div class="card-header d-flex justify-between align-center">
+      <h2 class="card-title">User List</h2>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+<table class="table table-bordered table-striped table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>First</th>
+              <th>Last</th>
+              <th>Email</th>
+              <th>Password</th>
+              <th>Phone</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+              <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.nom }}</td>
+                <td>{{ user.prenom }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.pwd }}</td>
+                <td>{{ user.phone }}</td>
+                <td>{{ user.role }}</td>
+                <td>
+                  <a href="{{ path('edit-user', { id: user.id }) }}" class="btn btn-sm btn-primary">Edit</a>
+                  <a href="{{ path('delete-user', { id: user.id }) }}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="8" class="text-center">No users found.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

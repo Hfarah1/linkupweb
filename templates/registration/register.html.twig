@@ -1,0 +1,54 @@
+{% extends 'basefront.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+    {% form_theme registrationForm 'bootstrap_5_layout.html.twig' %}
+
+    <div class="container mt-5">
+        <h2 class="mb-4">Créer un compte</h2>
+
+        {{ form_start(registrationForm) }}
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_row(registrationForm.nom, { label: 'Nom' }) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(registrationForm.prenom, { label: 'Prénom' }) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(registrationForm.email, { label: 'Email' }) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(registrationForm.plainPassword, { label: 'Mot de passe' }) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(registrationForm.phone, { label: 'Numéro de téléphone' }) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(registrationForm.role, {
+                        label: 'Rôle',
+                        attr: { class: 'form-select' }
+                    }) }}
+                </div>
+            </div>
+
+            <div class="form-check mt-3">
+                {{ form_row(registrationForm.agreeTerms) }}
+            </div>
+
+            <button type="submit" class="btn btn-success mt-3">S'inscrire</button>
+        {{ form_end(registrationForm) }}
+
+        {# Display errors for the form if any #}
+        {% if registrationForm is not empty and not registrationForm.vars.valid %}
+            <div class="alert alert-danger mt-3">
+                <ul>
+                    {% for fieldError in registrationForm.vars.errors %}
+                        <li>{{ fieldError.message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
