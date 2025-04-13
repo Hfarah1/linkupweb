@@ -170,7 +170,9 @@
 																<div class="modal-dialog modal-xl">
 																	<div class="modal-content">
 																		<div class="modal-header">
-																			<h5 class="modal-title">CV du candidat</h5>
+																			<h5 class="modal-title">CV de
+																				{{ candidature.user.prenom }}
+																				{{ candidature.user.nom }}</h5>
 																			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 																		</div>
 																		<div class="modal-body">
@@ -274,39 +276,35 @@
 	</div>
 </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            function showCandidaturesTab() {
-                const tabEl = document.getElementById('nav-mission-tab');
-                const tabsContainer = document.querySelector('.nav-tabs');
-                
-                if (tabEl && tabsContainer) {
-                    // 1. Activate the tab
-                    new bootstrap.Tab(tabEl).show();
-                    
-                    // 2. Calculate scroll position with custom offset
-                    const headerHeight = document.querySelector('header')?.offsetHeight || 0;
-                    const additionalOffset = 120; // Pixels below the top (adjust this value)
-                    const tabPosition = tabsContainer.getBoundingClientRect().top + 
-                                      window.pageYOffset - 
-                                      headerHeight - 
-                                      additionalOffset;
-                    
-                    // 3. Smooth scroll to position
-                    window.scrollTo({
-                        top: Math.max(0, tabPosition), // Ensure we don't scroll above page top
-                        behavior: 'smooth'
-                    });
-                }
-            }
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+function showCandidaturesTab() {
+const tabEl = document.getElementById('nav-mission-tab');
+const tabsContainer = document.querySelector('.nav-tabs');
 
-            // Check URL hash
-            if (window.location.hash === '#candidatures') {
-                setTimeout(showCandidaturesTab, 300);
-            }
+if (tabEl && tabsContainer) { // 1. Activate the tab
+new bootstrap.Tab(tabEl).show();
 
-            // Handle hash changes
-            window.addEventListener('hashchange', showCandidaturesTab);
-        });
-    </script>
+// 2. Calculate scroll position with custom offset
+const headerHeight = document.querySelector('header') ?. offsetHeight || 0;
+const additionalOffset = 120; // Pixels below the top (adjust this value)
+const tabPosition = tabsContainer.getBoundingClientRect().top + window.pageYOffset - headerHeight - additionalOffset;
+
+// 3. Smooth scroll to position
+window.scrollTo({
+top: Math.max(0, tabPosition), // Ensure we don't scroll above page top
+behavior: 'smooth'
+});
+}
+}
+
+// Check URL hash
+if (window.location.hash === '#candidatures') {
+setTimeout(showCandidaturesTab, 300);
+}
+
+// Handle hash changes
+window.addEventListener('hashchange', showCandidaturesTab);
+});
+</script>
 <!-- Single Product End -->{% endblock %}

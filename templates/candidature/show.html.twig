@@ -24,146 +24,165 @@
 		<div class="container py-5">
 			<div class="row g-5">
 				<div class="col-lg-8">
-					<div class="bg-light rounded p-4">
+					<div class="bg-light rounded p-4 shadow-sm">
 						<div class="d-flex align-items-center mb-4">
 							<div class="flex-shrink-0">
 								<img src="{{ asset('front/img/avatar.jpg') }}" class="img-fluid rounded-circle" style="width: 80px; height: 80px; object-fit: cover;" alt="Candidat">
 							</div>
 							<div class="flex-grow-1 ms-3">
-								<h4>{{ candidature.user.prenom }}
+								<h4 class="mb-2">{{ candidature.user.prenom }}
 									{{ candidature.user.nom }}</h4>
-								<p class="mb-0 text-muted">
-									Postulé le:
-									{{ candidature.date_candidature|date('d/m/Y à H:i') }}
-								</p>
+								<div class="d-flex flex-wrap align-items-center">
+
+									<small class="text-muted mb-2">
+										<i class="far fa-clock me-1"></i>
+										Postulé le:
+										{{ candidature.date_candidature|date('d/m/Y à H:i') }}
+									</small>
+								</div>
 								<div class="mt-2">
 									{% if candidature.user.email %}
-										<a href="mailto:{{ candidature.user.email }}" class="text-decoration-none me-3">
+										<a href="mailto:{{ candidature.user.email }}" class="btn btn-sm btn-outline-secondary me-2 mb-2">
 											<i class="fas fa-envelope me-1"></i>
 											{{ candidature.user.email }}
 										</a>
 									{% endif %}
 									{% if candidature.user.telephone %}
-										<a href="tel:{{ candidature.user.telephone }}" class="text-decoration-none">
+										<a href="tel:{{ candidature.user.telephone }}" class="btn btn-sm btn-outline-secondary mb-2">
 											<i class="fas fa-phone me-1"></i>
 											{{ candidature.user.telephone }}
 										</a>
 									{% endif %}
 								</div>
+
 							</div>
-							<span class="badge bg-{{ candidature.statut == 'Acceptée' ? 'success' : (candidature.statut == 'Refusée' ? 'danger' : 'warning') }} fs-6">
+							<span class="badge bg-{{ candidature.statut == 'Acceptée' ? 'success' : (candidature.statut == 'Refusée' ? 'danger' : 'warning') }} fs-6 me-3 mb-2">
 								{{ candidature.statut }}
 							</span>
 						</div>
 
-						<div class="row g-4 mb-4">
+						<div
+							class="row g-4 mb-4">
+							<!-- Motivation Letter -->
 							<div class="col-md-6">
-								<div class="bg-white p-3 rounded border">
-									<h5 class="mb-3">
-										<i class="fas fa-file-alt me-2"></i>Lettre de motivation
-									</h5>
-									<div class="p-3 bg-light rounded">
+								<div class="bg-white p-3 rounded border h-100">
+									<div class="d-flex align-items-center mb-3">
+										<i class="fas fa-file-alt text-primary fs-4 me-2"></i>
+										<h5 class="mb-0">Lettre de motivation</h5>
+									</div>
+									<div class="p-3 bg-light rounded" style="max-height: 300px; overflow-y: auto;">
 										{{ candidature.lettreMotivation|nl2br }}
 									</div>
 								</div>
 							</div>
+
+							<!-- CV Section -->
 							<div class="col-md-6">
 								<div class="bg-white p-3 rounded border h-100">
-									<h5 class="mb-3">
-										<i class="fas fa-file-pdf me-2 text-danger"></i>Curriculum Vitae
-									</h5>
+									<div class="d-flex align-items-center mb-3">
+										<i class="fas fa-file-pdf text-danger fs-4 me-2"></i>
+										<h5 class="mb-0">Curriculum Vitae</h5>
+									</div>
 									{% if candidature.cvFile %}
 										<div class="text-center">
-											<button type="button" class="btn btn-outline-primary mb-3" data-bs-toggle="modal" data-bs-target="#cvModal">
-												<i class="fas fa-eye me-1"></i>Voir le CV
+											<button type="button" class="btn btn-outline-primary mb-3" data-bs-toggle="modal" data-bs-target="#cvModal{{ candidature.id_candidature }}">
+												<i class="fas fa-eye me-1"></i>
+												Voir le CV
 											</button>
 											<a href="{{ path('app_candidature_download_cv', { 'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature }) }}" class="btn btn-primary mb-3">
-												<i class="fas fa-download me-1"></i>Télécharger
+												<i class="fas fa-download me-1"></i>
+												Télécharger
 											</a>
 										</div>
 									{% else %}
-										<p class="text-muted">Aucun CV disponible</p>
+										<div class="alert alert-info mb-0">Aucun CV disponible</div>
 									{% endif %}
 								</div>
 							</div>
 						</div>
 
-						<div class="bg-white p-3 rounded border">
-							<h5 class="mb-3">
-								<i class="fas fa-info-circle me-2"></i>Détails supplémentaires
-							</h5>
+						<!-- Additional Details -->
+						<div class="bg-white p-4 rounded border">
+							<div class="d-flex align-items-center mb-3">
+								<i class="fas fa-info-circle text-primary fs-4 me-2"></i>
+								<h5 class="mb-0">Détails supplémentaires</h5>
+							</div>
 							<div class="row">
 								<div class="col-md-6">
-									<p>
-										<strong>Nom complet:</strong>
-										{{ candidature.user.prenom }}
-										{{ candidature.user.nom }}
-									</p>
-									<p>
-										<strong>Email:</strong>
-										<a href="mailto:{{ candidature.user.email }}">{{ candidature.user.email }}</a>
-									</p>
-									{% if candidature.user.telephone %}
-										<p>
-											<strong>Téléphone:</strong>
-											<a href="tel:{{ candidature.user.telephone }}">{{ candidature.user.telephone }}</a>
-										</p>
-									{% endif %}
+									<ul class="list-group list-group-flush">
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+											<span class="fw-bold">Nom complet:</span>
+											<span>{{ candidature.user.prenom }}
+												{{ candidature.user.nom }}</span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+											<span class="fw-bold">Email:</span>
+											<a href="mailto:{{ candidature.user.email }}">{{ candidature.user.email }}</a>
+										</li>
+										{% if candidature.user.telephone %}
+											<li class="list-group-item d-flex justify-content-between align-items-center">
+												<span class="fw-bold">Téléphone:</span>
+												<a href="tel:{{ candidature.user.telephone }}">{{ candidature.user.telephone }}</a>
+											</li>
+										{% endif %}
+									</ul>
 								</div>
 								<div class="col-md-6">
-									<p>
-										<strong>Offre:</strong>
-										<a href="{{ path('app_offre_show', {'id_offre': candidature.offre.id_offre}) }}">
-											{{ candidature.offre.titre }}
-										</a>
-									</p>
-									<p>
-										<strong>Organisation:</strong>
-										{{ candidature.offre.organisation }}</p>
-									<p>
-										<strong>Type de contrat:</strong>
-										{{ candidature.offre.typeContrat }}</p>
+									<ul class="list-group list-group-flush">
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+											<span class="fw-bold">Offre:</span>
+											<a href="{{ path('app_offre_show', {'id_offre': candidature.offre.id_offre}) }}">{{ candidature.offre.titre }}</a>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+											<span class="fw-bold">Organisation:</span>
+											<span>{{ candidature.offre.organisation }}</span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+											<span class="fw-bold">Type de contrat:</span>
+											<span>{{ candidature.offre.typeContrat }}</span>
+										</li>
+									</ul>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 
+				<!-- Actions Sidebar -->
 				<div class="col-lg-4">
-					<div class="bg-light rounded p-4">
-						<h4 class="mb-4">Actions</h4>
-						<!-- Previous/Next Navigation -->
-						<div class="btn-group" role="group">
+					<div class="bg-light rounded p-4 shadow-sm sticky-top" style="top: 20px;">
+						<h4 class="mb-4 border-bottom pb-3">
+							<i class="fas fa-cog me-2"></i>Actions
+						</h4>
+
+						<!-- Navigation -->
+						<div class="btn-group w-100 mb-4" role="group">
 							{% if previousCandidature %}
 								<a href="{{ path('app_candidature_show', { 'id_offre': candidature.offre.id_offre, 'id_candidature': previousCandidature.id_candidature }) }}" class="btn btn-outline-primary">
 									<i class="fas fa-chevron-left me-1"></i>
-									Précédente
 								</a>
 							{% else %}
 								<button class="btn btn-outline-primary" disabled>
 									<i class="fas fa-chevron-left me-1"></i>
-									Précédente
 								</button>
 							{% endif %}
 
 							<a href="{{ path('app_offre_show', {'id_offre': candidature.offre.id_offre}) }}#candidatures" class="btn btn-outline-secondary">
 								<i class="fas fa-list me-1"></i>
-								Liste
 							</a>
 
 							{% if nextCandidature %}
-								<a href="{{ path('app_candidature_show', { 'id_offre': candidature.offre.id_offre, 'id_candidature': nextCandidature.id_candidature }) }}#candidatures" class="btn btn-outline-primary">
-									Suivante
-									<i class="fas fa-chevron-right ms-1"></i>
+								<a href="{{ path('app_candidature_show', { 'id_offre': candidature.offre.id_offre, 'id_candidature': nextCandidature.id_candidature }) }}" class="btn btn-outline-primary">
+									<i class="fas fa-chevron-right"></i>
 								</a>
 							{% else %}
 								<button class="btn btn-outline-primary" disabled>
-									Suivante
-									<i class="fas fa-chevron-right ms-1"></i>
+									<i class="fas fa-chevron-right"></i>
 								</button>
 							{% endif %}
 						</div>
-						<div class="d-grid gap-2 mb-4">
+
+						<div class="d-grid gap-3">
 							<a href="{{ path('app_offre_show', {'id_offre': candidature.offre.id_offre}) }}" class="btn btn-outline-secondary">
 								<i class="fas fa-arrow-left me-1"></i>
 								Retour à l'offre
@@ -174,7 +193,6 @@
 									<i class="fas fa-edit me-1"></i>
 									Modifier le statut
 								</a>
-
 								{{ include('candidature/_delete_form.html.twig') }}
 							{% endif %}
 						</div>
@@ -185,87 +203,116 @@
 	</div>
 	<!-- Candidature Details End -->
 
-	<!-- CV Modal -->
-	{% if candidature.cvFile %}
-		<div class="modal fade" id="cvModal" tabindex="-1" aria-hidden="true">
-			<div class="modal-dialog modal-xl">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title">CV de
-							{{ candidature.user.prenom }}
-							{{ candidature.user.nom }}</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body">
-						<div class="ratio ratio-16x9">
-							<iframe src="{{ path('app_candidature_view_cv', { 'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature }) }}" style="width: 100%; height: 100%; border: none;"></iframe>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- Other Candidatures Section -->
-		<div class="mt-5">
-			<h1 class="fw-bold mb-4">Autres candidatures pour l'offre 
-								"{{ candidature.offre.titre}}"</h1>
+	<!-- Other Candidatures Section -->
+	<div class="container-fluid pb-5">
+		<div class="container">
+			<h2 class="fw-bold mb-4">
+				<i class="fas fa-users me-2"></i>
+				Autres candidatures pour "{{ candidature.offre.titre }}"
+			</h2>
 			<div class="vesitable">
 				<div class="owl-carousel vegetable-carousel justify-content-center">
 					{% if otherCandidatures|length > 0 %}
 						{% for otherCand in otherCandidatures %}
 							{% if otherCand.id_candidature != candidature.id_candidature %}
-								<div class="border border-primary rounded position-relative vesitable-item d-flex flex-column h-100">
-									<a href="{{ path('app_candidature_show', {'id_offre': otherCand.offre.id_offre, 'id_candidature': otherCand.id_candidature}) }}" class="d-flex flex-column h-100 text-decoration-none">
-										<div class="vesitable-img" style="height: 200px; overflow: hidden;">
-											<img src="{{ asset('front/img/avatar.jpg') }}" class="img-fluid w-100 h-100 rounded-top" alt="Photo de profile {{ otherCand.user.prenom }} {{ otherCand.user.nom }}" style="object-fit: cover;">
+								<div class="border border-primary rounded position-relative vesitable-item">
+									<a href="{{ path('app_candidature_show', {'id_offre': otherCand.offre.id_offre, 'id_candidature': otherCand.id_candidature}) }}" class="text-decoration-none text-dark">
+										<div class="vesitable-img" style="height: 150px;">
+											<img src="{{ asset('front/img/avatar.jpg') }}" class="img-fluid w-100 h-100" style="object-fit: cover;" alt="{{ otherCand.user.prenom }} {{ otherCand.user.nom }}">
 										</div>
-										<div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 10px; right: 10px;">
-											{{ otherCand.statut }}
-										</div>
-										<div class="p-3 flex-grow-1 d-flex flex-column">
-											<h4 class="mb-2">{{ otherCand.user.prenom }}
-												{{ otherCand.user.nom }}</h4>
-											<p class="mb-2">
-												<small>Postulé le:
-													{{ otherCand.date_candidature|date('d/m/Y') }}</small>
-											</p>
+										<div class="p-3">
+											<span class="badge bg-{{ otherCand.statut == 'Acceptée' ? 'success' : (otherCand.statut == 'Refusée' ? 'danger' : 'warning') }} position-absolute" style="top: 10px; right: 10px;">
+												{{ otherCand.statut }}
+											</span>
+											<h5 class="mb-1">{{ otherCand.user.prenom }}
+												{{ otherCand.user.nom }}</h5>
+											<small class="text-muted d-block mb-2">
+												<i class="far fa-clock me-1"></i>
+												{{ otherCand.date_candidature|date('d/m/Y') }}
+											</small>
+											<div class="d-flex justify-content-between align-items-center">
+												<span class="small">
+													<i class="fas fa-envelope me-1"></i>
+													{{ otherCand.user.email|u.truncate(15, '...') }}
+												</span>
+												<button class="btn btn-sm btn-outline-primary">Voir</button>
+											</div>
 										</div>
 									</a>
 								</div>
 							{% endif %}
 						{% endfor %}
 					{% else %}
-						<div class="alert alert-info">Aucune autre candidature trouvée pour ce candidat.</div>
+						<div class="alert alert-info">Aucune autre candidature trouvée pour cette offre.</div>
 					{% endif %}
 				</div>
 			</div>
 		</div>
-		<!-- End Other Candidatures Section -->
+	</div>
+
+	<!-- CV Modal -->
+	{% if candidature.cvFile %}
+		<div class="modal fade" id="cvModal{{ candidature.id_candidature }}" tabindex="-1" aria-hidden="true">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">
+					<div class="modal-header bg-primary text-white">
+						<h5 class="modal-title">CV de
+							{{ candidature.user.prenom }}
+							{{ candidature.user.nom }}</h5>
+						<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body p-0">
+						<div class="ratio ratio-16x9">
+							<iframe id="cvIframe{{ candidature.id_candidature }}" style="width: 100%; height: 100%; border: none;"></iframe>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<a href="{{ path('app_candidature_download_cv', { 'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature }) }}" class="btn btn-primary">
+							<i class="fas fa-download me-1"></i>
+							Télécharger
+						</a>
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			document.addEventListener('DOMContentLoaded', function () {
+const modal = document.getElementById('cvModal {{ candidature.id_candidature }}');
+modal.addEventListener('show.bs.modal', function () {
+const iframe = document.getElementById('cvIframe {{ candidature.id_candidature }}');
+iframe.src = "{{ path('app_candidature_view_cv', { 
+						'id_offre': candidature.offre.id_offre, 
+						'id_candidature': candidature.id_candidature 
+					}) }}";
+});
+modal.addEventListener('hidden.bs.modal', function () {
+const iframe = document.getElementById('cvIframe {{ candidature.id_candidature }}');
+iframe.src = '';
+});
+});
+		</script>
 	{% endif %}
 
 	<style>
-		.badge {
-			font-size: 0.9rem;
-			padding: 0.5em 0.75em;
+		/* Custom enhancements */
+		.vesitable-item {
+			transition: all 0.3s ease;
 		}
-		.border {
-			border-color: #dee2e6 !important;
+		.vesitable-item:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+		}
+		.list-group-item {
+			padding: 0.75rem 1rem;
+			border-color: rgba(0, 0, 0, 0.05);
+		}
+		.bg-light {
+			background-color: #f8f9fa !important;
+		}
+		.modal-body iframe {
+			background: #f8f9fa;
 		}
 	</style>
-
-	<script>
-		document.addEventListener('DOMContentLoaded', function () { // Clean up iframe when modal closes
-const cvModal = document.getElementById('cvModal');
-if (cvModal) {
-cvModal.addEventListener('hidden.bs.modal', function () {
-const iframe = this.querySelector('iframe');
-if (iframe) {
-iframe.src = '';
-}
-});
-}
-});
-	</script>
 {% endblock %}
