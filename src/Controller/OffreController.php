@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Psr\Log\LoggerInterface;
 
 #[Route('/offre')]
 final class OffreController extends AbstractController
@@ -106,39 +107,72 @@ final class OffreController extends AbstractController
     #[Route('/{page<\d+>}', name: 'app_offre_index', methods: ['GET'], defaults: ['page' => 1])]
     public function index(Request $request, OffreRepository $offreRepository, int $page): Response
     {
-        $categories = [
-            'Marketing & Communication' => 0,
-            'Sponsoring & Partenariats' => 2,
-            'Animation & Production Artistique' => 0,
-            'Technique & Audiovisuel' => 14,
-            'Logistique & Opérations' => 1,
-            'Relationnel & Accueil' => 3,
-            'Digital & Innovation' => 22,
-        ];
+        // Fetch distinct categories and their counts
+        $categoriesResult = $offreRepository->createQueryBuilder('o')
+            ->select('o.categorie, COUNT(o.id_offre) as offer_count')
+            ->groupBy('o.categorie')
+            ->getQuery()
+            ->getResult();
 
-        $regions = ['Tunis', 'Sousse', 'Sfax', 'Gabes'];
+        $categories = [];
+        foreach ($categoriesResult as $result) {
+            if ($result['categorie']) {
+                $categories[$result['categorie']] = (int) $result['offer_count'];
+            }
+        }
+
+        // Fetch distinct regions (gouvernorat)
+        $regionsResult = $offreRepository->createQueryBuilder('o')
+            ->select('DISTINCT o.gouvernorat')
+            ->where('o.gouvernorat IS NOT NULL')
+            ->orderBy('o.gouvernorat', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        $regions = array_map(fn($row) => $row['gouvernorat'], $regionsResult);
 
         // Pagination parameters
         $itemsPerPage = 9;
-        $queryBuilder = $offreRepository->createQueryBuilder('o')
-            ->orderBy('o.date_publication', 'DESC');
+        $queryBuilder = $offreRepository->createQueryBuilder('o');
 
         // Apply filters
-        if ($search = $request->query->get('search')) {
+        $filters = [
+            'search' => $request->query->get('search', ''),
+            'category' => $request->query->get('category', ''),
+            'region' => $request->query->get('region', ''),
+            'salary' => $request->query->getInt('salary', 0),
+            'sort' => $request->query->get('sort', 'recent'),
+        ];
+
+        if ($filters['search']) {
             $queryBuilder->andWhere('o.titre LIKE :search OR o.description LIKE :search')
-                ->setParameter('search', "%$search%");
+                ->setParameter('search', "%{$filters['search']}%");
         }
-        if ($category = $request->query->get('category')) {
+        if ($filters['category']) {
             $queryBuilder->andWhere('o.categorie = :category')
-                ->setParameter('category', $category);
+                ->setParameter('category', $filters['category']);
         }
-        if ($region = $request->query->get('region')) {
+        if ($filters['region']) {
             $queryBuilder->andWhere('o.gouvernorat = :region')
-                ->setParameter('region', $region);
+                ->setParameter('region', $filters['region']);
         }
-        if ($salary = $request->query->get('salary')) {
+        if ($filters['salary'] > 0) {
             $queryBuilder->andWhere('o.salaire >= :salary')
-                ->setParameter('salary', $salary);
+                ->setParameter('salary', $filters['salary']);
+        }
+
+        // Apply sorting
+        switch ($filters['sort']) {
+            case 'salary-desc':
+                $queryBuilder->orderBy('o.salaire', 'DESC');
+                break;
+            case 'salary-asc':
+                $queryBuilder->orderBy('o.salaire', 'ASC');
+                break;
+            case 'recent':
+            default:
+                $queryBuilder->orderBy('o.date_publication', 'DESC');
+                break;
         }
 
         // Paginate
@@ -156,24 +190,20 @@ final class OffreController extends AbstractController
             'regions' => $regions,
             'currentPage' => $page,
             'totalPages' => $totalPages,
-            'filters' => [
-                'search' => $search ?? '',
-                'category' => $category ?? '',
-                'region' => $region ?? '',
-                'salary' => $salary ?? 0,
-            ],
+            'filters' => $filters,
         ]);
     }
 
     #[Route('/new', name: 'app_offre_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $offre = new Offre();
-        $offre->setUser($entityManager->getReference(User::class, 1));
-        $form = $this->createForm(OffreType::class, $offre);
-        $form->handleRequest($request);
+public function new(Request $request, EntityManagerInterface $entityManager): Response
+{
+    $offre = new Offre();
+    $offre->setUser($entityManager->getReference(User::class, 1));
+    $form = $this->createForm(OffreType::class, $offre);
+    $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+    if ($form->isSubmitted()) {
+        if ($form->isValid()) {
             $logoFile = $form->get('logoFile')->getData();
             if ($logoFile) {
                 $fileContent = file_get_contents($logoFile->getPathname());
@@ -181,15 +211,18 @@ final class OffreController extends AbstractController
             }
             $entityManager->persist($offre);
             $entityManager->flush();
-
             return $this->redirectToRoute('app_offre_index', [], Response::HTTP_SEE_OTHER);
         }
-
-        return $this->render('offre/new.html.twig', [
-            'offre' => $offre,
-            'form' => $form,
-        ]);
     }
+
+    $regionsAndCities = OffreType::getRegionsAndCities();
+
+    return $this->render('offre/new.html.twig', [
+        'offre' => $offre,
+        'form' => $form,
+        'regionsAndCities' => $regionsAndCities,
+    ]);
+}
 
     #[Route('/{id_offre}/edit', name: 'app_offre_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Offre $offre, EntityManagerInterface $entityManager): Response

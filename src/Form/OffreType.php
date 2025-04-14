@@ -5,6 +5,8 @@ namespace App\Form;
 use App\Entity\Offre;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -12,11 +14,41 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Form\DataTransformerInterface;
 
 class OffreType extends AbstractType
 {
+    private static $regionsAndCities = [
+        'Tunis' => [null, 'Tunis', 'La Marsa', 'Carthage', 'Le Bardo', 'Lac 1', 'Lac 2'],
+        'Ariana' => [null, 'Ariana', 'Raoued', 'Soukra', 'Kalaat El Andalous'],
+        'Ben Arous' => [null, 'Ben Arous', 'Rades', 'Hammam Lif', 'Hammam Chatt'],
+        'Manouba' => [null, 'Manouba', 'Douar Hicher', 'Oued Ellil', 'Tebourba'],
+        'Nabeul' => [null, 'Hammamet', 'Nabeul', 'Korba', 'Kelibia', 'Beni Khiar'],
+        'Bizerte' => [null, 'Bizerte', 'Menzel Bourguiba', 'Mateur', 'Ras Jebel'],
+        'Beja' => [null, 'Beja', 'Testour', 'Teboursouk', 'Nefza'],
+        'Jendouba' => [null, 'Jendouba', 'Tabarka', 'Ain Draham', 'Fernana'],
+        'Kef' => [null, 'Kef', 'Dahmani', 'Tajerouine', 'Nebeur'],
+        'Siliana' => [null, 'Siliana', 'Makthar', 'Bourouis', 'Gaafour'],
+        'Zaghouan' => [null, 'Zaghouan', 'El Fahs', 'Nadhour', 'Bir Mcherga'],
+        'Sousse' => [null, 'Sousse', 'Hammam Sousse', 'Sahloul', 'Kalaa Kebira'],
+        'Monastir' => [null, 'Monastir', 'Sahline', 'Ksar Hellal', 'Jemmal'],
+        'Mahdia' => [null, 'Mahdia', 'Chebba', 'Melloulech', 'Ksour Essef'],
+        'Sfax' => [null, 'Sfax Ville', 'Sakiet Ezzit', 'Sakiet Eddaier', 'Thyna'],
+        'Kairouan' => [null, 'Kairouan', 'Haffouz', 'Oueslatia', 'Sbikha'],
+        'Kasserine' => [null, 'Kasserine', 'Sbeitla', 'Feriana', 'Thala'],
+        'Sidi Bouzid' => [null, 'Sidi Bouzid', 'Regueb', 'Meknassy', 'Jilma'],
+        'Gabes' => [null, 'Gabes', 'Chenini Gabes', 'Mareth', 'Metouia'],
+        'Medenine' => [null, 'Medenine', 'Djerba', 'Zarzis', 'Ben Guerdane'],
+        'Tataouine' => [null, 'Tataouine', 'Bir Lahmar', 'Remada', 'Ghomrassen'],
+        'Gafsa' => [null, 'Gafsa', 'Metlaoui', 'Redeyef', 'Mdhilla'],
+        'Tozeur' => [null, 'Tozeur', 'Nefta', 'Degache', 'Tameghza'],
+        'Kebili' => [null, 'Kebili', 'Douz', 'Souk Lahad', 'Faouar'],
+    ];
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $regions = array_keys(self::$regionsAndCities);
+
         $builder
             ->add('titre', TextType::class, [
                 'label' => 'Titre de l\'offre*',
@@ -26,19 +58,24 @@ class OffreType extends AbstractType
                 ],
                 'help' => '100 caractères maximum'
             ])
-            ->add('gouvernorat', TextType::class, [
+            ->add('gouvernorat', ChoiceType::class, [
                 'label' => 'Gouvernorat*',
+                'choices' => array_combine($regions, $regions),
+                'placeholder' => 'Sélectionnez un gouvernorat',
+                'required' => true,
                 'attr' => [
                     'class' => 'form-control',
-                    'placeholder' => 'Ex: Tunis ou En Ligne'
+                    'id' => 'gouvernorat_select'
                 ]
             ])
-            ->add('ville', TextType::class, [
+            ->add('ville', ChoiceType::class, [
                 'label' => 'Ville*',
-                'required' => false,
+                'choices' => [],
+                'placeholder' => 'Sélectionnez une ville',
+                'required' => true,
                 'attr' => [
                     'class' => 'form-control',
-                    'placeholder' => 'Ex: Bardo'
+                    'id' => 'ville_select'
                 ]
             ])
             ->add('description', TextareaType::class, [
@@ -59,7 +96,7 @@ class OffreType extends AbstractType
             ])
             ->add('logoFile', FileType::class, [
                 'label' => 'Logo de l\'organisation',
-                'mapped' => false, // Important: This field is not mapped to the entity
+                'mapped' => false,
                 'required' => false,
                 'attr' => [
                     'class' => 'form-control',
@@ -90,6 +127,8 @@ class OffreType extends AbstractType
                     'Contrat' => 'Contrat',
                     'Stage' => 'Stage'
                 ],
+                'placeholder' => 'Sélectionnez un type de contrat',
+                'required' => true,
                 'attr' => ['class' => 'form-select']
             ])
             ->add('categorie', ChoiceType::class, [
@@ -103,6 +142,8 @@ class OffreType extends AbstractType
                     'Relationnel & Accueil' => 'Relationnel & Accueil',
                     'Digital & Innovation' => 'Digital & Innovation'
                 ],
+                'placeholder' => 'Sélectionnez une catégorie',
+                'required' => true,
                 'attr' => ['class' => 'form-select']
             ])
             ->add('salaire', NumberType::class, [
@@ -125,8 +166,29 @@ class OffreType extends AbstractType
                     'placeholder' => 'Listez les compétences et qualifications nécessaires'
                 ],
                 'help' => '1000 caractères maximum'
-            ])
-            ;
+            ]);
+
+        // PRE_SUBMIT event to dynamically set ville choices
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            $form = $event->getForm();
+            $data = $event->getData();
+
+            $gouvernorat = $data['gouvernorat'] ?? null;
+
+            $cities = $gouvernorat && isset(self::$regionsAndCities[$gouvernorat])
+                ? array_filter(self::$regionsAndCities[$gouvernorat], fn($city) => $city !== null)
+                : [];
+
+            $form->add('ville', ChoiceType::class, [
+                'label' => 'Ville*',
+                'choices' => array_combine($cities, $cities),
+                'placeholder' => 'Sélectionnez une ville',
+                'attr' => [
+                    'class' => 'form-control',
+                    'id' => 'ville_select'
+                ]
+            ]);
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -135,5 +197,10 @@ class OffreType extends AbstractType
             'data_class' => Offre::class,
             'attr' => ['class' => 'needs-validation', 'novalidate' => 'novalidate']
         ]);
+    }
+
+    public static function getRegionsAndCities(): array
+    {
+        return self::$regionsAndCities;
     }
 }

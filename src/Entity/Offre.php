@@ -244,7 +244,7 @@ class Offre
     #[ORM\Column(type: 'string', nullable: false)]
     #[Assert\NotBlank(message: "Le type de contrat ne peut pas être vide")]
     #[Assert\Choice(
-        choices: ['Bénévolat','Contrat', 'Mission ','CDD Événementiel','CDI Saisonnier',  'Freelance', 'Stage'],
+        choices: ['Bénévolat','Contrat', 'Mission','CDD Événementiel','CDI Saisonnier', 'Freelance', 'Stage'],
         message: "Choisissez un type de contrat valide"
     )]
     private ?string $type_contrat = null;

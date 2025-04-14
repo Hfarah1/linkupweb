@@ -1,110 +1,106 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Nouvelle Offre
-{% endblock %}
+{% block title %}Nouvelle Offre{% endblock %}
 
 {% block content %}
-	<!-- Single Page Header start -->
-	<div class="container-fluid page-header py-5">
-		<h1 class="text-center text-white display-6">Créer une Nouvelle Offre d'Emploi</h1>
-		<ol class="breadcrumb justify-content-center mb-0">
-			<li class="breadcrumb-item">
-				<a href="{{ path('app_home') }}">Accueil</a>
-			</li>
-			<li class="breadcrumb-item">
-				<a href="{{ path('app_offre_index') }}">Offres</a>
-			</li>
-			<li class="breadcrumb-item active text-white">Nouvelle Offre</li>
-		</ol>
-	</div>
-	<!-- Single Page Header End -->
+    <!-- Single Page Header start -->
+    <div class="container-fluid page-header py-5">
+        <h1 class="text-center text-white display-6">Créer une Nouvelle Offre d'Emploi</h1>
+        <ol class="breadcrumb justify-content-center mb-0">
+            <li class="breadcrumb-item">
+                <a href="{{ path('app_home') }}">Accueil</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ path('app_offre_index') }}">Offres</a>
+            </li>
+            <li class="breadcrumb-item active text-white">Nouvelle Offre</li>
+        </ol>
+    </div>
+    <!-- Single Page Header End -->
 
-	<!-- Checkout Page Start -->
-	<div class="container-fluid py-5">
-		<div class="container py-5">
-			<h1 class="mb-4 text-primary">Détails de l'Offre</h1>
+    <!-- Checkout Page Start -->
+    <div class="container-fluid py-5">
+        <div class="container py-5">
+            <h1 class="mb-4 text-primary">Détails de l'Offre</h1>
 
-			<div class="row g-5">
-				<div class="col-12">
-					{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
+            <div class="row g-5">
+                <div class="col-12">
+                    {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
 
-					<div class="card shadow-sm p-4 mb-4">
-						<h3 class="mb-4">Informations de Base</h3>
-						<div class="row g-4">
-							<div class="col-md-6">
-								<div class="form-item w-100">
-									{{ form_label(form.titre, 'Titre du Poste*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
-									{{ form_widget(form.titre, {'attr': {
+                    <div class="card shadow-sm p-4 mb-4">
+                        <h3 class="mb-4">Informations de Base</h3>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="form-item w-100">
+                                    {{ form_label(form.titre, 'Titre du Poste*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
+                                    {{ form_widget(form.titre, {'attr': {
                                         'class': 'form-control rounded',
-                                        'placeholder': 'Ex: Développeur Symfony Senior',
+                                        'placeholder': 'Ex: Animateur',
                                         'required': 'required'
                                     }}) }}
-									<div class="text-danger">{{ form_errors(form.titre) }}</div>
-								</div>
-							</div>
-							<div class="col-md-6">
-								<div class="form-item w-100">
-									{{ form_label(form.type_contrat, 'Type de Contrat*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
-									{{ form_widget(form.type_contrat, {'attr': {
+                                    <div class="text-danger">{{ form_errors(form.titre) }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-item w-100">
+                                    {{ form_label(form.type_contrat, 'Type de Contrat*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
+                                    {{ form_widget(form.type_contrat, {'attr': {
                                         'class': 'form-control rounded',
                                         'required': 'required'
                                     }}) }}
-									<div class="text-danger">{{ form_errors(form.type_contrat) }}</div>
-								</div>
-							</div>
-							<div class="col-md-6">
-								<div class="form-item w-100">
-									{{ form_label(form.gouvernorat, 'Gouvernorat*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
-									{{ form_widget(form.gouvernorat, {'attr': {
+                                    <div class="text-danger">{{ form_errors(form.type_contrat) }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-item w-100">
+                                    {{ form_label(form.gouvernorat, 'Gouvernorat*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
+                                    {{ form_widget(form.gouvernorat, {'attr': {
                                         'class': 'form-control rounded',
-                                        'placeholder': 'Ex: Tunis',
                                         'required': 'required'
                                     }}) }}
-									<div class="text-danger">{{ form_errors(form.gouvernorat) }}</div>
-								</div>
-							</div>
-							<div class="col-md-6">
-								<div class="form-item w-100">
-									{{ form_label(form.ville, 'Ville*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
-									{{ form_widget(form.ville, {'attr': {
-                                        'class': 'form-control rounded',
-                                        'placeholder': 'Ex: Ariana',
-                                        'required': 'required'
+                                    <div class="text-danger">{{ form_errors(form.gouvernorat) }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-item w-100">
+                                    {{ form_label(form.ville, 'Ville*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
+                                    {{ form_widget(form.ville, {'attr': {
+                                        'class': 'form-control rounded'
                                     }}) }}
-									<div class="text-danger">{{ form_errors(form.ville) }}</div>
-								</div>
-							</div>
-						</div>
-					</div>
+                                    <div class="text-danger">{{ form_errors(form.ville) }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-					<div class="card shadow-sm p-4 mb-4">
-						<h3 class="mb-4">Description et Organisation</h3>
-						<div class="form-item mb-4">
-							{{ form_label(form.description, 'Description*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
-							{{ form_widget(form.description, {'attr': {
+                    <div class="card shadow-sm p-4 mb-4">
+                        <h3 class="mb-4">Description et Organisation</h3>
+                        <div class="form-item mb-4">
+                            {{ form_label(form.description, 'Description*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
+                            {{ form_widget(form.description, {'attr': {
                                 'class': 'form-control rounded',
                                 'rows': 6,
                                 'placeholder': 'Décrivez en détail le poste, les missions et les responsabilités',
                                 'required': 'required'
                             }}) }}
-							<div class="text-danger">{{ form_errors(form.description) }}</div>
-						</div>
+                            <div class="text-danger">{{ form_errors(form.description) }}</div>
+                        </div>
 
-						<div class="row g-4">
-							<div class="col-md-4">
-								<div class="form-item w-100">
-									{{ form_label(form.organisation, 'Organisation*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
-									{{ form_widget(form.organisation, {'attr': {
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="form-item w-100">
+                                    {{ form_label(form.organisation, 'Organisation*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
+                                    {{ form_widget(form.organisation, {'attr': {
                                         'class': 'form-control rounded',
                                         'placeholder': 'Nom de votre entreprise/organisation',
                                         'required': 'required'
                                     }}) }}
-									<div class="text-danger">{{ form_errors(form.organisation) }}</div>
-								</div>
-							</div>
-							<div class="col-md-4">
-								<div class="form-item w-100">
-									{{ form_label(form.logoFile, 'Logo de l\'Organisation', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
+                                    <div class="text-danger">{{ form_errors(form.organisation) }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-item w-100">
+                                    {{ form_label(form.logoFile, 'Logo de l\'Organisation', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
                                     <div class="custom-file">
                                         {{ form_widget(form.logoFile, {'attr': {
                                             'class': 'form-control rounded',
@@ -153,7 +149,7 @@
                                     {{ form_widget(form.competences_requises, {'attr': {
                                         'class': 'form-control rounded',
                                         'rows': 4,
-                                        'placeholder': 'Ex: PHP, Symfony, Gestion de projet'
+                                        'placeholder': 'Ex: Public Speaking, Animation, Interviewing'
                                     }}) }}
                                     <div class="text-danger">{{ form_errors(form.competences_requises) }}</div>
                                 </div>
@@ -165,48 +161,88 @@
                         <div class="col-md-6">
                             <button type="submit" class="btn btn-primary border-secondary py-3 px-4 text-uppercase w-100">
                                 {{ button_label|default('CRÉER L\'OFFRE') }}
-								</button>
-							</div>
-							<div class="col-md-6">
-								<a href="{{ path('app_offre_index') }}" class="btn btn-outline-secondary border-secondary py-3 px-4 text-uppercase w-100">Retour à la Liste</a>
-							</div>
-						</div>
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{{ path('app_offre_index') }}" class="btn btn-outline-secondary border-secondary py-3 px-4 text-uppercase w-100">Retour à la Liste</a>
+                        </div>
+                    </div>
 
-						{{ form_end(form) }}
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- Checkout Page End -->
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Checkout Page End -->
 
-		<script>
-			function previewImage(input) {
-const preview = document.getElementById('preview');
-const previewContainer = document.getElementById('imagePreview');
+    <script>
+        // Image preview function
+        function previewImage(input) {
+            const preview = document.getElementById('preview');
+            const previewContainer = document.getElementById('imagePreview');
 
-if (input.files && input.files[0]) {
-const reader = new FileReader();
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.src = '#';
+                previewContainer.style.display = 'none';
+            }
+        }
 
-reader.onload = function (e) {
-preview.src = e.target.result;
-previewContainer.style.display = 'block';
-}
+        // Client-side validation feedback
+        document.querySelector('form.needs-validation').addEventListener('submit', function (event) {
+            const form = this;
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
 
-reader.readAsDataURL(input.files[0]);
-} else {
-preview.src = '#';
-previewContainer.style.display = 'none';
-}
-}
+        // Dynamic ville dropdown based on gouvernorat
+        document.addEventListener('DOMContentLoaded', function () {
+            const gouvernoratSelect = document.getElementById('offre_gouvernorat'); // Symfony form field ID
+            const villeSelect = document.getElementById('offre_ville'); // Symfony form field ID
+            
+            // Regions and cities data from controller
+            const regionsAndCities = {{ regionsAndCities|json_encode|raw }};
 
-// Client-side validation feedback
-document.querySelector('form.needs-validation').addEventListener('submit', function (event) {
-const form = this;
-if (! form.checkValidity()) {
-event.preventDefault();
-event.stopPropagation();
-}
-form.classList.add('was-validated');
-}, false);
-		</script>
-	{% endblock %}
+            // Function to update ville options
+            function updateVilles() {
+                const region = gouvernoratSelect.value;
+                villeSelect.innerHTML = ''; // Clear existing options
+
+                // Add placeholder
+                const placeholderOption = document.createElement('option');
+                placeholderOption.value = '';
+                placeholderOption.text = 'Sélectionnez une ville';
+                placeholderOption.disabled = true;
+                placeholderOption.selected = true;
+                villeSelect.appendChild(placeholderOption);
+
+                // Add cities for the selected region
+                if (region && regionsAndCities[region]) {
+                    regionsAndCities[region].forEach(function (city) {
+                        if (city) { // Skip null values
+                            const option = document.createElement('option');
+                            option.value = city;
+                            option.text = city;
+                            villeSelect.appendChild(option);
+                        }
+                    });
+                }
+            }
+
+            // Initial update (if gouvernorat is pre-selected, e.g., on edit)
+            updateVilles();
+
+            // Update villes when gouvernorat changes
+            gouvernoratSelect.addEventListener('change', updateVilles);
+        });
+    </script>
+{% endblock %}

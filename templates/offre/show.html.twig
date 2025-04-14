@@ -117,8 +117,7 @@
 							</span>
 							<span>
 								{% if offre.gouvernorat and offre.ville %}
-									{{ offre.ville }},
-									{{ offre.gouvernorat }}
+								{{ offre.gouvernorat }}, {{ offre.ville }}
 								{% elseif offre.gouvernorat %}
 									{{ offre.gouvernorat }}
 								{% elseif offre.ville %}
@@ -265,9 +264,8 @@
 							</p>
 							<div class="d-flex justify-content-between align-items-center">
 								<span class="fw-bold text-success">
-									{% if recommendedOffer.salaire %}
-										{{ recommendedOffer.salaire|number_format(2, ',', ' ') }}
-										DT
+									{% if recommendedOffer.gouvernorat %}
+										<i class="fas fa-map-marker-alt me-2 text-primary"></i> {{ offre.gouvernorat }}, {{ offre.ville }}
 									{% else %}
 										<span class="text-muted">Non spécifié</span>
 									{% endif %}
@@ -386,21 +384,30 @@ new bootstrap.Tab(tabEl).show();
 });
 
 // Load CV iframes on modal show and clear on hide
-{% for candidature in candidatures %}
-{% if candidature.cvFile %}
-const modal {{ candidature.id_candidature }} = document.getElementById('cvModal {{ candidature.id_candidature }}');
-if (modal {{ candidature.id_candidature }}) {
-modal {{ candidature.id_candidature }}.addEventListener('show.bs.modal', function () {
-const iframe = document.getElementById('cvIframe {{ candidature.id_candidature }}');
-iframe.src = "{{ path('app_candidature_view_cv', { 'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature })|e('js') }}";
-});
-modal {{ candidature.id_candidature }}.addEventListener('hidden.bs.modal', function () {
-const iframe = document.getElementById('cvIframe {{ candidature.id_candidature }}');
-iframe.src = '';
-});
-}
-{% endif %}
-{% endfor %}
+document.addEventListener('DOMContentLoaded', function() {
+    {% for candidature in candidatures %}
+        {% if candidature.cvFile %}
+            const modal{{ candidature.id_candidature }} = document.getElementById('cvModal{{ candidature.id_candidature }}');
+            if (modal{{ candidature.id_candidature }}) {
+                modal{{ candidature.id_candidature }}.addEventListener('show.bs.modal', function() {
+                    const iframe = document.getElementById('cvIframe{{ candidature.id_candidature }}');
+                    if (iframe) {
+                        iframe.src = "{{ path('app_candidature_view_cv', { 
+                            'id_offre': candidature.offre.id_offre, 
+                            'id_candidature': candidature.id_candidature 
+                        })|e('js') }}";
+                    }
+                });
+                
+                modal{{ candidature.id_candidature }}.addEventListener('hidden.bs.modal', function() {
+                    const iframe = document.getElementById('cvIframe{{ candidature.id_candidature }}');
+                    if (iframe) {
+                        iframe.src = '';
+                    }
+                });
+            }
+        {% endif %}
+    {% endfor %}
 });</script><!-- Styles --><style>.vesitable-item {
 	transition: transform 0.3s ease, box-shadow 0.3s ease;
 }

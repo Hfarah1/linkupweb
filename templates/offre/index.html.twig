@@ -37,7 +37,7 @@
                                                name="search"
                                                value="{{ filters.search }}"
                                                class="form-control form-control-lg rounded-start" 
-                                               placeholder="Rechercher par titre, compétences..." 
+                                               placeholder="Rechercher par titre, description" 
                                                aria-label="Rechercher des offres">
                                         <button class="btn btn-primary px-4" type="submit">
                                             <i class="fas fa-search"></i>
@@ -46,9 +46,9 @@
                                 </div>
                                 <div class="col-md-4">
                                     <select class="form-select form-select-lg shadow-sm" name="sort" aria-label="Trier les offres" id="sortSelect">
-                                        <option value="recent" {{ app.request.query.get('sort') == 'recent' or not app.request.query.get('sort') ? 'selected' }}>Plus récentes</option>
-                                        <option value="salary-desc" {{ app.request.query.get('sort') == 'salary-desc' ? 'selected' }}>Salaire (haut à bas)</option>
-                                        <option value="salary-asc" {{ app.request.query.get('sort') == 'salary-asc' ? 'selected' }}>Salaire (bas à haut)</option>
+                                        <option value="recent" {{ filters.sort == 'recent' ? 'selected' }}>Plus récentes</option>
+                                        <option value="salary-desc" {{ filters.sort == 'salary-desc' ? 'selected' }}>Salaire (haut à bas)</option>
+                                        <option value="salary-asc" {{ filters.sort == 'salary-asc' ? 'selected' }}>Salaire (bas à haut)</option>
                                     </select>
                                 </div>
                             </div>
@@ -79,7 +79,7 @@
                             {% if filters.salary > 0 %}
                                 <span class="badge bg-light text-dark p-2">
                                     Salaire ≥ {{ filters.salary }} DT
-                                    <a href="{{ path('app_offre_index', app.request.query.all|merge({'salary': null})) }}" class="btn-close btn-close-black ms-2" style="font-size: 0.5rem;"></a>
+                                    <a href="{{ path('app_offre_index', app.request.query.all|merge({'salary': 0})) }}" class="btn-close btn-close-black ms-2" style="font-size: 0.5rem;"></a>
                                 </span>
                             {% endif %}
                         </div>
@@ -125,7 +125,7 @@
                                             <span>
                                                 <i class="fas fa-map-marker-alt me-2"></i>
                                                 {% if offre.gouvernorat and offre.ville %}
-                                                    {{ offre.ville }}, {{ offre.gouvernorat }}
+                                                     {{ offre.gouvernorat }},{{ offre.ville }}
                                                 {% elseif offre.gouvernorat %}
                                                     {{ offre.gouvernorat }}
                                                 {% elseif offre.ville %}
@@ -265,11 +265,17 @@
     {{ parent() }}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Salary range display
+            // Salary range display and auto-submit
             const salaryRange = document.getElementById('salaryRange');
             const salaryValue = document.getElementById('salaryValue');
+            const filterForm = document.getElementById('filterForm');
+
             salaryRange.addEventListener('input', function() {
                 salaryValue.textContent = this.value;
+            });
+
+            salaryRange.addEventListener('change', function() {
+                filterForm.submit();
             });
 
             // Sort select submits form
