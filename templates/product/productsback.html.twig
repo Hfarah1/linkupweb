@@ -1,0 +1,108 @@
+{% extends 'baseback.html.twig' %}
+
+{% block title %}List of Products{% endblock %}
+
+{% block body %}
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="row">
+
+      <!-- ❌ Non Vendus -->
+      <div class="col-lg-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">❌ Non Vendus</h4>
+            <p class="card-description">Produits non vendus</p>
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Image</th> <!-- Nouvelle colonne pour l'image -->
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Price</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% set hasNonVendus = false %}
+                  {% for product in products %}
+                    {% if product.value != 0 %}
+                      {% set hasNonVendus = true %}
+                      <tr>
+                        <td>
+                          <img src="{{ product.image is not empty ? asset('uploads/' ~ product.image) : 'img/default-image.jpg' }}" class="img-fluid rounded-3" style="width: 50px; height: 50px;">
+                        </td> <!-- Affichage de l'image -->
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.type_produit }}</td>
+                        <td>{{ product.price }} TND</td>
+                        <td>
+                          <a href="{{ path('produit_edit', {'id': product.id}) }}" class="btn btn-sm btn-outline-warning me-2"><i class="fa fa-pencil"></i></a>
+
+                          <a href="{{ path('produit_delete', {'id': product.id}) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i></a>
+                        </td>
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                  {% if not hasNonVendus %}
+                    <tr>
+                      <td colspan="5" class="text-center text-muted">Aucun produit non vendu.</td>
+                    </tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Vendus -->
+      <div class="col-lg-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">✅ Vendus</h4>
+            <p class="card-description">Produits vendus</p>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Image</th> <!-- Nouvelle colonne pour l'image -->
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% set hasVendus = false %}
+                  {% for product in products %}
+                    {% if product.value == 0 %}
+                      {% set hasVendus = true %}
+                      <tr>
+                        <td>
+                          <img src="{{ product.image is not empty ? asset('uploads/' ~ product.image) : 'img/default-image.jpg' }}" class="img-fluid rounded-3" style="width: 50px; height: 50px;">
+                        </td> <!-- Affichage de l'image -->
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.type_produit }}</td>
+                        <td>{{ product.price }} TND</td>
+                        <td><label class="badge badge-success">Vendu</label></td>
+                       
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                  {% if not hasVendus %}
+                    <tr>
+                      <td colspan="6" class="text-center text-muted">Aucun produit vendu.</td>
+                    </tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

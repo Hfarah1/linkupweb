@@ -1,0 +1,90 @@
+{% extends 'baseback.html.twig' %}
+
+{% block title %}Edit Product{% endblock %}
+
+{% block body %}
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="row justify-content-center">
+      <div class="col-md-8 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title text-center">Edit Product</h4>
+
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+            <div class="mb-3">
+              {{ form_label(form.name, 'Name', {'label_attr': {'class': 'form-label'}}) }}
+              {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+              {{ form_errors(form.name) }}
+            </div>
+
+            <div class="mb-3">
+              {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+              {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+              {{ form_errors(form.description) }}
+            </div>
+
+            <div class="mb-3">
+              {{ form_label(form.price, 'Price', {'label_attr': {'class': 'form-label'}}) }}
+              {{ form_widget(form.price, {'attr': {'class': 'form-control'}}) }}
+              {{ form_errors(form.price) }}
+            </div>
+
+            <div class="mb-3">
+              {{ form_label(form.type_produit, 'Type', {'label_attr': {'class': 'form-label'}}) }}
+              {{ form_widget(form.type_produit, {'attr': {'class': 'form-select'}}) }}
+              {{ form_errors(form.type_produit) }}
+            </div>
+
+            <div class="mb-3" id="value-block">
+              {{ form_label(form.value, 'Value', {'label_attr': {'id': 'value-label', 'class': 'form-label'}}) }}
+              {{ form_widget(form.value, {'attr': {'class': 'form-control'}}) }}
+              {{ form_errors(form.value) }}
+            </div>
+
+            <div class="mb-3">
+              {{ form_label(form.image, 'Upload Image', {'label_attr': {'class': 'form-label'}}) }}
+              <div class="input-group">
+                {% if product.image %}
+                  <img src="{{ asset('uploads/' ~ product.image) }}" class="img-thumbnail mb-2" style="max-width: 100px; max-height: 100px;">
+                {% endif %}
+                {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
+              </div>
+              {{ form_errors(form.image) }}
+            </div>
+
+            <div class="text-center">
+  {{ form_widget(form.save, {'attr': {'class': 'btn btn-primary'}, 'label': 'Edit Product'}) }}
+            </div>
+
+            {{ form_end(form) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const typeSelect = document.querySelector('#form_type');
+    const valueLabel = document.querySelector('#value-label');
+
+    const updateLabel = () => {
+      if (typeSelect.value === 'physique') {
+        valueLabel.textContent = 'Quantity';
+      } else if (typeSelect.value === 'service') {
+        valueLabel.textContent = 'Duration';
+      } else {
+        valueLabel.textContent = 'Value';
+      }
+    };
+
+    if (typeSelect) {
+      typeSelect.addEventListener('change', updateLabel);
+      updateLabel();
+    }
+  });
+</script>
+{% endblock %}

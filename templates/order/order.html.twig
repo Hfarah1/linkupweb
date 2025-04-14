@@ -1,0 +1,301 @@
+{% extends 'basefront.html.twig' %}
+
+{% block title %}Order | LIINK UP{% endblock %}
+
+{% block body %}
+<!-- Single Page Header start -->
+<div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">Order</h1>
+    <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item"><a href="#">Pages</a></li>
+        <li class="breadcrumb-item active text-white">Order</li>
+    </ol>
+</div>
+<!-- Single Page Header End -->
+
+<!-- Order Page Start -->
+<div class="container-fluid py-5">
+    <div class="container py-5">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Products</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Méthode de paiement</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr data-product-id="{{ product.id }}">
+                        <th scope="row">
+                            <div class="d-flex align-items-center">
+                                <img src="{{ product.image is not empty ? asset('uploads/' ~ product.image) : 'img/default-image.jpg' }}" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="">
+                            </div>
+                        </th>
+                        <td><p class="mb-0 mt-4">{{ product.name }}</p></td>
+                        <td><p class="mb-0 mt-4 product-price">{{ product.price }} TND</p></td>
+                        <td>
+                            <div class="input-group quantity mt-4" style="width: 120px;">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-sm btn-minus rounded-circle bg-light border">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                                <input type="number" 
+                                       class="form-control form-control-sm text-center border-0 product-quantity" 
+                                       value="0" 
+                                       min="0" 
+                                       data-price="{{ product.price }}" 
+                                       data-max-quantity="{{ product.value }}" 
+                                       style="width: 60px;">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-sm btn-plus rounded-circle bg-light border">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <p class="mb-0 mt-4 product-total">0.00 TND</p>
+                        </td>
+                        <td>
+                            <div class="mt-4">
+                                <select class="form-control form-control-sm product-payment-method" name="product_payment_method">
+                                    <option value="credit_card">Credit Card</option>
+                                    <option value="cash_on_delivery" selected>Cash on Delivery</option>
+                                    <option value="paypal">Paypal</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column align-items-start mt-4">
+                                <div class="mb-2 d-flex gap-2">
+                                    <button class="btn btn-sm rounded-pill bg-success text-white add-btn" type="button" data-product-id="{{ product.id }}">
+                                        Order now
+                                    </button>
+                                    
+                                    <!-- Replace the regular button with a form submission button -->
+                                    <form method="POST" action="{{ path('order_update', {'id': order.id ?? product.orderId ?? 1}) }}" class="d-inline update-order-form">
+                                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                                        <input type="hidden" name="quantity" class="update-quantity" value="0">
+                                        <input type="hidden" name="total" class="update-total" value="0">
+                                        <input type="hidden" name="payment_method" class="update-payment-method" value="cash_on_delivery">
+                                        <input type="hidden" name="status" value="pending">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('update-order') }}">
+                                        
+                                        <button type="submit" class="btn btn-sm rounded-pill bg-warning text-white update-btn">
+                                            <i class="fa fa-sync-alt me-1"></i>
+                                        </button>
+                                    </form>
+                                    
+                                    <button class="btn btn-sm rounded-circle bg-light border">
+                                        <i class="fa fa-times text-danger me-1"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-5">
+            <button class="btn border-secondary rounded-pill px-4 py-3 text-primary" type="button">Apply Coupon</button>
+        </div>
+
+        <div class="row g-4 justify-content-end">
+            <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
+                <div class="bg-light rounded">
+                    <div class="p-4">
+                        <h1 class="display-6 mb-4">Order <span class="fw-normal">Total</span></h1>
+                        <div class="d-flex justify-content-between mb-4">
+                            <h5 class="mb-0 me-4">Subtotal:</h5>
+                            <p class="mb-0" id="subtotal">0 TND</p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <h5 class="mb-0 me-4">Shipping</h5>
+                            <div class="">
+                                <p class="mb-0">Flat rate: 3.00 TND</p>
+                            </div>
+                        </div>
+                        <p class="mb-0 text-end">Shipping to Tunisia.</p>
+                    </div>
+                   <div class="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
+                        <h5 class="mb-0 ps-4 me-4">Total</h5>
+                        <p class="mb-0 pe-4" id="final-total">3.00 TND</p>
+                    </div>
+                  {{ form_start(form, {'action': path('newOrder'), 'method': 'POST', 'attr': {'id': 'checkout-form'}}) }}
+    <input type="hidden" name="product_id" id="product-id" value="">
+    <input type="hidden" name="quantity" id="product-quantity" value="1">
+    <input type="hidden" name="selected_payment_method" id="selected-payment-method" value="cash_on_delivery">
+    {{ form_widget(form.payment_method, {'attr': {'class': 'd-none'}}) }}
+    <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="submit">Proceed to Checkout</button>
+{{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Order Page End -->
+
+<script>
+// Utiliser un IIFE pour éviter les conflits de portée
+(function() {
+    if (window.orderPageInitialized) return;
+    window.orderPageInitialized = true;
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get form elements
+        const checkoutForm = document.getElementById('checkout-form');
+        const productDataInput = document.getElementById('product-data');
+        const selectedPaymentMethodInput = document.getElementById('selected-payment-method');
+        const formPaymentMethodInput = document.querySelector('[name="commande[payment_method]"]');
+        
+        function updateTotals() {
+            let subtotal = 0;
+            document.querySelectorAll('.product-total').forEach(function(totalElement) {
+                let total = parseFloat(totalElement.textContent.replace(' TND', '')) || 0;
+                subtotal += total;
+            });
+
+            const shipping = 3;
+            const finalTotal = subtotal + shipping;
+
+            document.getElementById('subtotal').textContent = subtotal.toFixed(2) + ' TND';
+            document.getElementById('final-total').textContent = finalTotal.toFixed(2) + ' TND';
+        }
+
+        function updateProductTotal(inputElement) {
+            const quantity = parseInt(inputElement.value) || 0;
+            const price = parseFloat(inputElement.dataset.price) || 0;
+            const totalElement = inputElement.closest('tr').querySelector('.product-total');
+
+            const total = quantity * price;
+            totalElement.textContent = total.toFixed(2) + ' TND';
+
+            // Update hidden fields in update form
+            const row = inputElement.closest('tr');
+            const updateForm = row.querySelector('.update-order-form');
+            if (updateForm) {
+                updateForm.querySelector('.update-quantity').value = quantity;
+                updateForm.querySelector('.update-total').value = total.toFixed(2);
+                
+                const paymentMethodSelect = row.querySelector('.product-payment-method');
+                if (paymentMethodSelect) {
+                    updateForm.querySelector('.update-payment-method').value = paymentMethodSelect.value;
+                }
+            }
+
+            updateTotals();
+        }
+        
+        // Make sure all buttons are properly bound (to avoid event duplication issues)
+        document.querySelectorAll('.btn-plus, .btn-minus, .add-btn').forEach(btn => {
+            const newBtn = btn.cloneNode(true);
+            if (btn.parentNode) {
+                btn.parentNode.replaceChild(newBtn, btn);
+            }
+        });
+
+        // Update hidden fields when payment method changes
+        document.querySelectorAll('.product-payment-method').forEach(select => {
+            select.addEventListener('change', function() {
+                const row = this.closest('tr');
+                const updateForm = row.querySelector('.update-order-form');
+                if (updateForm) {
+                    updateForm.querySelector('.update-payment-method').value = this.value;
+                }
+            });
+        });
+
+        const table = document.querySelector('.table');
+        if (table) {
+            table.addEventListener('click', function(e) {
+                if (e.target.closest('.btn-plus')) {
+                    e.preventDefault();
+                    const input = e.target.closest('.quantity').querySelector('.product-quantity');
+                    const maxQuantity = parseInt(input.dataset.maxQuantity) || 0;
+                    const current = parseInt(input.value) || 0;
+
+                    if (current < maxQuantity) {
+                        input.value = current + 1;
+                        updateProductTotal(input);
+                    } else {
+                        alert(`You can't add more than ${maxQuantity} of this product to the cart. Limited stock!`);
+                    }
+                } else if (e.target.closest('.btn-minus')) {
+                    e.preventDefault();
+                    const input = e.target.closest('.quantity').querySelector('.product-quantity');
+                    const current = parseInt(input.value) || 0;
+                    if (current > 0) {
+                        input.value = current - 1;
+                        updateProductTotal(input);
+                    }
+                } else
+if (e.target.closest('.add-btn')) {
+    e.preventDefault();
+    const row = e.target.closest('tr');
+    const productId = e.target.closest('.add-btn').getAttribute('data-product-id');
+    const quantityInput = row.querySelector('.product-quantity');
+    const quantity = parseInt(quantityInput.value) || 0;
+    const maxQuantity = parseInt(quantityInput.dataset.maxQuantity) || 0;
+    
+    if (quantity <= 0) {
+        alert('Please specify a quantity greater than 0');
+        return;
+    }
+    
+    if (quantity > maxQuantity) {
+        alert(`You can't add more than ${maxQuantity} of this product to the cart. Limited stock!`);
+        return;
+    }
+    
+    // Get the payment method for this product
+    const paymentMethodSelect = row.querySelector('.product-payment-method');
+    const paymentMethod = paymentMethodSelect ? paymentMethodSelect.value : 'cash_on_delivery';
+    
+    // Set the product data in the hidden inputs
+    document.getElementById('product-id').value = productId;
+    document.getElementById('product-quantity').value = quantity;
+    document.getElementById('selected-payment-method').value = paymentMethod;
+    
+    // Sync with the form's native payment_method field
+    if (formPaymentMethodInput) {
+        formPaymentMethodInput.value = paymentMethod;
+    }
+    
+    // Submit the form
+    checkoutForm.submit();
+}
+            });
+
+            table.addEventListener('input', function(e) {
+                if (e.target.classList.contains('product-quantity')) {
+                    if (parseInt(e.target.value) < 0 || isNaN(e.target.value)) {
+                        e.target.value = 0;
+                    }
+                    updateProductTotal(e.target);
+                }
+            });
+        }
+
+        // Initialize all form hidden fields with current values
+        document.querySelectorAll('tr[data-product-id]').forEach(row => {
+            const quantityInput = row.querySelector('.product-quantity');
+            if (quantityInput) {
+                updateProductTotal(quantityInput);
+            }
+        });
+
+        updateTotals();
+    });
+})();
+</script>
+{% endblock %}

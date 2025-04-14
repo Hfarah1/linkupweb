@@ -1,0 +1,103 @@
+{% extends 'basefront.html.twig' %}
+
+{% block title %}Add a Product{% endblock %}
+
+{% block body %}
+
+<!-- Header -->
+<div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">Add a product</h1>
+    <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item"><a href="#">Pages</a></li>
+        <li class="breadcrumb-item active text-white">Add a product</li>
+    </ol>
+</div>
+
+<!-- FORM START -->
+{{ form_start(form) }}
+<div class="container-fluid contact py-5">
+    <div class="container py-5">
+        <div class="p-5 bg-light rounded">
+            <div class="row g-4">
+                <!-- Title -->
+                <div class="col-12">
+                    <div class="text-center mx-auto" style="max-width: 700px;">
+                        <h1 class="text-primary">ADD AND HAVE FUN</h1>
+                        <p class="mb-4">IN OUR WEBSITE, OF COURSE YOU CAN ADD PRODUCTS</p>
+                    </div>
+                </div>
+
+                <!-- LEFT COLUMN -->
+                <div class="col-lg-7">
+                    {{ form_row(form.name, {
+                        'attr': {'class': 'w-100 form-control border-0 py-3 mb-4', 'placeholder': 'Name of product'}
+                    }) }}
+
+                    {{ form_row(form.price, {
+                        'attr': {'class': 'w-100 form-control border-0 py-3 mb-4', 'placeholder': 'Price'}
+                    }) }}
+
+                    {{ form_row(form.description, {
+                        'attr': {'class': 'w-100 form-control border-0 mb-4', 'rows': '5', 'placeholder': 'Description'}
+                    }) }}
+                </div>
+
+                <!-- RIGHT COLUMN -->
+                <div class="col-lg-5">
+
+                    <!-- Type (service / physique) -->
+                    {{ form_row(form.type_produit, {
+                        'attr': {'class': 'w-100 form-control border-0 py-3 mb-4', 'id': 'productType'}
+                    }) }}
+
+                    <!-- Dynamic label + value input -->
+                    <div class="mb-4">
+                        <label id="valueLabel" class="form-label">Value</label>
+                        {{ form_widget(form.value, {
+                            'attr': {'class': 'w-100 form-control border-0 py-3', 'id': 'typeInput'}
+                        }) }}
+                        {{ form_errors(form.value) }}
+                    </div>
+
+                    <!-- Image upload -->
+                    {{ form_row(form.image, {
+                        'attr': {'class': 'w-100 form-control border-0 py-3 mb-4'}
+                    }) }}
+                </div>
+
+                <!-- Submit button -->
+                <div class="col-12">
+                    {{ form_widget(form.save, {
+                        'attr': {'class': 'w-100 btn form-control border-secondary py-3 bg-white text-primary'}
+                    }) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{ form_end(form) }}
+<!-- FORM END -->
+
+<!-- ✅ DYNAMIC LABEL SCRIPT -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const typeSelect = document.getElementById("productType");
+        const valueLabel = document.getElementById("valueLabel");
+
+        function updateLabel() {
+            if (typeSelect.value === "physique") {
+                valueLabel.textContent = "Quantity";
+            } else if (typeSelect.value === "service") {
+                valueLabel.textContent = "Duration";
+            } else {
+                valueLabel.textContent = "Value";
+            }
+        }
+
+        updateLabel(); // on load
+        typeSelect.addEventListener("change", updateLabel);
+    });
+</script>
+
+{% endblock %}

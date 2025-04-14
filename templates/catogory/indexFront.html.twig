@@ -1,0 +1,27 @@
+{% extends 'baseFront.html.twig' %}
+
+{% block content %}
+<div id="carouselId" class="carousel slide position-relative" data-bs-ride="carousel">
+    <div class="carousel-inner" role="listbox">
+
+        {% for c in categories %}
+            <div class="carousel-item {% if loop.first %}active{% endif %} rounded">
+                <img src="{{ asset('uploads/' ~ c.description) }}" class="img-fluid w-100 h-100 bg-secondary rounded" alt="{{ c.nom }}">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>{{ c.nom }}</h5>
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselId" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselId" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+{% endblock %}
