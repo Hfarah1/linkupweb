@@ -12,43 +12,39 @@
             <div class="row">
                 <div class="col-md-6">
                     {{ form_row(registrationForm.nom, { label: 'Nom' }) }}
+                    {{ form_errors(registrationForm.nom) }}
                 </div>
                 <div class="col-md-6">
                     {{ form_row(registrationForm.prenom, { label: 'Prénom' }) }}
+                    {{ form_errors(registrationForm.prenom) }}
                 </div>
                 <div class="col-md-6">
                     {{ form_row(registrationForm.email, { label: 'Email' }) }}
+                    {{ form_errors(registrationForm.email) }}
                 </div>
                 <div class="col-md-6">
                     {{ form_row(registrationForm.plainPassword, { label: 'Mot de passe' }) }}
+                    {{ form_errors(registrationForm.plainPassword) }}
                 </div>
                 <div class="col-md-6">
                     {{ form_row(registrationForm.phone, { label: 'Numéro de téléphone' }) }}
+                    {{ form_errors(registrationForm.phone) }}
                 </div>
                 <div class="col-md-6">
                     {{ form_row(registrationForm.role, {
                         label: 'Rôle',
                         attr: { class: 'form-select' }
                     }) }}
+                    {{ form_errors(registrationForm.role) }}
                 </div>
             </div>
 
             <div class="form-check mt-3">
                 {{ form_row(registrationForm.agreeTerms) }}
+                {{ form_errors(registrationForm.agreeTerms) }}
             </div>
 
             <button type="submit" class="btn btn-success mt-3">S'inscrire</button>
         {{ form_end(registrationForm) }}
-
-        {# Display errors for the form if any #}
-        {% if registrationForm is not empty and not registrationForm.vars.valid %}
-            <div class="alert alert-danger mt-3">
-                <ul>
-                    {% for fieldError in registrationForm.vars.errors %}
-                        <li>{{ fieldError.message }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endif %}
     </div>
 {% endblock %}
