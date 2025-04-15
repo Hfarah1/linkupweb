@@ -1,0 +1,139 @@
+{% extends 'back/index.html.twig' %}
+
+{% block content %}
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row">
+            {# Default Form #}
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Default Form</h4>
+                        <p class="card-description">Basic form layout</p>
+                        
+                        <div class="forms-sample">
+                            <div class="form-group">
+                                <label for="defaultUsername">Username</label>
+                                <input type="text" class="form-control" id="defaultUsername" placeholder="Username">
+                            </div>
+                            <div class="form-group">
+                                <label for="defaultEmail">Email address</label>
+                                <input type="email" class="form-control" id="defaultEmail" placeholder="Email">
+                            </div>
+                            <div class="form-group">
+                                <label for="defaultPassword">Password</label>
+                                <input type="password" class="form-control" id="defaultPassword" placeholder="Password">
+                            </div>
+                            <div class="form-group">
+                                <label for="defaultConfirmPassword">Confirm Password</label>
+                                <input type="password" class="form-control" id="defaultConfirmPassword" placeholder="Password">
+                            </div>
+                            <div class="form-check form-check-flat form-check-primary">
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input">
+                                    Remember me
+                                </label>
+                            </div>
+                            <button type="button" class="btn btn-primary me-2">Submit</button>
+                            <button type="button" class="btn btn-light">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Horizontal Form #}
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Horizontal Form</h4>
+                        <p class="card-description">Horizontal form layout</p>
+                        
+                        <div class="forms-sample">
+                            <div class="form-group row">
+                                <label for="horizontalEmail" class="col-sm-3 col-form-label">Email</label>
+                                <div class="col-sm-9">
+                                    <input type="email" class="form-control" id="horizontalEmail" placeholder="Email">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="horizontalUsername" class="col-sm-3 col-form-label">Username</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="horizontalUsername" placeholder="Username">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="horizontalMobile" class="col-sm-3 col-form-label">Mobile</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="horizontalMobile" placeholder="Mobile number">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="horizontalPassword" class="col-sm-3 col-form-label">Password</label>
+                                <div class="col-sm-9">
+                                    <input type="password" class="form-control" id="horizontalPassword" placeholder="Password">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="horizontalConfirmPassword" class="col-sm-3 col-form-label">Confirm Password</label>
+                                <div class="col-sm-9">
+                                    <input type="password" class="form-control" id="horizontalConfirmPassword" placeholder="Password">
+                                </div>
+                            </div>
+                            <div class="form-check form-check-flat form-check-primary">
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input">
+                                    Remember me
+                                </label>
+                            </div>
+                            <button type="button" class="btn btn-primary me-2">Submit</button>
+                            <button type="button" class="btn btn-light">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Basic Form Elements #}
+            <div class="col-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Basic Form Elements</h4>
+                        <p class="card-description">Basic form elements</p>
+                        
+                        <div class="forms-sample">
+                            <div class="form-group">
+                                <label for="basicName">Name</label>
+                                <input type="text" class="form-control" id="basicName" placeholder="Name">
+                            </div>
+                            <div class="form-group">
+                                <label for="basicEmail">Email address</label>
+                                <input type="email" class="form-control" id="basicEmail" placeholder="Email">
+                            </div>
+                            <div class="form-group">
+                                <label for="basicPassword">Password</label>
+                                <input type="password" class="form-control" id="basicPassword" placeholder="Password">
+                            </div>
+                            <div class="form-group">
+                                <label for="basicGender">Gender</label>
+                                <select class="form-select" id="basicGender">
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="basicCity">City</label>
+                                <input type="text" class="form-control" id="basicCity" placeholder="Location">
+                            </div>
+                            <div class="form-group">
+                                <label for="basicTextarea">Textarea</label>
+                                <textarea class="form-control" id="basicTextarea" rows="4"></textarea>
+                            </div>
+                            <button type="button" class="btn btn-primary me-2">Submit</button>
+                            <button type="button" class="btn btn-light">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
