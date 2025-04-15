@@ -32,7 +32,7 @@ final class BackController extends AbstractController
             'email' => 'AhmedYassine.Benothmen@Esprit.tn',
         ];
 
-        return $this->render('back/charts/chartjs.html.twig', [
+        return $this->render('back/pages/charts/chartjs.html.twig', [
             'controller_name' => 'BackController',
             'user' => $user,
         ]);
@@ -46,7 +46,7 @@ final class BackController extends AbstractController
             'email' => 'AhmedYassine.Benothmen@Esprit.tn',
         ];
 
-        return $this->render('back/ui-features/buttons.html.twig', [
+        return $this->render('back/pages/ui-features/buttons.html.twig', [
             'controller_name' => 'BackController',
             'user' => $user,
         ]);
@@ -60,7 +60,7 @@ final class BackController extends AbstractController
             'email' => 'AhmedYassine.Benothmen@Esprit.tn',
         ];
 
-        return $this->render('back/ui-features/dropdowns.html.twig', [
+        return $this->render('back/pages/ui-features/dropdowns.html.twig', [
             'controller_name' => 'BackController',
             'user' => $user,
         ]);
@@ -74,7 +74,7 @@ final class BackController extends AbstractController
             'email' => 'AhmedYassine.Benothmen@Esprit.tn',
         ];
 
-        return $this->render('back/ui-features/typography.html.twig', [
+        return $this->render('back/pages/ui-features/typography.html.twig', [
             'controller_name' => 'BackController',
             'user' => $user,
         ]);
@@ -88,7 +88,7 @@ final class BackController extends AbstractController
             'email' => 'AhmedYassine.Benothmen@Esprit.tn',
         ];
 
-        return $this->render('back/forms/basic_elements.html.twig', [
+        return $this->render('back/pages/forms/basic_elements.html.twig', [
             'controller_name' => 'BackController',
             'user' => $user,
         ]);
@@ -102,7 +102,7 @@ final class BackController extends AbstractController
             'email' => 'AhmedYassine.Benothmen@Esprit.tn',
         ];
 
-        return $this->render('back/tables/basic-table.html.twig', [
+        return $this->render('back/pages/tables/basic-table.html.twig', [
             'controller_name' => 'BackController',
             'user' => $user,
         ]);
@@ -116,7 +116,7 @@ final class BackController extends AbstractController
             'email' => 'AhmedYassine.Benothmen@Esprit.tn',
         ];
 
-        return $this->render('back/icons/font-awesome.html.twig', [
+        return $this->render('back/pages/icons/font-awesome.html.twig', [
             'controller_name' => 'BackController',
             'user' => $user,
         ]);
@@ -130,7 +130,7 @@ final class BackController extends AbstractController
             'email' => 'AhmedYassine.Benothmen@Esprit.tn',
         ];
 
-        return $this->render('back/samples/blank-page.html.twig', [
+        return $this->render('back/pages/samples/blank-page.html.twig', [
             'controller_name' => 'BackController',
             'user' => $user,
         ]);
@@ -139,24 +139,24 @@ final class BackController extends AbstractController
     #[Route('/back/samples/error-404', name: 'app_error_404')]
     public function error404(): Response
     {
-        return $this->render('back/samples/error-404.html.twig');
+        return $this->render('back/pages/samples/error-404.html.twig');
     }
 
     #[Route('/back/samples/error-500', name: 'app_error_500')]
     public function error500(): Response
     {
-        return $this->render('back/samples/error-500.html.twig');
+        return $this->render('back/pages/samples/error-500.html.twig');
     }
 
     #[Route('/back/samples/login', name: 'app_login')]
     public function login(): Response
     {
-        return $this->render('back/samples/login.html.twig');
+        return $this->render('back/pages/samples/login.html.twig');
     }
 
     #[Route('/back/samples/register', name: 'app_register')]
     public function register(): Response
     {
-        return $this->render('back/samples/register.html.twig');
+        return $this->render('back/pages/samples/register.html.twig');
     }
 }
