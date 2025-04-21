@@ -45,9 +45,18 @@ class OffreType extends AbstractType
         'Kebili' => [null, 'Kebili', 'Douz', 'Souk Lahad', 'Faouar'],
     ];
 
+
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $regions = array_keys(self::$regionsAndCities);
+        $selectedGouvernorat = $options['selected_gouvernorat'] ?? null;
+
+        // Déterminer les villes initiales en fonction du gouvernorat sélectionné
+        $initialCities = [];
+        if ($selectedGouvernorat && isset(self::$regionsAndCities[$selectedGouvernorat])) {
+            $initialCities = array_filter(self::$regionsAndCities[$selectedGouvernorat], fn($city) => $city !== null);
+        }
 
         $builder
             ->add('titre', TextType::class, [
@@ -66,7 +75,8 @@ class OffreType extends AbstractType
                 'attr' => [
                     'class' => 'form-control',
                     'id' => 'gouvernorat_select'
-                ]
+                ],
+                'data' => $selectedGouvernorat
             ])
             ->add('ville', ChoiceType::class, [
                 'label' => 'Ville*',
@@ -195,7 +205,8 @@ class OffreType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Offre::class,
-            'attr' => ['class' => 'needs-validation', 'novalidate' => 'novalidate']
+            'attr' => ['class' => 'needs-validation', 'novalidate' => 'novalidate'],
+            'selected_gouvernorat' => null,
         ]);
     }
 

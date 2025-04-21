@@ -81,7 +81,7 @@
 									{{ form_label(form.ville, 'Ville*', {'label_attr': {'class': 'form-label my-3 fw-bold'}}) }}
 									{{ form_widget(form.ville, {'attr': {
                                         'class': 'form-control rounded',
-                                        'placeholder': 'Ex: Ariana',
+                                        'placeholder': 'Ex: Bardo',
                                         'required': 'required',
                                         'aria-describedby': 'villeHelp'
                                     }}) }}
@@ -436,4 +436,75 @@ deleteModal.hide();
 				transform: translateY(-2px);
 			}
 		</style>
+		<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Image preview function
+        function previewImage(input) {
+            const preview = document.getElementById('preview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('d-none');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Dynamic ville dropdown based on gouvernorat
+        const gouvernoratSelect = document.getElementById('offre_gouvernorat');
+        const villeSelect = document.getElementById('offre_ville');
+        
+        // Regions and cities data from controller
+        const regionsAndCities = {{ regionsAndCities|json_encode|raw }};
+
+        // Function to update ville options
+        function updateVilles() {
+            const region = gouvernoratSelect.value;
+            villeSelect.innerHTML = ''; // Clear existing options
+
+            // Add placeholder
+            const placeholderOption = document.createElement('option');
+            placeholderOption.value = '';
+            placeholderOption.text = 'Sélectionnez une ville';
+            placeholderOption.disabled = true;
+            villeSelect.appendChild(placeholderOption);
+
+            // Add cities for the selected region
+            if (region && regionsAndCities[region]) {
+                regionsAndCities[region].forEach(function(city) {
+                    if (city) { // Skip null values
+                        const option = document.createElement('option');
+                        option.value = city;
+                        option.text = city;
+                        villeSelect.appendChild(option);
+                    }
+                });
+            }
+
+            // Set the selected ville if it exists
+            const selectedVille = '{{ selectedVille|default('') }}';
+            if (selectedVille && villeSelect.querySelector(`option[value="${selectedVille}"]`)) {
+                villeSelect.value = selectedVille;
+            }
+        }
+
+        // Initial update (if gouvernorat is pre-selected)
+        if (gouvernoratSelect.value) {
+            updateVilles();
+        }
+
+        // Update villes when gouvernorat changes
+        gouvernoratSelect.addEventListener('change', updateVilles);
+
+        // Form validation
+        document.querySelector('form.needs-validation').addEventListener('submit', function(event) {
+            if (!this.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            this.classList.add('was-validated');
+        }, false);
+    });
+</script>
 	{% endblock %}

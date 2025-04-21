@@ -195,39 +195,42 @@ final class OffreController extends AbstractController
     }
 
     #[Route('/new', name: 'app_offre_new', methods: ['GET', 'POST'])]
-public function new(Request $request, EntityManagerInterface $entityManager): Response
-{
-    $offre = new Offre();
-    $offre->setUser($entityManager->getReference(User::class, 1));
-    $form = $this->createForm(OffreType::class, $offre);
-    $form->handleRequest($request);
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $offre = new Offre();
+        $offre->setUser($entityManager->getReference(User::class, 1));
+        $form = $this->createForm(OffreType::class, $offre);
+        $form->handleRequest($request);
 
-    if ($form->isSubmitted()) {
-        if ($form->isValid()) {
-            $logoFile = $form->get('logoFile')->getData();
-            if ($logoFile) {
-                $fileContent = file_get_contents($logoFile->getPathname());
-                $offre->setOrganisationLogo($fileContent);
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $logoFile = $form->get('logoFile')->getData();
+                if ($logoFile) {
+                    $fileContent = file_get_contents($logoFile->getPathname());
+                    $offre->setOrganisationLogo($fileContent);
+                }
+                $entityManager->persist($offre);
+                $entityManager->flush();
+                return $this->redirectToRoute('app_offre_index', [], Response::HTTP_SEE_OTHER);
             }
-            $entityManager->persist($offre);
-            $entityManager->flush();
-            return $this->redirectToRoute('app_offre_index', [], Response::HTTP_SEE_OTHER);
         }
+
+        $regionsAndCities = OffreType::getRegionsAndCities();
+
+        return $this->render('offre/new.html.twig', [
+            'offre' => $offre,
+            'form' => $form,
+            'regionsAndCities' => $regionsAndCities,
+        ]);
     }
-
-    $regionsAndCities = OffreType::getRegionsAndCities();
-
-    return $this->render('offre/new.html.twig', [
-        'offre' => $offre,
-        'form' => $form,
-        'regionsAndCities' => $regionsAndCities,
-    ]);
-}
 
     #[Route('/{id_offre}/edit', name: 'app_offre_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Offre $offre, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(OffreType::class, $offre);
+        $form = $this->createForm(OffreType::class, $offre, [
+            'selected_gouvernorat' => $offre->getGouvernorat(), // Passer le gouvernorat sélectionné
+        ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -241,9 +244,13 @@ public function new(Request $request, EntityManagerInterface $entityManager): Re
             return $this->redirectToRoute('app_offre_index', [], Response::HTTP_SEE_OTHER);
         }
 
+        $regionsAndCities = OffreType::getRegionsAndCities();
         return $this->render('offre/edit.html.twig', [
             'offre' => $offre,
-            'form' => $form,
+            'form' => $form->createView(),
+            'regionsAndCities' => $regionsAndCities,
+            'selectedGouvernorat' => $offre->getGouvernorat(), // Passer au template
+            'selectedVille' => $offre->getVille(), // Passer au template
         ]);
     }
 
