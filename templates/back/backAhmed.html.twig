@@ -151,7 +151,7 @@
                                                                         </div>
                                                                     </td>
                                                                     <td>
-                                                                        <a href="{{ path('back', {'view_candidature': candidature.id_candidature}) }}" class="btn btn-sm btn-outline-primary"><i class="mdi mdi-eye"></i></a>
+                                                                        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewCandidatureModal" data-id="{{ candidature.id_candidature }}"><i class="mdi mdi-eye"></i></button>
                                                                         <form action="{{ path('back') }}" method="post" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette candidature ?');">
                                                                             <input type="hidden" name="action" value="delete_candidature">
                                                                             <input type="hidden" name="id" value="{{ candidature.id_candidature }}">
@@ -193,7 +193,7 @@
                                                                         <p class="text-small text-muted">{{ offre.organisation|u.truncate(20, '...') }}</p>
                                                                     </div>
                                                                     <div>
-                                                                        <a href="{{ path('back', {'view_offre': offre.id_offre}) }}" class="btn btn-sm btn-outline-primary"><i class="mdi mdi-eye"></i></a>
+                                                                        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewOffreModal" data-id="{{ offre.id_offre }}"><i class="mdi mdi-eye"></i></button>
                                                                         <form action="{{ path('back') }}" method="post" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?');">
                                                                             <input type="hidden" name="action" value="delete_offer">
                                                                             <input type="hidden" name="id" value="{{ offre.id_offre }}">
@@ -312,8 +312,7 @@
                                                             <td>{{ offre.salaire ? offre.salaire|number_format(2) : 'N/A' }}</td>
                                                             <td>{{ offre.date_publication|date('d/m/Y') }}</td>
                                                             <td>
-                                                                <a href="{{ path('back', {'view_offre': offre.id_offre}) }}" class="btn btn-sm btn-outline-primary"><i class="mdi mdi-eye"></i></a>
-                                                                <a href="{{ path('back', {'edit_offre': offre.id_offre}) }}" class="btn btn-sm btn-outline-warning"><i class="mdi mdi-pencil"></i></a>
+                                                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewOffreModal" data-id="{{ offre.id_offre }}"><i class="mdi mdi-eye"></i></button>
                                                                 <form action="{{ path('back') }}" method="post" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?');">
                                                                     <input type="hidden" name="action" value="delete_offer">
                                                                     <input type="hidden" name="id" value="{{ offre.id_offre }}">
@@ -433,7 +432,7 @@
                                                                 </form>
                                                             </td>
                                                             <td>
-                                                                <a href="{{ path('back', {'view_candidature': candidature.id_candidature}) }}" class="btn btn-sm btn-outline-primary"><i class="mdi mdi-eye"></i></a>
+                                                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewCandidatureModal" data-id="{{ candidature.id_candidature }}"><i class="mdi mdi-eye"></i></button>
                                                                 <form action="{{ path('back') }}" method="post" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette candidature ?');">
                                                                     <input type="hidden" name="action" value="delete_candidature">
                                                                     <input type="hidden" name="id" value="{{ candidature.id_candidature }}">
@@ -476,60 +475,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- View Offer/Candidature Details or Edit Offer -->
-                    {% if view_offre or view_candidature or edit_offre %}
-                        <div class="row mt-4">
-                            <div class="col-12 grid-margin stretch-card">
-                                <div class="card card-rounded">
-                                    <div class="card-body">
-                                        {% if view_offre %}
-                                            {% set offre = all_offers|filter(o => o.id_offre == view_offre)|first %}
-                                            <h4 class="card-title">Détails de l'Offre</h4>
-                                            <p><strong>Titre :</strong> {{ offre.titre }}</p>
-                                            <p><strong>Organisation :</strong> {{ offre.organisation }}</p>
-                                            <p><strong>Catégorie :</strong> {{ offre.categorie|default('N/A') }}</p>
-                                            <p><strong>Région :</strong> {{ offre.gouvernorat|default('N/A') }}</p>
-                                            <p><strong>Ville :</strong> {{ offre.ville|default('N/A') }}</p>
-                                            <p><strong>Type de Contrat :</strong> {{ offre.type_contrat|default('N/A') }}</p>
-                                            <p><strong>Salaire :</strong> {{ offre.salaire ? offre.salaire|number_format(2) : 'N/A' }}</p>
-                                            <p><strong>Date de Publication :</strong> {{ offre.date_publication|date('d/m/Y') }}</p>
-                                            <p><strong>Statut :</strong> {{ offre.statut == 'Active' ? 'Actif' : offre.statut }}</p>
-                                            {% if recommended_offers %}
-                                                <h5>Offres Recommandées</h5>
-                                                <ul>
-                                                    {% for recommended in recommended_offers %}
-                                                        <li>{{ recommended.titre }} ({{ recommended.categorie }})</li>
-                                                    {% endfor %}
-                                                </ul>
-                                            {% endif %}
-                                            <a href="{{ path('back') }}" class="btn btn-outline-primary">Retour au Tableau de Bord</a>
-                                        {% elseif view_candidature %}
-                                            {% set candidature = all_applications|filter(c => c.id_candidature == view_candidature)|first %}
-                                            <h4 class="card-title">Détails de la Candidature</h4>
-                                            <p><strong>Candidat :</strong> {{ candidature.user.prenom }} {{ candidature.user.nom }}</p>
-                                            <p><strong>Email :</strong> {{ candidature.user.email }}</p>
-                                            <p><strong>Offre :</strong> {{ candidature.offre.titre }}</p>
-                                            <p><strong>Date de Candidature :</strong> {{ candidature.date_candidature|date('d/m/Y') }}</p>
-                                            <p><strong>Statut :</strong> {{ candidature.statut }}</p>
-                                            {% if candidature.cv_file %}
-                                                <a href="{{ path('back', {'download_cv': candidature.id_candidature}) }}" class="btn btn-sm btn-outline-primary"><i class="mdi mdi-download"></i> Télécharger le CV</a>
-                                            {% endif %}
-                                            <a href="{{ path('back') }}" class="btn btn-outline-primary">Retour au Tableau de Bord</a>
-                                        {% elseif edit_offre %}
-                                            {% set offre = all_offers|filter(o => o.id_offre == edit_offre)|first %}
-                                            <h4 class="card-title">Modifier l'Offre</h4>
-                                            {{ form_start(edit_offer_form, {'action': path('back', {'edit_offre': edit_offre}), 'method': 'POST', 'attr': {'novalidate': 'novalidate'}}) }}
-                                                {{ form_widget(edit_offer_form) }}
-                                                <button type="submit" class="btn btn-primary">Mettre à jour</button>
-                                                <a href="{{ path('back') }}" class="btn btn-outline-secondary">Annuler</a>
-                                            {{ form_end(edit_offer_form) }}
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
                 </div>
             </div>
         </div>
@@ -538,17 +483,89 @@
 
 <!-- New Offer Modal -->
 <div class="modal fade" id="newOfferModal" tabindex="-1" aria-labelledby="newOfferModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="newOfferModalLabel">Créer une Nouvelle Offre</h5>
+                <h5 class="modal-title" id="newOfferModalLabel">Créer une Nouvelle Offre d'Emploi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ path('back') }}" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <input type="hidden" name="action" value="create_offer">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="offerTitle" class="form-label">Titre de l'Offre</label>
+                            <input type="text" class="form-control" id="offerTitle" name="title" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="offerOrganisation" class="form-label">Organisation</label>
+                            <input type="text" class="form-control" id="offerOrganisation" name="organisation" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="offerCategory" class="form-label">Catégorie</label>
+                            <select class="form-control" id="offerCategory" name="category" required>
+                                <option value="">Sélectionner une catégorie</option>
+                                {% for category in categories %}
+                                    <option value="{{ category }}">{{ category }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="offerRegion" class="form-label">Région</label>
+                            <select class="form-control" id="offerRegion" name="region" required>
+                                <option value="">Sélectionner une région</option>
+                                {% for region in regions %}
+                                    <option value="{{ region }}">{{ region }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="offerSalary" class="form-label">Salaire (TND)</label>
+                            <input type="number" class="form-control" id="offerSalary" name="salary" step="0.01" min="0">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="offerStatus" class="form-label">Statut</label>
+                            <select class="form-control" id="offerStatus" name="status" required>
+                                <option value="Active">Actif</option>
+                                <option value="Inactive">Inactif</option>
+                            </select>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="offerDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="offerDescription" name="description" rows="5" required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Créer l'Offre</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- View Offer Modal -->
+<div class="modal fade" id="viewOffreModal" tabindex="-1" aria-labelledby="viewOffreModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewOffreModalLabel">Détails de l'Offre</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                {{ form_start(offer_form, {'action': path('back'), 'method': 'POST', 'attr': {'novalidate': 'novalidate'}}) }}
-                    {{ form_widget(offer_form) }}
-                    <button type="submit" class="btn btn-primary">Créer</button>
-                {{ form_end(offer_form) }}
+                <h5 id="viewOfferTitle"></h5>
+                <p><strong>Organisation:</strong> <span id="viewOfferOrganisation"></span></p>
+                <p><strong>Catégorie:</strong> <span id="viewOfferCategory"></span></p>
+                <p><strong>Région:</strong> <span id="viewOfferRegion"></span></p>
+                <p><strong>Salaire:</strong> <span id="viewOfferSalary"></span> TND</p>
+                <p><strong>Statut:</strong> <span id="viewOfferStatus"></span></p>
+                <p><strong>Date de Publication:</strong> <span id="viewOfferDate"></span></p>
+                <p><strong>Description:</strong></p>
+                <p id="viewOfferDescription"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
             </div>
         </div>
     </div>
@@ -556,25 +573,140 @@
 
 <!-- New Candidature Modal -->
 <div class="modal fade" id="newCandidatureModal" tabindex="-1" aria-labelledby="newCandidatureModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="newCandidatureModalLabel">Créer une Nouvelle Candidature</h5>
+                <h5 class="modal-title" id="newCandidatureModalLabel">Nouvelle Candidature</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ path('back') }}" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <input type="hidden" name="action" value="create_candidature">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="candidatureUser" class="form-label">Candidat (Email)</label>
+                            <input type="email" class="form-control" id="candidatureUser" name="user_email" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="candidatureOffer" class="form-label">Offre</label>
+                            <select class="form-control" id="candidatureOffer" name="offer_id" required>
+                                <option value="">Sélectionner une offre</option>
+                                {% for offre in all_offers %}
+                                    <option value="{{ offre.id_offre }}">{{ offre.titre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="candidatureStatus" class="form-label">Statut</label>
+                            <select class="form-control" id="candidatureStatus" name="status" required>
+                                <option value="En attente">En attente</option>
+                                <option value="Acceptée">Acceptée</option>
+                                <option value="Refusée">Refusée</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="candidatureFile" class="form-label">CV (PDF)</label>
+                            <input type="file" class="form-control" id="candidatureFile" name="cv_file" accept=".pdf">
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="candidatureMessage" class="form-label">Message de Candidature</label>
+                            <textarea class="form-control" id="candidatureMessage" name="message" rows="5"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Soumettre la Candidature</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- View Candidature Modal -->
+<div class="modal fade" id="viewCandidatureModal" tabindex="-1" aria-labelledby="viewCandidatureModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewCandidatureModalLabel">Détails de la Candidature</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                {{ form_start(candidature_form, {'action': path('back'), 'method': 'POST', 'attr': {'novalidate': 'novalidate'}}) }}
-                    {{ form_widget(candidature_form) }}
-                    <button type="submit" class="btn btn-primary">Créer</button>
-                {{ form_end(candidature_form) }}
+                <p><strong>Candidat:</strong> <span id="viewCandidatureUser"></span></p>
+                <p><strong>Email:</strong> <span id="viewCandidatureEmail"></span></p>
+                <p><strong>Offre:</strong> <span id="viewCandidatureOffer"></span></p>
+                <p><strong>Date de Candidature:</strong> <span id="viewCandidatureDate"></span></p>
+                <p><strong>Statut:</strong> <span id="viewCandidatureStatus"></span></p>
+                <p><strong>Message:</strong></p>
+                <p id="viewCandidatureMessage"></p>
+                <p><strong>CV:</strong> <a id="viewCandidatureCV" href="#" target="_blank">Voir le CV</a></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
             </div>
         </div>
     </div>
 </div>
 
+{% endblock %}
+
 {% block javascripts %}
     {{ parent() }}
     <script>
+        // JavaScript to handle dynamic modal data loading (simplified example)
+        document.addEventListener('DOMContentLoaded', function () {
+            // View Offer Modal
+            document.querySelectorAll('[data-bs-target="#viewOffreModal"]').forEach(button => {
+                button.addEventListener('click', function () {
+                    const offerId = this.getAttribute('data-id');
+                    // Simulate fetching offer data (replace with actual AJAX call)
+                    const offerData = {
+                        id: offerId,
+                        title: "Développeur Full Stack",
+                        organisation: "Tech Corp",
+                        category: "Informatique",
+                        region: "Tunis",
+                        salary: "3000.00",
+                        status: "Actif",
+                        date: "01/04/2025",
+                        description: "Rejoignez notre équipe pour développer des applications web innovantes."
+                    };
+                    document.getElementById('viewOfferTitle').textContent = offerData.title;
+                    document.getElementById('viewOfferOrganisation').textContent = offerData.organisation;
+                    document.getElementById('viewOfferCategory').textContent = offerData.category;
+                    document.getElementById('viewOfferRegion').textContent = offerData.region;
+                    document.getElementById('viewOfferSalary').textContent = offerData.salary;
+                    document.getElementById('viewOfferStatus').textContent = offerData.status;
+                    document.getElementById('viewOfferDate').textContent = offerData.date;
+                    document.getElementById('viewOfferDescription').textContent = offerData.description;
+                });
+            });
+
+            // View Candidature Modal
+            document.querySelectorAll('[data-bs-target="#viewCandidatureModal"]').forEach(button => {
+                button.addEventListener('click', function () {
+                    const candidatureId = this.getAttribute('data-id');
+                    // Simulate fetching candidature data (replace with actual AJAX call)
+                    const candidatureData = {
+                        id: candidatureId,
+                        user: "Jean Dupont",
+                        email: "jean.dupont@example.com",
+                        offer: "Développeur Full Stack",
+                        date: "01/04/2025",
+                        status: "En attente",
+                        message: "Je suis très motivé pour rejoindre votre équipe.",
+                        cv: "/path/to/cv.pdf"
+                    };
+                    document.getElementById('viewCandidatureUser').textContent = candidatureData.user;
+                    document.getElementById('viewCandidatureEmail').textContent = candidatureData.email;
+                    document.getElementById('viewCandidatureOffer').textContent = candidatureData.offer;
+                    document.getElementById('viewCandidatureDate').textContent = candidatureData.date;
+                    document.getElementById('viewCandidatureStatus').textContent = candidatureData.status;
+                    document.getElementById('viewCandidatureMessage').textContent = candidatureData.message;
+                    document.getElementById('viewCandidatureCV').setAttribute('href', candidatureData.cv);
+                });
+            });
+        });
         document.addEventListener('DOMContentLoaded', function () {
             // Application Status Chart (Bar Chart)
             const ctxStatus = document.getElementById('applicationStatusChart').getContext('2d');
@@ -629,5 +761,4 @@
             });
         });
     </script>
-{% endblock %}
 {% endblock %}
