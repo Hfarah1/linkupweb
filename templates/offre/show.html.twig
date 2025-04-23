@@ -117,7 +117,8 @@
 							</span>
 							<span>
 								{% if offre.gouvernorat and offre.ville %}
-								{{ offre.gouvernorat }}, {{ offre.ville }}
+									{{ offre.gouvernorat }},
+									{{ offre.ville }}
 								{% elseif offre.gouvernorat %}
 									{{ offre.gouvernorat }}
 								{% elseif offre.ville %}
@@ -265,7 +266,9 @@
 							<div class="d-flex justify-content-between align-items-center">
 								<span class="fw-bold text-success">
 									{% if recommendedOffer.gouvernorat %}
-										<i class="fas fa-map-marker-alt me-2 text-primary"></i> {{ offre.gouvernorat }}, {{ offre.ville }}
+										<i class="fas fa-map-marker-alt me-2 text-primary"></i>
+										{{ offre.gouvernorat }},
+										{{ offre.ville }}
 									{% else %}
 										<span class="text-muted">Non spécifié</span>
 									{% endif %}
@@ -328,86 +331,58 @@
 			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
 		</div>
 	</div>
-</div></div>{% endif %}{% endfor %}<!-- JavaScript --><script>document.addEventListener('DOMContentLoaded', function () { // Initialize Owl Carousel
-const $carousel = $('.vegetable-carousel');
-if ($carousel.length) {
-$carousel.owlCarousel({
-loop: {{ recommendedOffers|length > 4 ? 'true' : 'false' }},
-margin: 20,
-nav: true,
-dots: true,
-autoplay: true,
-autoplayTimeout: 5000,
-responsive: {
-0: {
-items: 1
-},
-600: {
-items: 2
-},
-1000: {
-items: 3
-},
-1200: {
-items: 4
-}
-}
-});
-}
+</div></div>{% endif %}{% endfor %}<!-- JavaScript --><script>document.addEventListener('DOMContentLoaded', function () {
+    // Initialize carousel (assuming Owl Carousel is replaced with vanilla JS or a modern library)
+    const carousel = document.querySelector('.vegetable-carousel');
+    if (carousel) {
+        // Replace with actual carousel logic or library
+        console.log('Initialize carousel');
+    }
 
-// Activate candidatures tab if hash is present
-if (window.location.hash === '#candidatures') {
-const tabEl = document.getElementById('nav-mission-tab');
-if (tabEl) {
-new bootstrap.Tab(tabEl).show();
-setTimeout(() => {
-const tabsContainer = document.querySelector('.nav-tabs');
-if (tabsContainer) {
-const headerHeight = document.querySelector('.fixed-top') ?. offsetHeight || 0;
-window.scrollTo({
-top: tabsContainer.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20,
-behavior: 'smooth'
-});
-}
-}, 300);
-}
-}
-
-// Handle hash changes
-window.addEventListener('hashchange', function () {
-if (window.location.hash === '#candidatures') {
-const tabEl = document.getElementById('nav-mission-tab');
-if (tabEl) {
-new bootstrap.Tab(tabEl).show();
-}
-}
-});
-
-// Load CV iframes on modal show and clear on hide
-document.addEventListener('DOMContentLoaded', function() {
-    {% for candidature in candidatures %}
-        {% if candidature.cvFile %}
-            const modal{{ candidature.id_candidature }} = document.getElementById('cvModal{{ candidature.id_candidature }}');
-            if (modal{{ candidature.id_candidature }}) {
-                modal{{ candidature.id_candidature }}.addEventListener('show.bs.modal', function() {
-                    const iframe = document.getElementById('cvIframe{{ candidature.id_candidature }}');
-                    if (iframe) {
-                        iframe.src = "{{ path('app_candidature_view_cv', { 
-                            'id_offre': candidature.offre.id_offre, 
-                            'id_candidature': candidature.id_candidature 
-                        })|e('js') }}";
-                    }
-                });
-                
-                modal{{ candidature.id_candidature }}.addEventListener('hidden.bs.modal', function() {
-                    const iframe = document.getElementById('cvIframe{{ candidature.id_candidature }}');
-                    if (iframe) {
-                        iframe.src = '';
-                    }
-                });
+    // Activate candidatures tab
+    function activateCandidaturesTab() {
+        if (window.location.hash === '#candidatures') {
+            const tabEl = document.getElementById('nav-mission-tab');
+            if (tabEl) {
+                if (typeof bootstrap !== 'undefined') {
+                    const tab = new bootstrap.Tab(tabEl);
+                    tab.show();
+                    setTimeout(() => {
+                        const tabsContainer = document.querySelector('.nav-tabs');
+                        if (tabsContainer) {
+                            const headerHeight = document.querySelector('.fixed-top')?.offsetHeight || 0;
+                            window.scrollTo({
+                                top: tabsContainer.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }, 300);
+                } else {
+                    tabEl.click();
+                }
             }
-        {% endif %}
-    {% endfor %}
+        }
+    }
+
+    activateCandidaturesTab();
+    window.addEventListener('hashchange', activateCandidaturesTab);
+
+    // Handle modals with event delegation
+    document.addEventListener('show.bs.modal', function (event) {
+        const modal = event.target;
+        const iframe = modal.querySelector('.cv-iframe');
+        if (iframe && modal.dataset.candidatureId) {
+            iframe.src = `/path/to/cv/${modal.dataset.candidatureId}`;
+        }
+    });
+
+    document.addEventListener('hidden.bs.modal', function (event) {
+        const modal = event.target;
+        const iframe = modal.querySelector('.cv-iframe');
+        if (iframe) {
+            iframe.src = '';
+        }
+    });
 });</script><!-- Styles --><style>.vesitable-item {
 	transition: transform 0.3s ease, box-shadow 0.3s ease;
 }

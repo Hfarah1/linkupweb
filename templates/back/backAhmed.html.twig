@@ -1,665 +1,882 @@
 {% extends 'baseback.html.twig' %}
 
-{% block title %}Tableau de Bord Admin - LinkUp{% endblock %}
+{% block title %}Tableau de Bord Admin - LinkUp
+{% endblock %}
 
 {% block content %}
-<div class="content-wrapper">
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="home-tab">
-                <!-- Welcome Message with User Data -->
-                <div class="mb-4">
-                    <h3 class="card-title">Bienvenue, {{ user.name }}</h3>
-                    <p class="text-muted">Gérez les offres d'emploi et les candidatures depuis votre tableau de bord.</p>
-                </div>
+	<div class="content-wrapper">
+		<div class="row">
+			<div class="col-sm-12">
+				<div
+					class="home-tab">
+					<!-- Welcome Message with User Data -->
+					<div class="mb-4">
+						<h3 class="card-title">Bienvenue,
+							{{ user.name }}</h3>
+						<p class="text-muted">Gérez les offres d'emploi et les candidatures depuis votre tableau de bord.</p>
+					</div>
 
-                <!-- Tabs Navigation -->
-                <div class="d-sm-flex align-items-center justify-content-between border-bottom">
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active ps-0" id="overview-tab" data-bs-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true">Vue d'ensemble</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="offers-tab" data-bs-toggle="tab" href="#offers" role="tab" aria-selected="false">Offres</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="applications-tab" data-bs-toggle="tab" href="#applications" role="tab" aria-selected="false">Candidatures</a>
-                        </li>
-                    </ul>
-                    <div class="btn-wrapper">
-                        <button class="btn btn-primary text-white me-2" data-bs-toggle="modal" data-bs-target="#newOfferModal"><i class="mdi mdi-plus"></i> Nouvelle Offre</button>
-                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#newCandidatureModal"><i class="mdi mdi-account-multiple"></i> Nouvelle Candidature</button>
-                    </div>
-                </div>
+					<!-- Tabs Navigation -->
+					<div class="d-sm-flex align-items-center justify-content-between border-bottom">
+						<ul class="nav nav-tabs" role="tablist">
+							<li class="nav-item">
+								<a class="nav-link active ps-0" id="overview-tab" data-bs-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true">Vue d'ensemble</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" id="offers-tab" data-bs-toggle="tab" href="#offers" role="tab" aria-selected="false">Offres</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" id="applications-tab" data-bs-toggle="tab" href="#applications" role="tab" aria-selected="false">Candidatures</a>
+							</li>
+						</ul>
+						<div class="btn-wrapper">
+							<button class="btn btn-primary text-white me-2" data-bs-toggle="modal" data-bs-target="#newOfferModal">
+								<i class="mdi mdi-plus"></i>
+								Nouvelle Offre</button>
+							<button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#newCandidatureModal">
+								<i class="mdi mdi-account-multiple"></i>
+								Nouvelle Candidature</button>
+						</div>
+					</div>
 
-                <!-- Tab Content -->
-                <div class="tab-content tab-content-basic">
-                    <!-- Overview Tab -->
-                    <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
-                        <!-- Statistics Cards -->
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="statistics-details d-flex align-items-center justify-content-between flex-wrap">
-                                    <div class="text-center">
-                                        <p class="statistics-title">Total des Offres</p>
-                                        <h3 class="rate-percentage">{{ stats.total_offers|default(0) }}</h3>
-                                        <p class="text-success d-flex justify-content-center">
-                                            <i class="mdi mdi-menu-up"></i><span>{{ stats.offers_change|default('+0') }}%</span>
-                                        </p>
-                                    </div>
-                                    <div class="text-center">
-                                        <p class="statistics-title">Total des Candidatures</p>
-                                        <h3 class="rate-percentage">{{ stats.total_applications|default(0) }}</h3>
-                                        <p class="text-danger d-flex justify-content-center">
-                                            <i class="mdi mdi-menu-down"></i><span>{{ stats.applications_change|default('0') }}%</span>
-                                        </p>
-                                    </div>
-                                    <div class="text-center">
-                                        <p class="statistics-title">Offres Actives</p>
-                                        <h3 class="rate-percentage">{{ stats.active_offers|default(0) }}</h3>
-                                        <p class="text-success d-flex justify-content-center">
-                                            <i class="mdi mdi-menu-up"></i><span>{{ stats.active_offers_change|default('+0') }}%</span>
-                                        </p>
-                                    </div>
-                                    <div class="text-center">
-                                        <p class="statistics-title">Candidatures en Attente</p>
-                                        <h3 class="rate-percentage">{{ stats.pending_applications|default(0) }}</h3>
-                                        <p class="text-warning d-flex justify-content-center">
-                                            <i class="mdi mdi-menu-down"></i><span>{{ stats.pending_change|default('0') }}%</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+					<!-- Tab Content -->
+					<div
+						class="tab-content tab-content-basic">
+						<!-- Overview Tab -->
+						<div
+							class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+							<!-- Statistics Cards -->
+							<div class="row">
+								<div class="col-sm-12">
+									<div class="statistics-details d-flex align-items-center justify-content-between flex-wrap">
+										<div class="text-center">
+											<p class="statistics-title">Total des Offres</p>
+											<h3 class="rate-percentage">{{ stats.total_offers|default(0) }}</h3>
+											<p class="text-success d-flex justify-content-center">
+												<i class="mdi mdi-menu-up"></i>
+												<span>{{ stats.offers_change|default('+0') }}%</span>
+											</p>
+										</div>
+										<div class="text-center">
+											<p class="statistics-title">Total des Candidatures</p>
+											<h3 class="rate-percentage">{{ stats.total_applications|default(0) }}</h3>
+											<p class="text-danger d-flex justify-content-center">
+												<i class="mdi mdi-menu-down"></i>
+												<span>{{ stats.applications_change|default('0') }}%</span>
+											</p>
+										</div>
+										<div class="text-center">
+											<p class="statistics-title">Offres Actives</p>
+											<h3 class="rate-percentage">{{ stats.active_offers|default(0) }}</h3>
+											<p class="text-success d-flex justify-content-center">
+												<i class="mdi mdi-menu-up"></i>
+												<span>{{ stats.active_offers_change|default('+0') }}%</span>
+											</p>
+										</div>
+										<div class="text-center">
+											<p class="statistics-title">Candidatures en Attente</p>
+											<h3 class="rate-percentage">{{ stats.pending_applications|default(0) }}</h3>
+											<p class="text-warning d-flex justify-content-center">
+												<i class="mdi mdi-menu-down"></i>
+												<span>{{ stats.pending_change|default('0') }}%</span>
+											</p>
+										</div>
+									</div>
+								</div>
+							</div>
 
-                        <!-- Charts and Tables -->
-                        <div class="row">
-                            <!-- Left Column: Charts and Recent Applications -->
-                            <div class="col-lg-8 d-flex flex-column">
-                                <!-- Application Status Chart -->
-                                <div class="row flex-grow">
-                                    <div class="col-12 grid-margin stretch-card">
-                                        <div class="card card-rounded">
-                                            <div class="card-body">
-                                                <div class="d-sm-flex justify-content-between align-items-start">
-                                                    <div>
-                                                        <h4 class="card-title card-title-dash">Statut des Candidatures</h4>
-                                                        <p class="card-subtitle card-subtitle-dash">Répartition des statuts des candidatures</p>
-                                                    </div>
-                                                    <div>
-                                                        <div class="dropdown">
-                                                            <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-0" type="button" id="dropdownMenuButtonStatus" data-bs-toggle="dropdown">
-                                                                Ce Mois
-                                                            </button>
-                                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonStatus">
-                                                                <a class="dropdown-item" href="#">Mois Dernier</a>
-                                                                <a class="dropdown-item" href="#">Cette Année</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="chartjs-bar-wrapper mt-3">
-                                                    <canvas id="applicationStatusChart"></canvas>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+							<!-- Charts and Tables -->
+							<div
+								class="row">
+								<!-- Left Column: Charts and Recent Applications -->
+								<div
+									class="col-lg-8 d-flex flex-column">
+									<!-- Application Status Chart -->
+									<div class="row flex-grow">
+										<div class="col-12 grid-margin stretch-card">
+											<div class="card card-rounded">
+												<div class="card-body">
+													<div class="d-sm-flex justify-content-between align-items-start">
+														<div>
+															<h4 class="card-title card-title-dash">Statut des Candidatures</h4>
+															<p class="card-subtitle card-subtitle-dash">Répartition des statuts des candidatures</p>
+														</div>
+														<div>
+															<div class="dropdown">
+																<button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-0" type="button" id="dropdownMenuButtonStatus" data-bs-toggle="dropdown">
+																	Ce Mois
+																</button>
+																<div class="dropdown-menu" aria-labelledby="dropdownMenuButtonStatus">
+																	<a class="dropdown-item" href="#">Mois Dernier</a>
+																	<a class="dropdown-item" href="#">Cette Année</a>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="chartjs-bar-wrapper mt-3">
+														<canvas id="applicationStatusChart"></canvas>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
 
-                                <!-- Recent Applications Table -->
-                                <div class="row flex-grow">
-                                    <div class="col-12 grid-margin stretch-card">
-                                        <div class="card card-rounded">
-                                            <div class="card-body">
-                                                <div class="d-sm-flex justify-content-between align-items-start">
-                                                    <div>
-                                                        <h4 class="card-title card-title-dash">Candidatures Récentes</h4>
-                                                        <p class="card-subtitle card-subtitle-dash">Dernières candidatures soumises</p>
-                                                    </div>
-                                                </div>
-                                                <div class="table-responsive mt-1">
-                                                    <table class="table select-table">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Candidat</th>
-                                                                <th>Offre</th>
-                                                                <th>Date</th>
-                                                                <th>Statut</th>
-                                                                <th>Actions</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {% for candidature in recent_applications|slice(0, 5) %}
-                                                                <tr>
-                                                                    <td>
-                                                                        <div class="d-flex">
-                                                                            <img src="{{ candidature.user.avatar|default(asset('back/images/faces/face1.jpg')) }}" alt="Candidat" class="rounded-circle" style="width: 40px; height: 40px;" />
-                                                                            <div>
-                                                                                <h6>{{ candidature.user.prenom }} {{ candidature.user.nom }}</h6>
-                                                                                <p>{{ candidature.user.email|u.truncate(20, '...') }}</p>
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <h6>{{ candidature.offre.titre|u.truncate(20, '...') }}</h6>
-                                                                        <p>{{ candidature.offre.organisation|u.truncate(20, '...') }}</p>
-                                                                    </td>
-                                                                    <td>{{ candidature.date_candidature|date('d/m/Y') }}</td>
-                                                                    <td>
-                                                                        <div class="badge badge-opacity-{{ candidature.statut == 'Acceptée' ? 'success' : (candidature.statut == 'Refusée' ? 'danger' : 'warning') }}">
-                                                                            {{ candidature.statut }}
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewCandidatureModal" data-id="{{ candidature.id_candidature }}"><i class="mdi mdi-eye"></i></button>
-                                                                        <form action="{{ path('back') }}" method="post" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette candidature ?');">
-                                                                            <input type="hidden" name="action" value="delete_candidature">
-                                                                            <input type="hidden" name="id" value="{{ candidature.id_candidature }}">
-                                                                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="mdi mdi-delete"></i></button>
-                                                                        </form>
-                                                                    </td>
-                                                                </tr>
-                                                            {% else %}
-                                                                <tr>
-                                                                    <td colspan="5">Aucune candidature récente trouvée.</td>
-                                                                </tr>
-                                                            {% endfor %}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+									<!-- Recent Applications Table -->
+									<div class="row flex-grow">
+										<div class="col-12 grid-margin stretch-card">
+											<div class="card card-rounded">
+												<div class="card-body">
+													<div class="d-sm-flex justify-content-between align-items-start">
+														<div>
+															<h4 class="card-title card-title-dash">Candidatures Récentes</h4>
+															<p class="card-subtitle card-subtitle-dash">Dernières candidatures soumises</p>
+														</div>
+													</div>
+													<div class="table-responsive mt-1">
+														<table class="table select-table">
+															<thead>
+																<tr>
+																	<th>Candidat</th>
+																	<th>Offre</th>
+																	<th>Date</th>
+																	<th>Statut</th>
+																	<th>Actions</th>
+																</tr>
+															</thead>
+															<tbody>
+																{% for candidature in recent_applications|slice(0, 5) %}
+																	<tr>
+																		<td>
+																			<div class="d-flex">
+																				<img src="{{ candidature.user.avatar|default(asset('back/images/faces/face1.jpg')) }}" alt="Candidat" class="rounded-circle" style="width: 40px; height: 40px;"/>
+																				<div>
+																					<h6>{{ candidature.user.prenom }}
+																						{{ candidature.user.nom }}</h6>
+																					<p>{{ candidature.user.email|u.truncate(20, '...') }}</p>
+																				</div>
+																			</div>
+																		</td>
+																		<td>
+																			<h6>{{ candidature.offre.titre|u.truncate(20, '...') }}</h6>
+																			<p>{{ candidature.offre.organisation|u.truncate(20, '...') }}</p>
+																		</td>
+																		<td>{{ candidature.date_candidature|date('d/m/Y') }}</td>
+																		<td>
+																			<div class="badge badge-opacity-{{ candidature.statut == 'Acceptée' ? 'success' : (candidature.statut == 'Refusée' ? 'danger' : 'warning') }}">
+																				{{ candidature.statut }}
+																			</div>
+																		</td>
+																		<td>
+																			<button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewCandidatureModal" data-id="{{ candidature.id_candidature }}">
+																				<i class="mdi mdi-eye"></i>
+																			</button>
+																			<form action="{{ path('back') }}" method="post" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette candidature ?');">
+																				<input type="hidden" name="action" value="delete_candidature">
+																				<input type="hidden" name="id" value="{{ candidature.id_candidature }}">
+																				<button type="submit" class="btn btn-sm btn-outline-danger">
+																					<i class="mdi mdi-delete"></i>
+																				</button>
+																			</form>
+																		</td>
+																	</tr>
+																{% else %}
+																	<tr>
+																		<td colspan="5">Aucune candidature récente trouvée.</td>
+																	</tr>
+																{% endfor %}
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
 
-                            <!-- Right Column: Recent Offers and Categories -->
-                            <div class="col-lg-4 d-flex flex-column">
-                                <!-- Recent Offers -->
-                                <div class="row flex-grow">
-                                    <div class="col-12 grid-margin stretch-card">
-                                        <div class="card card-rounded">
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <h4 class="card-title card-title-dash">Offres Récentes</h4>
-                                                </div>
-                                                <div class="list-wrapper">
-                                                    <ul class="todo-list todo-list-rounded">
-                                                        {% for offre in recent_offers|slice(0, 5) %}
-                                                            <li class="d-block">
-                                                                <div class="d-flex justify-content-between align-items-center">
-                                                                    <div>
-                                                                        <h6>{{ offre.titre|u.truncate(25, '...') }}</h6>
-                                                                        <p class="text-small text-muted">{{ offre.organisation|u.truncate(20, '...') }}</p>
-                                                                    </div>
-                                                                    <div>
-                                                                        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewOffreModal" data-id="{{ offre.id_offre }}"><i class="mdi mdi-eye"></i></button>
-                                                                        <form action="{{ path('back') }}" method="post" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?');">
-                                                                            <input type="hidden" name="action" value="delete_offer">
-                                                                            <input type="hidden" name="id" value="{{ offre.id_offre }}">
-                                                                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="mdi mdi-delete"></i></button>
-                                                                        </form>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="d-flex mt-2">
-                                                                    <div class="ps-4 text-small me-3">{{ offre.date_publication|date('d/m/Y') }}</div>
-                                                                    <div class="badge badge-opacity-{{ offre.statut == 'Active' ? 'success' : 'warning' }}">{{ offre.statut == 'Active' ? 'Actif' : offre.statut }}</div>
-                                                                </div>
-                                                            </li>
-                                                        {% else %}
-                                                            <li>Aucune offre récente trouvée.</li>
-                                                        {% endfor %}
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+								<!-- Right Column: Recent Offers and Categories -->
+								<div
+									class="col-lg-4 d-flex flex-column">
+									<!-- Recent Offers -->
+									<div class="row flex-grow">
+										<div class="col-12 grid-margin stretch-card">
+											<div class="card card-rounded">
+												<div class="card-body">
+													<div class="d-flex justify-content-between align-items-center">
+														<h4 class="card-title card-title-dash">Offres Récentes</h4>
+													</div>
+													<div class="list-wrapper">
+														<ul class="todo-list todo-list-rounded">
+															{% for offre in recent_offers|slice(0, 5) %}
+																<li class="d-block">
+																	<div class="d-flex justify-content-between align-items-center">
+																		<div>
+																			<h6>{{ offre.titre|u.truncate(25, '...') }}</h6>
+																			<p class="text-small text-muted">{{ offre.organisation|u.truncate(20, '...') }}</p>
+																		</div>
+																		<div>
+																			<button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewOffreModal" data-id="{{ offre.id_offre }}">
+																				<i class="mdi mdi-eye"></i>
+																			</button>
+																			<form action="{{ path('back') }}" method="post" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?');">
+																				<input type="hidden" name="action" value="delete_offer">
+																				<input type="hidden" name="id" value="{{ offre.id_offre }}">
+																				<button type="submit" class="btn btn-sm btn-outline-danger">
+																					<i class="mdi mdi-delete"></i>
+																				</button>
+																			</form>
+																		</div>
+																	</div>
+																	<div class="d-flex mt-2">
+																		<div class="ps-4 text-small me-3">{{ offre.date_publication|date('d/m/Y') }}</div>
+																		<div class="badge badge-opacity-{{ offre.statut == 'Active' ? 'success' : 'warning' }}">{{ offre.statut == 'Active' ? 'Actif' : offre.statut }}</div>
+																	</div>
+																</li>
+															{% else %}
+																<li>Aucune offre récente trouvée.</li>
+															{% endfor %}
+														</ul>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
 
-                                <!-- Offer Categories Chart -->
-                                <div class="row flex-grow">
-                                    <div class="col-12 grid-margin stretch-card">
-                                        <div class="card card-rounded">
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                                    <h4 class="card-title card-title-dash">Catégories des Offres</h4>
-                                                </div>
-                                                <div>
-                                                    <canvas id="offerCategoriesChart"></canvas>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+									<!-- Offer Categories Chart -->
+									<div class="row flex-grow">
+										<div class="col-12 grid-margin stretch-card">
+											<div class="card card-rounded">
+												<div class="card-body">
+													<div class="d-flex justify-content-between align-items-center mb-3">
+														<h4 class="card-title card-title-dash">Catégories des Offres</h4>
+													</div>
+													<div>
+														<canvas id="offerCategoriesChart"></canvas>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 
-                    <!-- Offers Tab -->
-                    <div class="tab-pane fade" id="offers" role="tabpanel" aria-labelledby="offers-tab">
-                        <div class="row">
-                            <div class="col-12 grid-margin stretch-card">
-                                <div class="card card-rounded">
-                                    <div class="card-body">
-                                        <div class="d-sm-flex justify-content-between align-items-start mb-4">
-                                            <div>
-                                                <h4 class="card-title card-title-dash">Toutes les Offres d'Emploi</h4>
-                                                <p class="card-subtitle card-subtitle-dash">Gérer toutes les offres d'emploi</p>
-                                            </div>
-                                            <div>
-                                                <button class="btn btn-primary btn-lg text-white mb-0 me-0" data-bs-toggle="modal" data-bs-target="#newOfferModal">
-                                                    <i class="mdi mdi-plus"></i> Créer une Offre
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <!-- Search and Filter Form -->
-                                        <form action="{{ path('back') }}" method="get" class="mb-4">
-                                            <div class="row g-3">
-                                                <div class="col-md-3">
-                                                    <input type="text" name="offer_search" class="form-control" placeholder="Rechercher par titre ou description" value="{{ filters.offer_search|default('') }}">
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <select name="offer_category" class="form-control">
-                                                        <option value="">Toutes les Catégories</option>
-                                                        {% for category in categories %}
-                                                            <option value="{{ category }}" {{ filters.offer_category == category ? 'selected' }}>{{ category }}</option>
-                                                        {% endfor %}
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <select name="offer_region" class="form-control">
-                                                        <option value="">Toutes les Régions</option>
-                                                        {% for region in regions %}
-                                                            <option value="{{ region }}" {{ filters.offer_region == region ? 'selected' }}>{{ region }}</option>
-                                                        {% endfor %}
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <input type="number" name="offer_salary" class="form-control" placeholder="Salaire Minimum" value="{{ filters.offer_salary > 0 ? filters.offer_salary : '' }}">
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <select name="offer_sort" class="form-control">
-                                                        <option value="recent" {{ filters.offer_sort == 'recent' ? 'selected' }}>Récent</option>
-                                                        <option value="salary-asc" {{ filters.offer_sort == 'salary-asc' ? 'selected' }}>Salaire : Croissant</option>
-                                                        <option value="salary-desc" {{ filters.offer_sort == 'salary-desc' ? 'selected' }}>Salaire : Décroissant</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <button type="submit" class="btn btn-primary w-100"><i class="mdi mdi-filter"></i> Filtrer</button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                        <div class="table-responsive">
-                                            <table class="table select-table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Titre</th>
-                                                        <th>Organisation</th>
-                                                        <th>Catégorie</th>
-                                                        <th>Région</th>
-                                                        <th>Salaire</th>
-                                                        <th>Date</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for offre in all_offers %}
-                                                        <tr>
-                                                            <td>{{ offre.titre|u.truncate(30, '...') }}</td>
-                                                            <td>{{ offre.organisation|u.truncate(20, '...') }}</td>
-                                                            <td>{{ offre.categorie|default('N/A') }}</td>
-                                                            <td>{{ offre.gouvernorat|default('N/A') }}</td>
-                                                            <td>{{ offre.salaire ? offre.salaire|number_format(2) : 'N/A' }}</td>
-                                                            <td>{{ offre.date_publication|date('d/m/Y') }}</td>
-                                                            <td>
-                                                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewOffreModal" data-id="{{ offre.id_offre }}"><i class="mdi mdi-eye"></i></button>
-                                                                <form action="{{ path('back') }}" method="post" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?');">
-                                                                    <input type="hidden" name="action" value="delete_offer">
-                                                                    <input type="hidden" name="id" value="{{ offre.id_offre }}">
-                                                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="mdi mdi-delete"></i></button>
-                                                                </form>
-                                                            </td>
-                                                        </tr>
-                                                    {% else %}
-                                                        <tr>
-                                                            <td colspan="7">Aucune offre trouvée.</td>
-                                                        </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <!-- Pagination for Offers -->
-                                        {% if offer_pagination.total_pages > 1 %}
-                                            <nav aria-label="Pagination des offres" class="mt-4">
-                                                <ul class="pagination justify-content-center">
-                                                    <li class="page-item {{ offer_pagination.current_page == 1 ? 'disabled' : '' }}">
-                                                        <a class="page-link" href="{{ path('back', offer_pagination.query_params|merge({'offer_page': offer_pagination.current_page - 1})) }}" aria-label="Précédent">
-                                                            <span aria-hidden="true">«</span>
-                                                        </a>
-                                                    </li>
-                                                    {% for page in 1..offer_pagination.total_pages %}
-                                                        <li class="page-item {{ page == offer_pagination.current_page ? 'active' : '' }}">
-                                                            <a class="page-link" href="{{ path('back', offer_pagination.query_params|merge({'offer_page': page})) }}">{{ page }}</a>
-                                                        </li>
-                                                    {% endfor %}
-                                                    <li class="page-item {{ offer_pagination.current_page == offer_pagination.total_pages ? 'disabled' : '' }}">
-                                                        <a class="page-link" href="{{ path('back', offer_pagination.query_params|merge({'offer_page': offer_pagination.current_page + 1})) }}" aria-label="Suivant">
-                                                            <span aria-hidden="true">»</span>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </nav>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+						<!-- Offers Tab -->
+						<div class="tab-pane fade" id="offers" role="tabpanel" aria-labelledby="offers-tab">
+							<div class="row">
+								<div class="col-12 grid-margin stretch-card">
+									<div class="card card-rounded">
+										<div class="card-body">
+											<div class="d-sm-flex justify-content-between align-items-start mb-4">
+												<div>
+													<h4 class="card-title card-title-dash">Toutes les Offres d'Emploi</h4>
+													<p class="card-description">Gérer toutes les offres d'emploi</p>
+												</div>
+												<div>
+													<button class="btn btn-primary btn-lg text-white mb-0 me-0" data-bs-toggle="modal" data-bs-target="#newOfferModal">
+														<i class="mdi mdi-plus"></i>
+														Créer une Offre
+													</button>
+												</div>
+											</div>
+											<!-- Search and Filter Form -->
+											<form action="{{ path('back') }}#offers" method="get" class="mb-4">
+												<div class="row g-3 align-items-center">
+													<div class="col-md-3">
+														<div class="input-group">
+															<span class="input-group-text">
+																<i class="mdi mdi-magnify"></i>
+															</span>
+															<input type="text" name="offer_search" class="form-control" placeholder="Rechercher par titre ou description" value="{{ filters.offer_search|default('') }}">
+														</div>
+													</div>
+													<div class="col-md-2">
+														<select name="offer_category" class="form-control">
+															<option value="">Toutes les Catégories</option>
+															{% for category in categories %}
+																<option value="{{ category }}" {{ filters.offer_category == category ? 'selected' }}>{{ category }}</option>
+															{% endfor %}
+														</select>
+													</div>
+													<div class="col-md-2">
+														<select name="offer_region" class="form-control">
+															<option value="">Toutes les Régions</option>
+															{% for region in regions %}
+																<option value="{{ region }}" {{ filters.offer_region == region ? 'selected' }}>{{ region }}</option>
+															{% endfor %}
+														</select>
+													</div>
+													<div class="col-md-2">
+														<div class="input-group">
+															<span class="input-group-text">$</span>
+															<input type="number" name="offer_salary" class="form-control" placeholder="Salaire Minimum" value="{{ filters.offer_salary > 0 ? filters.offer_salary : '' }}">
+														</div>
+													</div>
+													<div class="col-md-2">
+														<select name="offer_sort" class="form-control">
+															<option value="recent" {{ filters.offer_sort == 'recent' ? 'selected' }}>Récent</option>
+															<option value="salary-asc" {{ filters.offer_sort == 'salary-asc' ? 'selected' }}>Salaire : Croissant</option>
+															<option value="salary-desc" {{ filters.offer_sort == 'salary-desc' ? 'selected' }}>Salaire : Décroissant</option>
+														</select>
+													</div>
+													<div class="col-md-1">
+														<button type="submit" class="btn btn-primary w-100">
+															<i class="mdi mdi-filter"></i>
+															Filtrer</button>
+													</div>
+												</div>
+											</form>
+											<div class="table-responsive">
+												<table class="table table-hover table-striped">
+													<thead>
+														<tr>
+															<th>Titre</th>
+															<th>Organisation</th>
+															<th>Catégorie</th>
+															<th>Région</th>
+															<th>Salaire</th>
+															<th>Date</th>
+															<th>Candidatures</th>
+															<th>Actions</th>
+														</tr>
+													</thead>
+													<tbody>
+														{% for offre in all_offers %}
+															<tr>
+																<td>{{ offre.titre|u.truncate(30, '...') }}</td>
+																<td>{{ offre.organisation|u.truncate(20, '...') }}</td>
+																<td>{{ offre.categorie|default('N/A') }}</td>
+																<td>{{ offre.gouvernorat|default('N/A') }}</td>
+																<td>{{ offre.salaire ? offre.salaire|number_format(2) : 'N/A' }}</td>
+																<td>{{ offre.date_publication|date('d/m/Y') }}</td>
+																<td>
+																	<span class="badge badge-info">{{ offre.candidature_count|default(0) }}</span>
+																</td>
+																<td>
+																	<div class="btn-group" role="group">
+																		<button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewOffreModal" data-id="{{ offre.id_offre }}">
+																			<i class="mdi mdi-eye"></i>
+																		</button>
+																		<form action="{{ path('back') }}" method="post" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?');">
+																			<input type="hidden" name="action" value="delete_offer">
+																			<input type="hidden" name="id" value="{{ offre.id_offre }}">
+																			<button type="submit" class="btn btn-sm btn-outline-danger">
+																				<i class="mdi mdi-delete"></i>
+																			</button>
+																		</form>
+																	</div>
+																</td>
+															</tr>
+														{% else %}
+															<tr>
+																<td colspan="8" class="text-center">Aucune offre trouvée.</td>
+															</tr>
+														{% endfor %}
+													</tbody>
+												</table>
+											</div>
+											<!-- Pagination for Offers -->
+											{% if offer_pagination.total_pages > 1 %}
+												<nav aria-label="Pagination des offres" class="mt-4">
+													<ul class="pagination justify-content-center">
+														<li class="page-item {{ offer_pagination.current_page == 1 ? 'disabled' : '' }}">
+															<a class="page-link" href="{{ path('back', offer_pagination.query_params|merge({'offer_page': offer_pagination.current_page - 1})) }}" aria-label="Précédent">
+																<span aria-hidden="true">«</span>
+															</a>
+														</li>
+														{% for page in 1..offer_pagination.total_pages %}
+															<li class="page-item {{ page == offer_pagination.current_page ? 'active' : '' }}">
+																<a class="page-link" href="{{ path('back', offer_pagination.query_params|merge({'offer_page': page})) }}">{{ page }}</a>
+															</li>
+														{% endfor %}
+														<li class="page-item {{ offer_pagination.current_page == offer_pagination.total_pages ? 'disabled' : '' }}">
+															<a class="page-link" href="{{ path('back', offer_pagination.query_params|merge({'offer_page': offer_pagination.current_page + 1})) }}" aria-label="Suivant">
+																<span aria-hidden="true">»</span>
+															</a>
+														</li>
+													</ul>
+												</nav>
+											{% endif %}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 
-                    <!-- Applications Tab -->
-                    <div class="tab-pane fade" id="applications" role="tabpanel" aria-labelledby="applications-tab">
-                        <div class="row">
-                            <div class="col-12 grid-margin stretch-card">
-                                <div class="card card-rounded">
-                                    <div class="card-body">
-                                        <div class="d-sm-flex justify-content-between align-items-start mb-4">
-                                            <div>
-                                                <h4 class="card-title card-title-dash">Toutes les Candidatures</h4>
-                                                <p class="card-subtitle card-subtitle-dash">Gérer toutes les candidatures soumises</p>
-                                            </div>
-                                            <div>
-                                                <button class="btn btn-primary btn-lg text-white mb-0 me-0" data-bs-toggle="modal" data-bs-target="#newCandidatureModal">
-                                                    <i class="mdi mdi-plus"></i> Nouvelle Candidature
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <!-- Search and Filter Form -->
-                                        <form action="{{ path('back') }}" method="get" class="mb-4">
-                                            <div class="row g-3">
-                                                <div class="col-md-4">
-                                                    <input type="text" name="application_search" class="form-control" placeholder="Rechercher par candidat ou offre" value="{{ filters.application_search|default('') }}">
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <select name="application_status" class="form-control">
-                                                        <option value="">Tous les Statuts</option>
-                                                        <option value="En attente" {{ filters.application_status == 'En attente' ? 'selected' }}>En attente</option>
-                                                        <option value="Acceptée" {{ filters.application_status == 'Acceptée' ? 'selected' }}>Acceptée</option>
-                                                        <option value="Refusée" {{ filters.application_status == 'Refusée' ? 'selected' }}>Refusée</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <button type="submit" class="btn btn-primary w-100"><i class="mdi mdi-filter"></i> Filtrer</button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                        <div class="table-responsive">
-                                            <table class="table select-table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Candidat</th>
-                                                        <th>Offre</th>
-                                                        <th>Date</th>
-                                                        <th>Statut</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for candidature in all_applications %}
-                                                        <tr>
-                                                            <td>
-                                                                <div class="d-flex">
-                                                                    <img src="{{ candidature.user.avatar|default(asset('back/images/faces/face1.jpg')) }}" alt="Candidat" class="rounded-circle" style="width: 40px; height: 40px;" />
-                                                                    <div>
-                                                                        <h6>{{ candidature.user.prenom }} {{ candidature.user.nom }}</h6>
-                                                                        <p>{{ candidature.user.email|u.truncate(20, '...') }}</p>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <h6>{{ candidature.offre.titre|u.truncate(20, '...') }}</h6>
-                                                                <p>{{ candidature.offre.organisation|u.truncate(20, '...') }}</p>
-                                                            </td>
-                                                            <td>{{ candidature.date_candidature|date('d/m/Y') }}</td>
-                                                            <td>
-                                                                <form action="{{ path('back') }}" method="post" style="display:inline;">
-                                                                    <input type="hidden" name="action" value="edit_candidature">
-                                                                    <input type="hidden" name="id" value="{{ candidature.id_candidature }}">
-                                                                    <select name="status" onchange="this.form.submit()">
-                                                                        <option value="En attente" {{ candidature.statut == 'En attente' ? 'selected' }}>En attente</option>
-                                                                        <option value="Acceptée" {{ candidature.statut == 'Acceptée' ? 'selected' }}>Acceptée</option>
-                                                                        <option value="Refusée" {{ candidature.statut == 'Refusée' ? 'selected' }}>Refusée</option>
-                                                                    </select>
-                                                                </form>
-                                                            </td>
-                                                            <td>
-                                                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewCandidatureModal" data-id="{{ candidature.id_candidature }}"><i class="mdi mdi-eye"></i></button>
-                                                                <form action="{{ path('back') }}" method="post" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette candidature ?');">
-                                                                    <input type="hidden" name="action" value="delete_candidature">
-                                                                    <input type="hidden" name="id" value="{{ candidature.id_candidature }}">
-                                                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="mdi mdi-delete"></i></button>
-                                                                </form>
-                                                            </td>
-                                                        </tr>
-                                                    {% else %}
-                                                        <tr>
-                                                            <td colspan="5">Aucune candidature trouvée.</td>
-                                                        </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <!-- Pagination for Applications -->
-                                        {% if application_pagination.total_pages > 1 %}
-                                            <nav aria-label="Pagination des candidatures" class="mt-4">
-                                                <ul class="pagination justify-content-center">
-                                                    <li class="page-item {{ application_pagination.current_page == 1 ? 'disabled' : '' }}">
-                                                        <a class="page-link" href="{{ path('back', application_pagination.query_params|merge({'application_page': application_pagination.current_page - 1})) }}" aria-label="Précédent">
-                                                            <span aria-hidden="true">«</span>
-                                                        </a>
-                                                    </li>
-                                                    {% for page in 1..application_pagination.total_pages %}
-                                                        <li class="page-item {{ page == application_pagination.current_page ? 'active' : '' }}">
-                                                            <a class="page-link" href="{{ path('back', application_pagination.query_params|merge({'application_page': page})) }}">{{ page }}</a>
-                                                        </li>
-                                                    {% endfor %}
-                                                    <li class="page-item {{ application_pagination.current_page == application_pagination.total_pages ? 'disabled' : '' }}">
-                                                        <a class="page-link" href="{{ path('back', application_pagination.query_params|merge({'application_page': application_pagination.current_page + 1})) }}" aria-label="Suivant">
-                                                            <span aria-hidden="true">»</span>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </nav>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+						<!-- Applications Tab -->
+						<div class="tab-pane fade" id="applications" role="tabpanel" aria-labelledby="applications-tab">
+							<div class="row">
+								<div class="col-12 grid-margin stretch-card">
+									<div class="card card-rounded">
+										<div class="card-body">
+											<div class="d-sm-flex justify-content-between align-items-start mb-4">
+												<div>
+													<h4 class="card-title card-title-dash">Toutes les Candidatures</h4>
+													<p class="card-subtitle card-subtitle-dash">Gérer toutes les candidatures soumises</p>
+												</div>
+												<div>
+													<button class="btn btn-primary btn-lg text-white mb-0 me-0" data-bs-toggle="modal" data-bs-target="#newCandidatureModal">
+														<i class="mdi mdi-plus"></i>
+														Nouvelle Candidature
+													</button>
+												</div>
+											</div>
+											
+											<!-- Search and Filter Form -->
+											<form action="{{ path('back') }}#candidatures" method="get" class="mb-4">
+												<div class="row g-3">
+													<div class="col-md-4">
+														<input type="text" name="application_search" class="form-control" placeholder="Rechercher par candidat ou offre" value="{{ filters.application_search|default('') }}">
+													</div>
+													<div class="col-md-3">
+														<select name="application_status" class="form-control">
+															<option value="">Tous les Statuts</option>
+															<option value="En attente" {{ filters.application_status == 'En attente' ? 'selected' }}>En attente</option>
+															<option value="Acceptée" {{ filters.application_status == 'Acceptée' ? 'selected' }}>Acceptée</option>
+															<option value="Refusée" {{ filters.application_status == 'Refusée' ? 'selected' }}>Refusée</option>
+														</select>
+													</div>
+													<div class="col-md-2">
+														<button type="submit" class="btn btn-primary w-100">
+															<i class="mdi mdi-filter"></i>
+															Filtrer</button>
+													</div>
+												</div>
+											</form>
+											<div class="table-responsive">
+												<table class="table select-table">
+													<thead>
+														<tr>
+															<th>Candidat</th>
+															<th>Offre</th>
+															<th>Date</th>
+															<th>Statut</th>
+															<th>Actions</th>
+														</tr>
+													</thead>
+													<tbody>
+														{% for candidature in all_applications %}
+															<tr>
+																<td>
+																	<div class="d-flex">
+																		<img src="{{ candidature.user.avatar|default(asset('back/images/faces/face1.jpg')) }}" alt="Candidat" class="rounded-circle" style="width: 40px; height: 40px;"/>
+																		<div>
+																			<h6>{{ candidature.user.prenom }}
+																				{{ candidature.user.nom }}</h6>
+																			<p>{{ candidature.user.email|u.truncate(20, '...') }}</p>
+																		</div>
+																	</div>
+																</td>
+																<td>
+																	<h6>{{ candidature.offre.titre|u.truncate(20, '...') }}</h6>
+																	<p>{{ candidature.offre.organisation|u.truncate(20, '...') }}</p>
+																</td>
+																<td>{{ candidature.date_candidature|date('d/m/Y') }}</td>
+																<td>
+																	<form action="{{ path('back') }}" method="post" style="display:inline;">
+																		<input type="hidden" name="action" value="edit_candidature">
+																		<input type="hidden" name="id" value="{{ candidature.id_candidature }}">
+																		<select name="status" onchange="this.form.submit()">
+																			<option value="En attente" {{ candidature.statut == 'En attente' ? 'selected' }}>En attente</option>
+																			<option value="Acceptée" {{ candidature.statut == 'Acceptée' ? 'selected' }}>Acceptée</option>
+																			<option value="Refusée" {{ candidature.statut == 'Refusée' ? 'selected' }}>Refusée</option>
+																		</select>
+																	</form>
+																</td>
+																<td>
+																	<button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewCandidatureModal" data-id="{{ candidature.id_candidature }}">
+																		<i class="mdi mdi-eye"></i>
+																	</button>
+																	<form action="{{ path('back') }}" method="post" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette candidature ?');">
+																		<input type="hidden" name="action" value="delete_candidature">
+																		<input type="hidden" name="id" value="{{ candidature.id_candidature }}">
+																		<button type="submit" class="btn btn-sm btn-outline-danger">
+																			<i class="mdi mdi-delete"></i>
+																		</button>
+																	</form>
+																</td>
+															</tr>
+														{% else %}
+															<tr>
+																<td colspan="5">Aucune candidature trouvée.</td>
+															</tr>
+														{% endfor %}
+													</tbody>
+												</table>
+											</div>
+											<!-- Pagination for Applications -->
+											{% if application_pagination.total_pages > 1 %}
+												<nav aria-label="Pagination des candidatures" class="mt-4">
+													<ul class="pagination justify-content-center">
+														<li class="page-item {{ application_pagination.current_page == 1 ? 'disabled' : '' }}">
+															<a class="page-link" href="{{ path('back', application_pagination.query_params|merge({'application_page': application_pagination.current_page - 1})) }}" aria-label="Précédent">
+																<span aria-hidden="true">«</span>
+															</a>
+														</li>
+														{% for page in 1..application_pagination.total_pages %}
+															<li class="page-item {{ page == application_pagination.current_page ? 'active' : '' }}">
+																<a class="page-link" href="{{ path('back', application_pagination.query_params|merge({'application_page': page})) }}">{{ page }}</a>
+															</li>
+														{% endfor %}
+														<li class="page-item {{ application_pagination.current_page == application_pagination.total_pages ? 'disabled' : '' }}">
+															<a class="page-link" href="{{ path('back', application_pagination.query_params|merge({'application_page': application_pagination.current_page + 1})) }}" aria-label="Suivant">
+																<span aria-hidden="true">»</span>
+															</a>
+														</li>
+													</ul>
+												</nav>
+											{% endif %}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
-<!-- New Offer Modal -->
-<div class="modal fade" id="newOfferModal" tabindex="-1" aria-labelledby="newOfferModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="newOfferModalLabel">Créer une Nouvelle Offre d'Emploi</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="{{ path('back') }}" method="post" enctype="multipart/form-data">
-                <div class="modal-body">
-                    <input type="hidden" name="action" value="create_offer">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="offerTitle" class="form-label">Titre de l'Offre</label>
-                            <input type="text" class="form-control" id="offerTitle" name="title" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="offerOrganisation" class="form-label">Organisation</label>
-                            <input type="text" class="form-control" id="offerOrganisation" name="organisation" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="offerCategory" class="form-label">Catégorie</label>
-                            <select class="form-control" id="offerCategory" name="category" required>
-                                <option value="">Sélectionner une catégorie</option>
-                                {% for category in categories %}
-                                    <option value="{{ category }}">{{ category }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="offerRegion" class="form-label">Région</label>
-                            <select class="form-control" id="offerRegion" name="region" required>
-                                <option value="">Sélectionner une région</option>
-                                {% for region in regions %}
-                                    <option value="{{ region }}">{{ region }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="offerSalary" class="form-label">Salaire (TND)</label>
-                            <input type="number" class="form-control" id="offerSalary" name="salary" step="0.01" min="0">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="offerStatus" class="form-label">Statut</label>
-                            <select class="form-control" id="offerStatus" name="status" required>
-                                <option value="Active">Actif</option>
-                                <option value="Inactive">Inactif</option>
-                            </select>
-                        </div>
-                        <div class="col-12 mb-3">
-                            <label for="offerDescription" class="form-label">Description</label>
-                            <textarea class="form-control" id="offerDescription" name="description" rows="5" required></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Créer l'Offre</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+	<!-- New Offer Modal -->
+	<div class="modal fade" id="newOfferModal" tabindex="-1" aria-labelledby="newOfferModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="newOfferModalLabel">Créer une Nouvelle Offre d'Emploi</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<form action="{{ path('back') }}" method="post" enctype="multipart/form-data">
+					<div class="modal-body">
+						<input type="hidden" name="action" value="create_offer">
+						<div class="row">
+							<div class="col-md-6 mb-3">
+								<label for="offerTitle" class="form-label">Titre de l'Offre</label>
+								<input type="text" class="form-control" id="offerTitle" name="title" required>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label for="offerOrganisation" class="form-label">Organisation</label>
+								<input type="text" class="form-control" id="offerOrganisation" name="organisation" required>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label for="offerCategory" class="form-label">Catégorie</label>
+								<select class="form-control" id="offerCategory" name="category" required>
+									<option value="">Sélectionner une catégorie</option>
+									{% for category in categories %}
+										<option value="{{ category }}">{{ category }}</option>
+									{% endfor %}
+								</select>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label for="offerRegion" class="form-label">Région</label>
+								<select class="form-control" id="offerRegion" name="region" required>
+									<option value="">Sélectionner une région</option>
+									{% for region in regions %}
+										<option value="{{ region }}">{{ region }}</option>
+									{% endfor %}
+								</select>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label for="offerSalary" class="form-label">Salaire (TND)</label>
+								<input type="number" class="form-control" id="offerSalary" name="salary" step="0.01" min="0">
+							</div>
+							<div class="col-md-6 mb-3">
+								<label for="offerStatus" class="form-label">Statut</label>
+								<select class="form-control" id="offerStatus" name="status" required>
+									<option value="Active">Actif</option>
+									<option value="Inactive">Inactif</option>
+								</select>
+							</div>
+							<div class="col-12 mb-3">
+								<label for="offerDescription" class="form-label">Description</label>
+								<textarea class="form-control" id="offerDescription" name="description" rows="5" required></textarea>
+							</div>
+						</div>
+					</div>
 
-<!-- View Offer Modal -->
-<div class="modal fade" id="viewOffreModal" tabindex="-1" aria-labelledby="viewOffreModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="viewOffreModalLabel">Détails de l'Offre</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h5 id="viewOfferTitle"></h5>
-                <p><strong>Organisation:</strong> <span id="viewOfferOrganisation"></span></p>
-                <p><strong>Catégorie:</strong> <span id="viewOfferCategory"></span></p>
-                <p><strong>Région:</strong> <span id="viewOfferRegion"></span></p>
-                <p><strong>Salaire:</strong> <span id="viewOfferSalary"></span> TND</p>
-                <p><strong>Statut:</strong> <span id="viewOfferStatus"></span></p>
-                <p><strong>Date de Publication:</strong> <span id="viewOfferDate"></span></p>
-                <p><strong>Description:</strong></p>
-                <p id="viewOfferDescription"></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-            </div>
-        </div>
-    </div>
-</div>
+                    
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+						<button type="submit" class="btn btn-primary">Créer l'Offre</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 
-<!-- New Candidature Modal -->
-<div class="modal fade" id="newCandidatureModal" tabindex="-1" aria-labelledby="newCandidatureModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="newCandidatureModalLabel">Nouvelle Candidature</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="{{ path('back') }}" method="post" enctype="multipart/form-data">
-                <div class="modal-body">
-                    <input type="hidden" name="action" value="create_candidature">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="candidatureUser" class="form-label">Candidat (Email)</label>
-                            <input type="email" class="form-control" id="candidatureUser" name="user_email" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="candidatureOffer" class="form-label">Offre</label>
-                            <select class="form-control" id="candidatureOffer" name="offer_id" required>
-                                <option value="">Sélectionner une offre</option>
-                                {% for offre in all_offers %}
-                                    <option value="{{ offre.id_offre }}">{{ offre.titre }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="candidatureStatus" class="form-label">Statut</label>
-                            <select class="form-control" id="candidatureStatus" name="status" required>
-                                <option value="En attente">En attente</option>
-                                <option value="Acceptée">Acceptée</option>
-                                <option value="Refusée">Refusée</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="candidatureFile" class="form-label">CV (PDF)</label>
-                            <input type="file" class="form-control" id="candidatureFile" name="cv_file" accept=".pdf">
-                        </div>
-                        <div class="col-12 mb-3">
-                            <label for="candidatureMessage" class="form-label">Message de Candidature</label>
-                            <textarea class="form-control" id="candidatureMessage" name="message" rows="5"></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Soumettre la Candidature</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+	<!-- View Offer Modal -->
+	<div class="modal fade" id="viewOffreModal" tabindex="-1" aria-labelledby="viewOffreModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="viewOffreModalLabel">Détails de l'Offre</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<h5 id="viewOfferTitle"></h5>
+					<p>
+						<strong>Organisation:</strong>
+						<span id="viewOfferOrganisation"></span>
+					</p>
+					<p>
+						<strong>Catégorie:</strong>
+						<span id="viewOfferCategory"></span>
+					</p>
+					<p>
+						<strong>Région:</strong>
+						<span id="viewOfferRegion"></span>
+					</p>
+					<p>
+						<strong>Salaire:</strong>
+						<span id="viewOfferSalary"></span>
+						TND</p>
+					<p>
+						<strong>Statut:</strong>
+						<span id="viewOfferStatus"></span>
+					</p>
+					<p>
+						<strong>Date de Publication:</strong>
+						<span id="viewOfferDate"></span>
+					</p>
+					<p>
+						<strong>Description:</strong>
+					</p>
+					<p id="viewOfferDescription"></p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
-<!-- View Candidature Modal -->
-<div class="modal fade" id="viewCandidatureModal" tabindex="-1" aria-labelledby="viewCandidatureModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="viewCandidatureModalLabel">Détails de la Candidature</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p><strong>Candidat:</strong> <span id="viewCandidatureUser"></span></p>
-                <p><strong>Email:</strong> <span id="viewCandidatureEmail"></span></p>
-                <p><strong>Offre:</strong> <span id="viewCandidatureOffer"></span></p>
-                <p><strong>Date de Candidature:</strong> <span id="viewCandidatureDate"></span></p>
-                <p><strong>Statut:</strong> <span id="viewCandidatureStatus"></span></p>
-                <p><strong>Message:</strong></p>
-                <p id="viewCandidatureMessage"></p>
-                <p><strong>CV:</strong> <a id="viewCandidatureCV" href="#" target="_blank">Voir le CV</a></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-            </div>
-        </div>
-    </div>
-</div>
+	<!-- New Candidature Modal -->
+	<div class="modal fade" id="newCandidatureModal" tabindex="-1" aria-labelledby="newCandidatureModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="newCandidatureModalLabel">Nouvelle Candidature</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<form action="{{ path('back') }}" method="post" enctype="multipart/form-data">
+					<div class="modal-body">
+						<input type="hidden" name="action" value="create_candidature">
+						<div class="row">
+							<div class="col-md-6 mb-3">
+								<label for="candidatureUser" class="form-label">Candidat (Email)</label>
+								<input type="email" class="form-control" id="candidatureUser" name="user_email" required>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label for="candidatureOffer" class="form-label">Offre</label>
+								<select class="form-control" id="candidatureOffer" name="offer_id" required>
+									<option value="">Sélectionner une offre</option>
+									{% for offre in all_offers %}
+										<option value="{{ offre.id_offre }}">{{ offre.titre }}</option>
+									{% endfor %}
+								</select>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label for="candidatureStatus" class="form-label">Statut</label>
+								<select class="form-control" id="candidatureStatus" name="status" required>
+									<option value="En attente">En attente</option>
+									<option value="Acceptée">Acceptée</option>
+									<option value="Refusée">Refusée</option>
+								</select>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label for="candidatureFile" class="form-label">CV (PDF)</label>
+								<input type="file" class="form-control" id="candidatureFile" name="cv_file" accept=".pdf">
+							</div>
+							<div class="col-12 mb-3">
+								<label for="candidatureMessage" class="form-label">Message de Candidature</label>
+								<textarea class="form-control" id="candidatureMessage" name="message" rows="5"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+						<button type="submit" class="btn btn-primary">Soumettre la Candidature</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- View Candidature Modal -->
+	<div class="modal fade" id="viewCandidatureModal" tabindex="-1" aria-labelledby="viewCandidatureModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="viewCandidatureModalLabel">Détails de la Candidature</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<p>
+						<strong>Candidat:</strong>
+						<span id="viewCandidatureUser"></span>
+					</p>
+					<p>
+						<strong>Email:</strong>
+						<span id="viewCandidatureEmail"></span>
+					</p>
+					<p>
+						<strong>Offre:</strong>
+						<span id="viewCandidatureOffer"></span>
+					</p>
+					<p>
+						<strong>Date de Candidature:</strong>
+						<span id="viewCandidatureDate"></span>
+					</p>
+					<p>
+						<strong>Statut:</strong>
+						<span id="viewCandidatureStatus"></span>
+					</p>
+					<p>
+						<strong>Message:</strong>
+					</p>
+					<p id="viewCandidatureMessage"></p>
+					<p>
+						<strong>CV:</strong>
+						<a id="viewCandidatureCV" href="#" target="_blank">Voir le CV</a>
+					</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
     <script>
-        // JavaScript to handle dynamic modal data loading (simplified example)
         document.addEventListener('DOMContentLoaded', function () {
+            // Function to activate Offers tab for #offers
+            function activateOffersTab() {
+                if (window.location.hash === '#offers') {
+                    const tabEl = document.getElementById('offers-tab');
+                    if (tabEl) {
+                        if (typeof bootstrap !== 'undefined') {
+                            const tab = new bootstrap.Tab(tabEl);
+                            tab.show();
+                            setTimeout(() => {
+                                const tabsContainer = document.querySelector('.nav-tabs');
+                                if (tabsContainer) {
+                                    const headerHeight = document.querySelector('.fixed-top')?.offsetHeight || 0;
+                                    window.scrollTo({
+                                        top: tabsContainer.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20,
+                                        behavior: 'smooth'
+                                    });
+                                }
+                            }, 300);
+                        } else {
+                            tabEl.click();
+                        }
+                    }
+                }
+            }
+
+            // Function to activate Candidatures tab for #candidatures
+            function activateCandidaturesTab() {
+                if (window.location.hash === '#candidatures') {
+                    const tabEl = document.getElementById('applications-tab');
+                    if (tabEl) {
+                        if (typeof bootstrap !== 'undefined') {
+                            const tab = new bootstrap.Tab(tabEl);
+                            tab.show();
+                            setTimeout(() => {
+                                const tabsContainer = document.querySelector('.nav-tabs');
+                                if (tabsContainer) {
+                                    const headerHeight = document.querySelector('.fixed-top')?.offsetHeight || 0;
+                                    window.scrollTo({
+                                        top: tabsContainer.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20,
+                                        behavior: 'smooth'
+                                    });
+                                }
+                            }, 300);
+                        } else {
+                            tabEl.click();
+                        }
+                    }
+                }
+            }
+
+            // Function to activate default Overview tab
+            function activateDefaultTab() {
+                if (!window.location.hash || (window.location.hash !== '#offers' && window.location.hash !== '#candidatures')) {
+                    const tabEl = document.getElementById('overview-tab');
+                    if (tabEl) {
+                        if (typeof bootstrap !== 'undefined') {
+                            const tab = new bootstrap.Tab(tabEl);
+                            tab.show();
+                            setTimeout(() => {
+                                const tabsContainer = document.querySelector('.nav-tabs');
+                                if (tabsContainer) {
+                                    const headerHeight = document.querySelector('.fixed-top')?.offsetHeight || 0;
+                                    window.scrollTo({
+                                        top: tabsContainer.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20,
+                                        behavior: 'smooth'
+                                    });
+                                }
+                            }, 300);
+                        } else {
+                            tabEl.click();
+                        }
+                    }
+                }
+            }
+
+
+// Update URL hash when a tab is clicked
+            document.querySelectorAll('.nav-tabs .nav-link').forEach(tabLink => {
+                tabLink.addEventListener('click', function () {
+                    const tabId = this.getAttribute('id');
+                    let hash;
+                    if (tabId === 'overview-tab') {
+                        hash = ''; // No hash for Overview to keep URL clean
+                    } else if (tabId === 'offers-tab') {
+                        hash = '#offers';
+                    } else if (tabId === 'applications-tab') {
+                        hash = '#candidatures';
+                    }
+                    if (hash !== undefined) {
+                        window.location.hash = hash;
+                    }
+                });
+            });
+            // Activate tabs on page load
+            activateOffersTab();
+            activateCandidaturesTab();
+            activateDefaultTab();
+
+            // Handle hash changes
+            window.addEventListener('hashchange', function () {
+                activateOffersTab();
+                activateCandidaturesTab();
+                activateDefaultTab();
+            });
+
+            // Handle filter form submission for offers (sets #offers hash)
+            const offerFilterForm = document.querySelector('form[action="{{ path('back') }}#offers"]');
+            if (offerFilterForm) {
+                offerFilterForm.addEventListener('submit', function (event) {
+                    window.location.hash = '#offers';
+                });
+            }
+
+            // Handle filter form submission for applications (sets #candidatures hash)
+            const applicationFilterForm = document.querySelector('form[action="{{ path('back') }}#candidatures"]');
+            if (applicationFilterForm) {
+                applicationFilterForm.addEventListener('submit', function (event) {
+                    window.location.hash = '#candidatures';
+                });
+            }
+
             // View Offer Modal
             document.querySelectorAll('[data-bs-target="#viewOffreModal"]').forEach(button => {
                 button.addEventListener('click', function () {
                     const offerId = this.getAttribute('data-id');
-                    // Simulate fetching offer data (replace with actual AJAX call)
+                    // Replace with actual AJAX call to fetch offer data
                     const offerData = {
                         id: offerId,
                         title: "Développeur Full Stack",
@@ -686,7 +903,7 @@
             document.querySelectorAll('[data-bs-target="#viewCandidatureModal"]').forEach(button => {
                 button.addEventListener('click', function () {
                     const candidatureId = this.getAttribute('data-id');
-                    // Simulate fetching candidature data (replace with actual AJAX call)
+                    // Replace with actual AJAX call to fetch candidature data
                     const candidatureData = {
                         id: candidatureId,
                         user: "Jean Dupont",
@@ -706,8 +923,7 @@
                     document.getElementById('viewCandidatureCV').setAttribute('href', candidatureData.cv);
                 });
             });
-        });
-        document.addEventListener('DOMContentLoaded', function () {
+
             // Application Status Chart (Bar Chart)
             const ctxStatus = document.getElementById('applicationStatusChart').getContext('2d');
             new Chart(ctxStatus, {
@@ -748,7 +964,7 @@
                     labels: [{% for category, count in categories %}'{{ category }}',{% endfor %}],
                     datasets: [{
                         data: [{% for category, count in categories %}{{ count }},{% endfor %}],
-                        backgroundColor: ['#007bff', '#28a745', '#dc3545', '#ffc107', '#17a2b8'],
+                        backgroundColor: ['#007bff', '#28a745', '#dc3545', '#ffc107', '#17a2b8']
                     }]
                 },
                 options: {

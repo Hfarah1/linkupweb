@@ -92,19 +92,19 @@ final class BackController extends AbstractController
         $offerQuery = $offreRepository->createQueryBuilder('o');
         if ($filters['offer_search']) {
             $offerQuery->andWhere('o.titre LIKE :search OR o.description LIKE :search')
-                       ->setParameter('search', '%' . $filters['offer_search'] . '%');
+                ->setParameter('search', '%' . $filters['offer_search'] . '%');
         }
         if ($filters['offer_category']) {
             $offerQuery->andWhere('o.categorie = :category')
-                       ->setParameter('category', $filters['offer_category']);
+                ->setParameter('category', $filters['offer_category']);
         }
         if ($filters['offer_region']) {
             $offerQuery->andWhere('o.gouvernorat = :region')
-                       ->setParameter('region', $filters['offer_region']);
+                ->setParameter('region', $filters['offer_region']);
         }
         if ($filters['offer_salary'] > 0) {
             $offerQuery->andWhere('o.salaire >= :salary')
-                       ->setParameter('salary', $filters['offer_salary']);
+                ->setParameter('salary', $filters['offer_salary']);
         }
 
         // Apply sorting
@@ -143,11 +143,11 @@ final class BackController extends AbstractController
             ->join('c.user', 'u');
         if ($filters['application_search']) {
             $applicationQuery->andWhere('o.titre LIKE :search OR u.prenom LIKE :search OR u.nom LIKE :search')
-                            ->setParameter('search', '%' . $filters['application_search'] . '%');
+                ->setParameter('search', '%' . $filters['application_search'] . '%');
         }
         if ($filters['application_status']) {
             $applicationQuery->andWhere('c.statut = :status')
-                            ->setParameter('status', $filters['application_status']);
+                ->setParameter('status', $filters['application_status']);
         }
 
         $totalApplications = (clone $applicationQuery)->select('COUNT(c.id_candidature)')->getQuery()->getSingleScalarResult();
@@ -345,7 +345,9 @@ final class BackController extends AbstractController
                 }
             }
         }
-
+        // Retrieve active tab parameter
+        $activeTab = $request->query->get('active_tab', 'overview');
+        
         return $this->render('back/backAhmed.html.twig', [
             'controller_name' => 'BackController',
             'user' => $user,
@@ -366,6 +368,7 @@ final class BackController extends AbstractController
             'view_candidature' => $request->query->getInt('view_candidature', 0),
             'edit_offre' => $request->query->getInt('edit_offre', 0),
             'recommended_offers' => $recommendedOffers,
+            'active_tab' => $activeTab,
         ]);
     }
 
