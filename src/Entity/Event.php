@@ -6,7 +6,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use App\Repository\EventRepository;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
@@ -30,8 +31,12 @@ class Event
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
-    #[Assert\NotBlank(message: "La date de commande ne peut pas être vide")]
-    private ?string $titre = null;
+    #[Assert\NotBlank(message: "Le titre est obligatoire.")]
+    #[Assert\Length(
+        min: 3,
+        minMessage: "Le titre doit contenir au moins {{ limit }} caractères."
+    )]    private ?string $titre = null;
+    
 
     public function getTitre(): ?string
     {
@@ -45,6 +50,11 @@ class Event
     }
 
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\NotBlank(message: "La description est obligatoire.")]
+    #[Assert\Length(
+        min: 5,
+        minMessage: "La description doit contenir au moins {{ limit }} caractères."
+    )]
     private ?string $description = null;
 
     public function getDescription(): ?string
@@ -59,6 +69,8 @@ class Event
     }
 
     #[ORM\Column(type: 'datetime', nullable: false)]
+    #[Assert\NotNull(message: "La date de début est obligatoire.")]
+    #[Assert\NotBlank(message: "La date de début est obligatoire.")]
     private ?\DateTimeInterface $date_debut = null;
 
     public function getDate_debut(): ?\DateTimeInterface
@@ -73,6 +85,8 @@ class Event
     }
 
     #[ORM\Column(type: 'datetime', nullable: false)]
+    #[Assert\NotNull(message: "La date de fin est obligatoire.")]
+    #[Assert\NotBlank(message: "La date de début est obligatoire.")]
     private ?\DateTimeInterface $date_fin = null;
 
     public function getDate_fin(): ?\DateTimeInterface
@@ -85,8 +99,6 @@ class Event
         $this->date_fin = $date_fin;
         return $this;
     }
-
-    
 
     #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'events')]
     #[ORM\JoinColumn(name: 'id_categorie', referencedColumnName: 'id_categorie')]
@@ -104,16 +116,49 @@ class Event
     }
 
     #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $imagePath = null;
+    private ?string $image_path = null;
 
-    public function getImagePath(): ?string
+    public function getImage_path(): ?string
     {
-        return $this->imagePath;
+        return $this->image_path;
     }
 
-    public function setImagePath(?string $imagePath): self
+    public function setImage_path(?string $image_path): self
     {
-        $this->imagePath = $imagePath;
+        $this->image_path = $image_path;
+        return $this;
+    }
+
+    #[ORM\OneToMany(targetEntity: Rating::class, mappedBy: 'event')]
+    private Collection $ratings;
+
+    public function __construct()
+    {
+        $this->ratings = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection<int, Rating>
+     */
+    public function getRatings(): Collection
+    {
+        if (!$this->ratings instanceof Collection) {
+            $this->ratings = new ArrayCollection();
+        }
+        return $this->ratings;
+    }
+
+    public function addRating(Rating $rating): self
+    {
+        if (!$this->getRatings()->contains($rating)) {
+            $this->getRatings()->add($rating);
+        }
+        return $this;
+    }
+
+    public function removeRating(Rating $rating): self
+    {
+        $this->getRatings()->removeElement($rating);
         return $this;
     }
 
@@ -142,6 +187,18 @@ class Event
     public function setDateFin(\DateTimeInterface $date_fin): static
     {
         $this->date_fin = $date_fin;
+
+        return $this;
+    }
+
+    public function getImagePath(): ?string
+    {
+        return $this->image_path;
+    }
+
+    public function setImagePath(?string $image_path): static
+    {
+        $this->image_path = $image_path;
 
         return $this;
     }

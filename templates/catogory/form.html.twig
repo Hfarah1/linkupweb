@@ -37,7 +37,9 @@
                                         'class': 'form-control',
                                         'onchange': 'previewImage(this)'
                                     }}) }}
-                                    {{ form_errors(form.description) }}
+                                    <span class="text-danger">
+              {{ form_errors(form.description) }}
+                </span>
                                 </div>
                                 <div class="mt-2" id="imagePreview" style="display:none;">
                                     <img id="preview" src="#" alt="Aperçu du categorie" class="img-thumbnail" style="max-width: 150px; max-height: 150px;">

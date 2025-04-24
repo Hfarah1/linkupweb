@@ -15,7 +15,8 @@
 </div>
 
 <!-- FORM START -->
-{{ form_start(form) }}
+{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
 <div class="container-fluid contact py-5">
     <div class="container py-5">
         <div class="p-5 bg-light rounded">
@@ -51,28 +52,41 @@
 
                     
                     {{ form_row(form.titre, {
-                        'attr': {'class': 'w-100 form-control border-0 py-3 mb-4', 'placeholder': 'Name of event'}
+                        'attr': {'class': 'w-100 form-control border-0 py-3 mb-4', 'placeholder': 'Name of event',
+                        'required': false,
+                        'minlength': '3'
+                        }
                     }) }}
                      
                     {{ form_row(form.description, {
-                        'attr': {'class': 'w-100 form-control border-0 py-3 mb-4', 'placeholder': 'description'}
+                        'attr': {'class': 'w-100 form-control border-0 py-3 mb-4', 'placeholder': 'description',
+                                    'required': false,
+                                    'minlength': '5'
+                                }
                     }) }}
                        <div class="mb-4">
-                            {{ form_label(form.dateDebut, 'Date de début', {'label_attr': {'class': 'form-label'}}) }}
-                                {{ form_widget(form.dateDebut, {
-                                    'attr': {
-                                        'class': 'form-control datepicker-custom',
-                                        'placeholder': 'Choisissez la date de début'
-                                    }
-                                }) }}
-                                {{ form_errors(form.dateDebut) }}
-                        </div>
-
-                        <div class="mb-4">
-                            {{ form_label(form.dateFin, 'Date de fin', {'label_attr': {'class': 'form-label'}}) }}
-                            {{ form_widget(form.dateFin, {
+                            {{ form_row(form.dateDebut, {
+                                'label': 'Date de début',
+                                'label_attr': {'class': 'form-label'},
                                 'attr': {
                                     'class': 'form-control datepicker-custom',
+                                    'autocomplete': 'off',
+                                    'required': false,
+                                    'placeholder': 'Choisissez la date de début'
+                                }
+                            }) }}
+                            {{ form_errors(form.dateDebut) }}
+                        </div>
+
+                                                
+                        <div class="mb-4">
+                            {{ form_row(form.dateFin, {
+                                'label': 'Date de fin',
+                                'label_attr': {'class': 'form-label'},
+                                'attr': {
+                                    'class': 'form-control datepicker-custom',
+                                    'autocomplete': 'off',
+                                    'required': false,
                                     'placeholder': 'Choisissez la date de fin'
                                 }
                             }) }}
@@ -130,6 +144,7 @@
         });
     });
 </script>
+
 
 
 {% endblock %}

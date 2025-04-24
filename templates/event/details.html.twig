@@ -1,0 +1,32 @@
+<h2>{{ event.titre }}</h2>
+<p>{{ event.description }}</p>
+<p class="fw-bold">Moyenne : {{ moyenne }} / 5 basée sur {{ n }} avis</p>
+
+<div class="rating-bars">
+    {% set bars = {
+        5: n5,
+        4: n4,
+        3: n3,
+        2: n2,
+        1: n1
+    } %}
+    {% for i in 5..1 %}
+        {% set percent = n > 0 ? (bars[i] / n * 100)|round : 0 %}
+        <div class="row align-items-center mb-1">
+            <div class="col-1">{{ i }} ★</div>
+            <div class="col-9">
+                <div class="bar-container bg-light rounded" style="height: 18px;">
+                    <div style="width: {{ percent }}%; height: 100%; background-color: {% if i == 5 %}#04AA6D{% elseif i == 4 %}#2196F3{% elseif i == 3 %}#00bcd4{% elseif i == 2 %}#ff9800{% else %}#f44336{% endif %};"></div>
+                </div>
+            </div>
+            <div class="col-2 text-end">{{ bars[i] }}</div>
+        </div>
+    {% endfor %}
+</div>
+<style>
+.bar-container {
+    width: 100%;
+    background-color: #f1f1f1;
+    border-radius: 4px;
+}
+</style>
