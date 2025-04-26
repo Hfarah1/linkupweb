@@ -1,0 +1,293 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Join Virtual Event - {{ event.titre }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    #video-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1rem;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        min-height: 400px;
+        border-radius: 8px;
+    }
+
+    .video-player {
+        width: 100%;
+        height: 300px;
+        background-color: #343a40;
+        border-radius: 4px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+
+    .video-controls {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 1rem;
+        padding: 1rem;
+    }
+
+    .control-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .control-btn:hover {
+        opacity: 0.8;
+    }
+
+    .control-btn.mic {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .control-btn.camera {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .control-btn.leave {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .control-btn.disabled {
+        background-color: #6c757d;
+    }
+
+    .event-info {
+        margin-bottom: 2rem;
+    }
+
+    #error-message {
+        display: none;
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 1rem;
+        border-radius: 4px;
+        margin-bottom: 1rem;
+    }
+
+    .loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .video-placeholder {
+        text-align: center;
+        padding: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="event-info">
+        <h1>{{ event.titre }}</h1>
+        <p class="text-muted">{{ event.description }}</p>
+    </div>
+
+    <div style="color: #007bff; font-weight: bold;">AppID utilisé : {{ event.appId }}</div>
+    <div style="color: #28a745; font-weight: bold;">Channel utilisé : {{ event.channel }}</div>
+
+    <div id="error-message"></div>
+
+    <div id="video-container">
+        <div class="video-player" id="local-player">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin fa-2x"></i>
+                <p>Connexion en cours...</p>
+            </div>
+        </div>
+        <div class="video-player" id="remote-player">
+            <div class="video-placeholder">
+                <i class="fas fa-users fa-2x"></i>
+                <p>En attente d'autres participants...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="video-controls">
+        <button class="control-btn mic" id="mic-btn" disabled>
+            <i class="fas fa-microphone"></i>
+            <span>Microphone</span>
+        </button>
+        <button class="control-btn camera" id="camera-btn" disabled>
+            <i class="fas fa-video"></i>
+            <span>Caméra</span>
+        </button>
+        <button class="control-btn leave" id="leave-btn">
+            <i class="fas fa-phone-slash"></i>
+            <span>Quitter</span>
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
+<script>
+let rtc = {
+    client: null,
+    localAudioTrack: null,
+    localVideoTrack: null
+};
+
+const options = {
+    appId: '{{ event.appId }}',
+    channel: '{{ event.channel }}',
+    token: '{{ event.token }}',
+    uid: Math.floor(Math.random() * 1000000)
+};
+
+console.log('Agora AppID used:', options.appId);
+
+function showError(message) {
+    const errorDiv = document.getElementById('error-message');
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+}
+
+function enableControls(enabled) {
+    document.getElementById('mic-btn').disabled = !enabled;
+    document.getElementById('camera-btn').disabled = !enabled;
+}
+
+async function initializeAgora() {
+    try {
+        console.log('Initializing Agora...');
+        rtc.client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
+        
+        // Set up event handlers for remote users
+        rtc.client.on('user-published', async (user, mediaType) => {
+            await rtc.client.subscribe(user, mediaType);
+            
+            if (mediaType === 'video') {
+                const remotePlaceholder = document.querySelector('#remote-player .video-placeholder');
+                if (remotePlaceholder) {
+                    remotePlaceholder.style.display = 'none';
+                }
+                user.videoTrack.play('remote-player');
+            }
+            if (mediaType === 'audio') {
+                user.audioTrack.play();
+            }
+        });
+
+        rtc.client.on('user-unpublished', (user, mediaType) => {
+            if (mediaType === 'video') {
+                const remotePlaceholder = document.querySelector('#remote-player .video-placeholder');
+                if (remotePlaceholder) {
+                    remotePlaceholder.style.display = 'block';
+                }
+            }
+        });
+
+        // Join the channel
+        console.log('Joining channel...');
+        await rtc.client.join(options.appId, options.channel, options.token, options.uid);
+        
+        // Create and publish local tracks
+        console.log('Creating local tracks...');
+        rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+        rtc.localVideoTrack = await AgoraRTC.createCameraVideoTrack();
+        
+        // Remove loading indicator
+        const loadingDiv = document.querySelector('#local-player .loading');
+        if (loadingDiv) {
+            loadingDiv.style.display = 'none';
+        }
+
+        rtc.localVideoTrack.play('local-player');
+        await rtc.client.publish([rtc.localAudioTrack, rtc.localVideoTrack]);
+        
+        // Enable controls
+        enableControls(true);
+        updateButtonStates();
+        
+        console.log('Successfully joined the channel');
+    } catch (error) {
+        console.error('Error joining channel:', error);
+        showError('Erreur lors de la connexion à la session virtuelle: ' + error.message);
+        enableControls(false);
+    }
+}
+
+function updateButtonStates() {
+    const micBtn = document.getElementById('mic-btn');
+    const cameraBtn = document.getElementById('camera-btn');
+    
+    if (rtc.localAudioTrack) {
+        micBtn.classList.toggle('disabled', !rtc.localAudioTrack.enabled);
+    }
+    if (rtc.localVideoTrack) {
+        cameraBtn.classList.toggle('disabled', !rtc.localVideoTrack.enabled);
+    }
+}
+
+// Button click handlers
+document.getElementById('mic-btn').onclick = async function() {
+    if (rtc.localAudioTrack) {
+        rtc.localAudioTrack.setEnabled(!rtc.localAudioTrack.enabled);
+        updateButtonStates();
+    }
+};
+
+document.getElementById('camera-btn').onclick = async function() {
+    if (rtc.localVideoTrack) {
+        rtc.localVideoTrack.setEnabled(!rtc.localVideoTrack.enabled);
+        updateButtonStates();
+    }
+};
+
+document.getElementById('leave-btn').onclick = async function() {
+    try {
+        if (rtc.localAudioTrack) {
+            rtc.localAudioTrack.close();
+        }
+        if (rtc.localVideoTrack) {
+            rtc.localVideoTrack.close();
+        }
+        
+        await rtc.client.leave();
+        window.location.href = '{{ path('newEventFront', {'id_categorie': event.categorie.id}) }}';
+    } catch (error) {
+        console.error('Error leaving channel:', error);
+        window.location.href = '{{ path('newEventFront', {'id_categorie': event.categorie.id}) }}';
+    }
+};
+
+// Cleanup when the page is closed
+window.onbeforeunload = async function() {
+    if (rtc.localAudioTrack) {
+        rtc.localAudioTrack.close();
+    }
+    if (rtc.localVideoTrack) {
+        rtc.localVideoTrack.close();
+    }
+    if (rtc.client) {
+        await rtc.client.leave();
+    }
+};
+
+// Initialize when the page loads
+document.addEventListener('DOMContentLoaded', initializeAgora);
+</script>
+{% endblock %}

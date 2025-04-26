@@ -1,123 +1,151 @@
-{% extends 'baseback.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% block title %}Ajouter une Catégorie{% endblock %}
+{% block title %}Créer un événement {{ type == 'virtual' ? 'virtuel' : 'présentiel' }}{% endblock %}
 
 {% block body %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('eventslist') }}">Événements</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('event_new_choice', {'id_categorie': categorie.id}) }}">Choix du type</a></li>
+            <li class="breadcrumb-item active">Nouvel événement {{ type == 'virtual' ? 'virtuel' : 'présentiel' }}</li>
+        </ol>
+    </nav>
 
-<!-- Header -->
-<div class="container-fluid page-header py-5">
-    <h1 class="text-center text-white display-6">Add a category</h1>
-    <ol class="breadcrumb justify-content-center mb-0">
-        <li class="breadcrumb-item"><a href="#">Home</a></li>
-        <li class="breadcrumb-item"><a href="#">Pages</a></li>
-        <li class="breadcrumb-item active text-white">Add a category</li>
-    </ol>
-</div>
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex align-items-center">
+                <i class="fas {{ type == 'virtual' ? 'fa-video' : 'fa-map-marker-alt' }} me-2"></i>
+                <h1 class="h3 mb-0">Créer un événement {{ type == 'virtual' ? 'virtuel' : 'présentiel' }}</h1>
+            </div>
+        </div>
 
-<!-- FORM START -->
-{{ form_start(form) }}
-<div class="container-fluid contact py-5">
-    <div class="container py-5">
-        <div class="p-5 bg-light rounded">
-            <div class="row g-4">
-                <!-- Title -->
-                <div class="col-12">
-                    <div class="text-center mx-auto" style="max-width: 700px;">
-                        <h1 class="text-primary">ADD AND HAVE FUN</h1>
-                        <p class="mb-4">IN OUR WEBSITE, OF COURSE YOU CAN CREATE YOUR EVENT</p>
+        <div class="card-body">
+            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+            
+            <div class="row">
+                <div class="col-md-8">
+                    {# Informations principales #}
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Informations principales</h5>
+                            
+                            <div class="mb-3">
+                                {{ form_label(form.titre, 'Titre', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.titre, {'attr': {'class': 'form-control' ~ (form.titre.vars.valid ? '' : ' is-invalid')}}) }}
+                                {{ form_errors(form.titre) }}
+                                <div class="form-text">Donnez un titre clair et descriptif à votre événement</div>
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.description, {'attr': {'class': 'form-control' ~ (form.description.vars.valid ? '' : ' is-invalid'), 'rows': '5'}}) }}
+                                {{ form_errors(form.description) }}
+                                <div class="form-text">Décrivez votre événement en détail</div>
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form_label(form.image_path, 'Image', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.image_path, {'attr': {'class': 'form-control' ~ (form.image_path.vars.valid ? '' : ' is-invalid')}}) }}
+                                {{ form_errors(form.image_path) }}
+                                <div class="form-text">Choisissez une image représentative pour votre événement</div>
+                            </div>
+                        </div>
                     </div>
+
+                    {# Informations spécifiques au type d'événement #}
+                    {% if type == 'physical' %}
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title mb-4">Lieu de l'événement</h5>
+                                
+                                <div class="mb-3">
+                                    {{ form_label(form.lieu, 'Adresse', {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.lieu, {'attr': {'class': 'form-control' ~ (form.lieu.vars.valid ? '' : ' is-invalid')}}) }}
+                                    {{ form_errors(form.lieu) }}
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form_label(form.ville, 'Ville', {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.ville, {'attr': {'class': 'form-control' ~ (form.ville.vars.valid ? '' : ' is-invalid')}}) }}
+                                    {{ form_errors(form.ville) }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
 
-                <!-- LEFT COLUMN -->
-                <div class="col-lg-7">
-                    <div class="form-item w-100">
-                                {{ form_label(form.imagePath, 'categorie', {'label_attr': {'class': 'form-label my-3'}}) }}
-                                <div class="custom-file">
-                                    {{ form_widget(form.imagePath, {'attr': {
-                                        'class': 'form-control',
-                                        'onchange': 'previewImage(this)'
-                                    }}) }}
-                                    {{ form_errors(form.imagePath) }}
-                                </div>
-                                <div class="mt-2" id="imagePreview" style="display:none;">
-                                    <img id="preview" src="#" alt="Aperçu du categorie" class="img-thumbnail" style="max-width: 150px; max-height: 150px;">
-                                </div>
-                    </div>
-                    
-                </div>
+                <div class="col-md-4">
+                    {# Paramètres de l'événement #}
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Paramètres</h5>
 
-                <!-- RIGHT COLUMN -->
-                <div class="col-lg-5">
-
-                    
-                    {{ form_row(form.titre, {
-                        'attr': {'class': 'w-100 form-control border-0 py-3 mb-4', 'placeholder': 'Name of event'}
-                    }) }}
-                     
-                    {{ form_row(form.description, {
-                        'attr': {'class': 'w-100 form-control border-0 py-3 mb-4', 'placeholder': 'description'}
-                    }) }}
-                       <div class="mb-4">
-                            {{ form_label(form.dateDebut, 'Date de début', {'label_attr': {'class': 'form-label'}}) }}
-                                {{ form_widget(form.dateDebut, {
+                            <div class="mb-4">
+                            {{ form_label(form.date_debut, 'Date de début', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.date_debut, {
                                     'attr': {
                                         'class': 'form-control datepicker-custom',
                                         'placeholder': 'Choisissez la date de début'
                                     }
                                 }) }}
-                                {{ form_errors(form.dateDebut) }}
+                                {{ form_errors(form.date_debut) }}
                         </div>
 
                         <div class="mb-4">
-                            {{ form_label(form.dateFin, 'Date de fin', {'label_attr': {'class': 'form-label'}}) }}
-                            {{ form_widget(form.dateFin, {
+                            {{ form_label(form.date_fin, 'Date de fin', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.date_fin, {
                                 'attr': {
                                     'class': 'form-control datepicker-custom',
                                     'placeholder': 'Choisissez la date de fin'
                                 }
                             }) }}
-                            {{ form_errors(form.dateFin) }}
+                            {{ form_errors(form.date_fin) }}
                         </div>
 
-   
-                    
-
-
-
-                </div>
-
-                <div class="mt-4">
-                    <button type="submit" class="btn btn-primary">Enregistrer</button>
-                    <a href="{{ path('eventslist')}}" class="btn btn-outline-secondary ms-2">Retour à la liste</a>
+                            <div class="mb-3">
+                                {{ form_label(form.places, 'Nombre de places', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.places, {'attr': {'class': 'form-control' ~ (form.places.vars.valid ? '' : ' is-invalid')}}) }}
+                                {{ form_errors(form.places) }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{{ path('event_new_choice', {'id_categorie': categorie.id}) }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Créer l'événement
+                </button>
+            </div>
+
+            {{ form_end(form) }}
         </div>
     </div>
 </div>
-{{ form_end(form) }}
-<!-- FORM END -->
 
+{% block javascripts %}
+{{ parent() }}
 <script>
-        function previewImage(input) {
-            const preview = document.getElementById('preview');
-            const previewContainer = document.getElementById('imagePreview');
-            
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    previewContainer.style.display = 'block';
+    // Validation du formulaire côté client
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
                 }
-                
-                reader.readAsDataURL(input.files[0]);
-            } else {
-                preview.src = '#';
-                previewContainer.style.display = 'none';
-            }
-        }
-    </script>
-    {# CSS et JS du datepicker #}
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+ {# CSS et JS du datepicker #}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/css/bootstrap-datepicker.min.css">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/js/bootstrap-datepicker.min.js"></script>
 
@@ -130,6 +158,5 @@
         });
     });
 </script>
-
-
+{% endblock %}
 {% endblock %}

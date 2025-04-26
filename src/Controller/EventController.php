@@ -31,7 +31,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class EventController extends AbstractController
 {
-    #[Route('/event/{id_categorie}/event', name:'newEventFront')]
+    #[Route('/event/{id_categorie}/event', name:'eventFront')]
     public function index(
         Request $request,
         EventRepository $eventRepository, 
@@ -43,20 +43,35 @@ final class EventController extends AbstractController
             throw $this->createNotFoundException('Catégorie non trouvée.');
         }
     
+        // Récupérer tous les événements de la catégorie
         $events = $eventRepository->findBy(['categorie' => $categorie]);
+        
+        // Séparer les événements virtuels et physiques
+        $virtualEvents = [];
+        $physicalEvents = [];
+        
+        foreach ($events as $event) {
+            if ($event->getType() === 'virtual') {
+                $virtualEvents[] = $event;
+            } else {
+                $physicalEvents[] = $event;
+            }
+        }
     
+        // Créer les formulaires de notation
         $ratingForms = [];
         foreach ($events as $event) {
             $rating = new Rating();
             $rating->setEvent($event);
             $form = $this->createForm(RatingType::class, $rating, [
-                'action' => $this->generateUrl('rating_new', ['id_event' => $event->getId_event()])
+                'action' => $this->generateUrl('rating_new', ['id_event' => $event->getId()])
             ]);
-            $ratingForms[$event->getId_event()] = $form->createView();
+            $ratingForms[$event->getId()] = $form->createView();
         }
     
         return $this->render('event/eventFront.html.twig', [
-            'events' => $events,
+            'virtualEvents' => $virtualEvents,
+            'physicalEvents' => $physicalEvents,
             'categorie' => $categorie,
             'ratingForms' => $ratingForms
         ]);
@@ -115,63 +130,115 @@ public function eventDetail(
     ]);
 }
 
-    #[Route('/new/{id_categorie}', name: '/new/{id_categorie}', methods: ['GET', 'POST'])]
-public function new(
-    Request $request,
-    EntityManagerInterface $entityManager,
-    EventRepository $eventRepository,
-    SluggerInterface $slugger,
-    CategorieRepository $categorieRepository,
-    int $id_categorie
-): Response {
-    $categorie = $categorieRepository->find($id_categorie);
-    if (!$categorie) {
-        throw $this->createNotFoundException('Catégorie non trouvée.');
-    }
-
-    $event = new Event();
-    $event->setCategorie($categorie);
-
-    $form = $this->createForm(EventType::class, $event);
-    $form->handleRequest($request);
-
-    if ($form->isSubmitted() && $form->isValid()) {
-        
-        $fileImg = $form->get('imagePath')->getData();
-        if ($fileImg) {
-            $originalFilename = pathinfo($fileImg->getClientOriginalName(), PATHINFO_FILENAME);
-            $safeFilename = $slugger->slug($originalFilename);
-            $newFilename = $safeFilename.'-'.uniqid().'.'.$fileImg->guessExtension();
-
-            try {
-                $fileImg->move($this->getParameter('upload_directory'), $newFilename);
-            } catch (FileException $e) {
-                // Gérer l'exception (facultatif)
-            }
-
-            $event->setImagePath($newFilename);
+    #[Route('/new/{id_categorie}', name: 'event_new_choice')]
+    public function selectType(int $id_categorie, EntityManagerInterface $entityManager): Response
+    {
+        $categorie = $entityManager->getRepository(Categorie::class)->find($id_categorie);
+        if (!$categorie) {
+            throw $this->createNotFoundException('Catégorie non trouvée');
         }
 
-        $entityManager->persist($event);
-        $entityManager->flush();
-
-        return $this->redirectToRoute('eventslist');
+        return $this->render('event/select_type.html.twig', [
+            'id_categorie' => $id_categorie,
+            'categorie' => $categorie
+        ]);
     }
 
-    return $this->renderForm('/event/new.html.twig', [
-        'form' => $form->createView(),
-        
-        'event' => $event,
-    ]);
-}
+    #[Route('/event/{id_categorie}/new', name: 'event_new', methods: ['GET', 'POST'])]
+    public function newEvent(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        SluggerInterface $slugger,
+        int $id_categorie
+    ): Response {
+        $categorie = $entityManager->getRepository(Categorie::class)->find($id_categorie);
+        if (!$categorie) {
+            throw $this->createNotFoundException('Catégorie non trouvée');
+        }
 
-  
-    #[Route('/eventFront', name: 'EventFront')]
-    public function newEventFront(EventRepository $EventRepository): Response
+        $event = new Event();
+        $event->setCategorie($categorie);
+        // Récupérer le type depuis l'URL ou par défaut 'virtual'
+        $type = $request->query->get('type', 'virtual');
+        $event->setType($type);
+        if ($type === 'virtual') {
+            $event->setChannel('linkup');
+        }
+        $form = $this->createForm(EventType::class, $event, ['type' => $type]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($event->getType() === 'virtual') {
+                $event->setAppId('788fe3b38e104edba009da276cb137ca');
+                $event->setToken('007eJxTYIjqX6/y6ubjsMgH6VorFkt2ztZvn5FgqdEmW1PB4V7E2K3AYG5hkZZqnGRskWpoYJKakpRoYGCZkmhkbpacZGhsnpzILsWb0RDIyHDgoiwzIwMEgvhsDDmZedmlBQwMAAsNHd8=');
+                $event->setChannel('linkup');
+            }
+
+            // Gérer l'upload de l'image
+            $fileImg = $form->get('image_path')->getData();
+            if ($fileImg) {
+                $originalFilename = pathinfo($fileImg->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$fileImg->guessExtension();
+
+                try {
+                    $fileImg->move($this->getParameter('upload_directory'), $newFilename);
+                    $event->setImagePath($newFilename);
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Une erreur est survenue lors de l\'upload de l\'image');
+                }
+            }
+
+            $entityManager->persist($event);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'L\'événement a été créé avec succès');
+            return $this->redirectToRoute('newEventFront', ['id_categorie' => $categorie->getId()]);
+        }
+
+        return $this->render('event/new.html.twig', [
+            'form' => $form->createView(),
+            'event' => $event,
+            'categorie' => $categorie,
+            'type' => $type,
+        ]);
+    }
+
+    #[Route('/eventFront', name: 'newEventFront')]
+    public function newEventFront(Request $request, EventRepository $eventRepository, CategorieRepository $categorieRepository): Response
     {
-        $events = $EventRepository->findAll();
-        return $this->render('eventfront.html.twig', [
-            'events' => $events,
+        $id_categorie = $request->query->get('id_categorie');
+        if (!$id_categorie) {
+            throw $this->createNotFoundException("Paramètre id_categorie manquant dans l'URL.");
+        }
+        $categorie = $categorieRepository->find($id_categorie);
+        if (!$categorie) {
+            throw $this->createNotFoundException('Catégorie non trouvée.');
+        }
+        $events = $eventRepository->findBy(['categorie' => $categorie]);
+        $virtualEvents = [];
+        $physicalEvents = [];
+        foreach ($events as $event) {
+            if ($event->getType() === 'virtual') {
+                $virtualEvents[] = $event;
+            } else {
+                $physicalEvents[] = $event;
+            }
+        }
+        $ratingForms = [];
+        foreach ($events as $event) {
+            $rating = new \App\Entity\Rating();
+            $rating->setEvent($event);
+            $form = $this->createForm(\App\Form\RatingType::class, $rating, [
+                'action' => $this->generateUrl('rating_new', ['id_event' => $event->getId()])
+            ]);
+            $ratingForms[$event->getId()] = $form->createView();
+        }
+        return $this->render('event/eventFront.html.twig', [
+            'virtualEvents' => $virtualEvents,
+            'physicalEvents' => $physicalEvents,
+            'categorie' => $categorie,
+            'ratingForms' => $ratingForms
         ]);
     }
 
@@ -184,28 +251,24 @@ public function new(
 
         if ($form->isSubmitted() && $form->isValid()) {
             
-            $fileImg = $form->get('imagePath')->getData();
+            $fileImg = $form->get('image_path')->getData();
 
-            
             if ($fileImg) {
                 $originalFilename = pathinfo($fileImg->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename.'-'.uniqid().'.'.$fileImg->guessExtension();
             
-                
                 try {
                     $fileImg->move(
                         $this->getParameter('upload_directory'), 
                         $newFilename
                     );
                 } catch (FileException $e) {
-                    
+                    // Handle exception
                 }
             
-                
-                $event->setImagePath($newFilename);}
-
-            
+                $event->setImagePath($newFilename);
+            }
 
             // Enregistrer les modifications dans la base de données
             $entityManager->flush();
@@ -240,14 +303,114 @@ public function new(
         // Redirect to the list page of produits after deletion
         return $this->redirectToRoute('eventslist', [], Response::HTTP_SEE_OTHER);
     }
+
+    // Nouvelles méthodes pour les événements virtuels
     
+    #[Route('/event/virtual/new', name: 'virtual_event_new', methods: ['GET', 'POST'])]
+    public function newVirtualEvent(
+        Request $request,
+        EntityManagerInterface $entityManager
+    ): Response
+    {
+        $event = new Event();
+        
+        // Configuration Agora
+        $event->setAppId('788fe3b38e104edba009da276cb137ca');
+        $event->setToken('007eJxTYIjqX6/y6ubjsMgH6VorFkt2ztZvn5FgqdEmW1PB4V7E2K3AYG5hkZZqnGRskWpoYJKakpRoYGCZkmhkbpacZGhsnpzILsWb0RDIyHDgoiwzIwMEgvhsDDmZedmlBQwMAAsNHd8=');
+        $event->setChannel('linkup');
+        
+        // Autres configurations
+        $event->setType('virtual');
+        $event->setCode(substr(md5(uniqid()), 0, 6));
+        $event->setAcces('public');
+        $event->setDuree('60');
+        
+        // Créer le formulaire
+        $form = $this->createFormBuilder($event)
+            ->add('titre', TextType::class, [
+                'label' => 'Titre de l\'événement',
+                'attr' => ['placeholder' => 'Ex: Séance de yoga en ligne']
+            ])
+            ->add('description', TextareaType::class, [
+                'label' => 'Description',
+                'required' => false,
+                'attr' => ['placeholder' => 'Décrivez votre événement...']
+            ])
+            ->add('date_debut', DateType::class, [
+                'label' => 'Date de début',
+                'widget' => 'single_text',
+                'html5' => true
+            ])
+            ->add('date_fin', DateType::class, [
+                'label' => 'Date de fin',
+                'widget' => 'single_text',
+                'html5' => true
+            ])
+            ->getForm();
 
+        $form->handleRequest($request);
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                // S'assurer que le type est toujours 'virtual'
+                $event->setType('virtual');
+                
+                // Persister l'événement
+                $entityManager->persist($event);
+                $entityManager->flush();
+                
+                $this->addFlash('success', 'Événement virtuel créé avec succès!');
+                
+                return $this->redirectToRoute('virtual_event_show', ['id' => $event->getIdEvent()]);
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Erreur lors de la création de l\'événement: ' . $e->getMessage());
+            }
+        }
 
+        return $this->render('event/virtual_new.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
 
+    #[Route('/event/virtual/{id}', name: 'virtual_event_show', methods: ['GET'])]
+    public function showVirtualEvent(int $id, EventRepository $eventRepository): Response
+    {
+        $event = $eventRepository->find($id);
+        if (!$event) {
+            throw $this->createNotFoundException('Event not found');
+        }
+        return $this->render('event/virtual_show.html.twig', [
+            'event' => $event,
+        ]);
+    }
 
+    #[Route('/event/virtual/{id}/join', name: 'virtual_event_join', methods: ['GET'])]
+    public function joinVirtualEvent(int $id, EventRepository $eventRepository): Response
+    {
+        $event = $eventRepository->find($id);
+        if (!$event) {
+            throw $this->createNotFoundException('Event not found');
+        }
+        if ($event->getType() !== 'virtual') {
+            throw $this->createNotFoundException('Cet événement n\'est pas un événement virtuel.');
+        }
+        return $this->render('event/virtual_join.html.twig', [
+            'event' => $event,
+        ]);
+    }
 
-
-
-
+    #[Route('/event/virtual/{id}/end', name: 'virtual_event_end', methods: ['POST'])]
+    public function endVirtualEvent(int $id, EventRepository $eventRepository, EntityManagerInterface $entityManager): Response
+    {
+        $event = $eventRepository->find($id);
+        if (!$event) {
+            throw $this->createNotFoundException('Event not found');
+        }
+        if ($event->getType() !== 'virtual') {
+            throw $this->createNotFoundException('Cet événement n\'est pas un événement virtuel.');
+        }
+        $event->setEndDate(new \DateTime());
+        $entityManager->flush();
+        return $this->redirectToRoute('event_detail', ['id_event' => $id]);
+    }
 }

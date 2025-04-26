@@ -57,7 +57,7 @@ private ?int $idRating = null;
     }
 
     #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'ratings')]
-    #[ORM\JoinColumn(name: 'fkidEvent', referencedColumnName: 'id_event')]
+    #[ORM\JoinColumn(name: 'id_event', referencedColumnName: 'id')]
     private ?Event $event = null;
 
     public function getEvent(): ?Event

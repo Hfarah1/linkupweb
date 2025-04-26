@@ -44,44 +44,51 @@ final class CatogoryController extends AbstractController
     }
 
     #[Route('/newcategory', name: 'new')]
-    public function newcategory(ManagerRegistry $mr, Request $req , SluggerInterface $slugger): Response
+    public function newcategory(ManagerRegistry $mr, Request $req, SluggerInterface $slugger): Response
     {
         $categorie = new Categorie();
         $form = $this->createForm(CategorieType::class, $categorie);
         $form->handleRequest($req);
-    
+
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $mr->getManager();
-    
-            
+
             $fileImg = $form->get('description')->getData();
             if ($fileImg) {
                 $originalFilename = pathinfo($fileImg->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename.'-'.uniqid().'.'.$fileImg->guessExtension();
-            
-                
+
                 try {
-                    $fileImg->move(
-                        $this->getParameter('upload_directory'), 
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    // Gérer l'erreur
+                    $uploadDir = $this->getParameter('upload_directory');
+                    if (!file_exists($uploadDir)) {
+                        mkdir($uploadDir, 0777, true);
+                    }
+                    
+                    $fileImg->move($uploadDir, $newFilename);
+                    $categorie->setDescription($newFilename);
+                    
+                    $this->addFlash('success', 'L\'image a été uploadée avec succès.');
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Erreur lors de l\'upload de l\'image : ' . $e->getMessage());
+                    return $this->renderForm('catogory/newcategory.html.twig', [
+                        'form' => $form,
+                    ]);
                 }
-            
-                // Enregistrer juste le nom du fichier ou son chemin
-                $categorie->setDescription($newFilename);
             }
-            // Enregistrement en base
-            $em->persist($categorie);
-            $em->flush();
-    
-            return $this->redirectToRoute('categorietlist');
+
+            try {
+                $em->persist($categorie);
+                $em->flush();
+                $this->addFlash('success', 'La catégorie a été créée avec succès.');
+                return $this->redirectToRoute('categorietlist');
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Erreur lors de la création de la catégorie : ' . $e->getMessage());
+            }
         }
-    
-        return $this->render('catogory/newcategory.html.twig', [
-            'form' => $form->createView(),
+
+        return $this->renderForm('catogory/newcategory.html.twig', [
+            'form' => $form,
         ]);
     }
 

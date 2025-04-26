@@ -50,6 +50,8 @@ final class RatingController extends AbstractController
             throw $this->createNotFoundException('Événement non trouvé.');
         }
     
+        $event->setAppId('788fe3b38e104edba009da276cb137ca');
+    
         $rating = new Rating();
         $rating->setEvent($event);
     
@@ -66,7 +68,7 @@ final class RatingController extends AbstractController
         }
     
         return $this->redirectToRoute('newEventFront', [
-            'id_categorie' => $event->getCategorie()->getId_categorie()
+            'id_categorie' => $event->getCategorie()->getId()
         ]);
     }
     

@@ -14,23 +14,28 @@ use App\Repository\CategorieRepository;
 class Categorie
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private ?int $id_categorie = null;
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(name: 'id_categorie', type: Types::INTEGER)]
+    private ?int $id = null;
 
-    public function getId_categorie(): ?int
-    {
-        return $this->id_categorie;
-    }
-
-    public function setId_categorie(int $id_categorie): self
-    {
-        $this->id_categorie = $id_categorie;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'string', nullable: false)]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
     private ?string $nom = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: false)]
+    private ?string $description = null;
+
+    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'categorie')]
+    private Collection $events;
+
+    public function __construct()
+    {
+        $this->events = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
     public function getNom(): ?string
     {
@@ -43,9 +48,6 @@ class Categorie
         return $this;
     }
 
-    #[ORM\Column(type: 'text', nullable: false)]
-    private ?string $description = null;
-
     public function getDescription(): ?string
     {
         return $this->description;
@@ -55,14 +57,6 @@ class Categorie
     {
         $this->description = $description;
         return $this;
-    }
-
-    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'categorie')]
-    private Collection $events;
-
-    public function __construct()
-    {
-        $this->events = new ArrayCollection();
     }
 
     /**
@@ -80,19 +74,18 @@ class Categorie
     {
         if (!$this->getEvents()->contains($event)) {
             $this->getEvents()->add($event);
+            $event->setCategorie($this);
         }
         return $this;
     }
 
     public function removeEvent(Event $event): self
     {
-        $this->getEvents()->removeElement($event);
+        if ($this->events->removeElement($event)) {
+            if ($event->getCategorie() === $this) {
+                $event->setCategorie(null);
+            }
+        }
         return $this;
     }
-
-    public function getIdCategorie(): ?int
-    {
-        return $this->id_categorie;
-    }
-
 }

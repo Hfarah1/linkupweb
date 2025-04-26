@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ event.titre }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8">
+                <h1>{{ event.titre }}</h1>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Détails de l'événement</h5>
+                        <p class="card-text">{{ event.description }}</p>
+                        <ul class="list-unstyled">
+                            <li><strong>Date de début :</strong> {{ event.dateDebut|date('d/m/Y H:i') }}</li>
+                            <li><strong>Date de fin :</strong> {{ event.dateFin|date('d/m/Y H:i') }}</li>
+                            <li><strong>Durée :</strong> {{ event.duree }} minutes</li>
+                            <li><strong>Accès :</strong> {{ event.acces }}</li>
+                            <li><strong>Code d'accès :</strong> {{ event.code }}</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Rejoindre l'événement</h5>
+                        <p class="card-text">Cliquez sur le bouton ci-dessous pour rejoindre la session virtuelle.</p>
+                        <a href="{{ path('virtual_event_join', {'id': event.id_event}) }}" class="btn btn-primary">Rejoindre la session</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Informations de connexion</h5>
+                        <p class="card-text">Canal : {{ event.channel }}</p>
+                        <p class="card-text">Code d'accès : {{ event.code }}</p>
+                        <div class="alert alert-warning">
+                            <small>Conservez ces informations pour rejoindre la session.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 
