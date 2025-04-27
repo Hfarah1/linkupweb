@@ -117,6 +117,24 @@
     <div class="container mt-4">
         <h1 class="mb-4">Événements - {{ categorie.nom }}</h1>
 
+        <h2 style="color: red; background: yellow; text-align: center; padding: 10px;">TEST BARRE DE RECHERCHE</h2>
+        <form method="get" action="{{ path('newEventFront') }}" style="display: flex; justify-content: center; margin-bottom: 32px; box-shadow: 0 2px 8px #f3b6c2; background: #fff0f6; border-radius: 32px;">
+            <input
+                type="text"
+                name="q"
+                placeholder="Rechercher un événement..."
+                value="{{ app.request.get('q') }}"
+                style="padding: 16px 24px; border-radius: 24px 0 0 24px; border: none; width: 350px; font-size: 1.2em; background: #fff;"
+            >
+            <input type="hidden" name="id_categorie" value="{{ categorie.id }}">
+            <button
+                type="submit"
+                style="background: #f3b6c2; color: #fff; border: none; border-radius: 0 24px 24px 0; padding: 16px 40px; font-weight: bold; font-size: 1.2em; cursor: pointer;"
+            >
+                🔍 Rechercher
+            </button>
+        </form>
+
         {# Section des événements virtuels #}
         {% if virtualEvents|length > 0 %}
             <div class="mb-5">

@@ -1,6 +1,9 @@
 <h2>{{ event.titre }}</h2>
 <p>{{ event.description }}</p>
-<p class="fw-bold">Moyenne : {{ moyenne }} / 5 basée sur {{ n }} avis</p>
+<p class="fw-bold" style="font-size: 1.3em; color: #1976d2; margin-top: 12px; margin-bottom: 24px;">
+    ⭐ Moyenne&nbsp;: <span style="font-weight: bold; color: #222;">{{ moyenne }}</span> / 5
+    <span style="font-size: 0.9em; color: #555;">(basée sur {{ n }} avis)</span>
+</p>
 
 <div class="rating-bars">
     {% set bars = {
@@ -30,3 +33,27 @@
     border-radius: 4px;
 }
 </style>
+
+{% if event.imagePath %}
+    <div style="text-align: center; margin: 32px 0;">
+        <img src="{{ asset('uploads/' ~ event.imagePath) }}" alt="Image de l'événement" style="max-width: 350px; max-height: 300px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+    </div>
+{% endif %}
+
+<div class="comments-section" style="margin-top: 40px;">
+    <h3>Commentaires</h3>
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+        {% for rating in ratings %}
+            {% if rating.commentaire %}
+                <div style="max-width: 400px; align-self: flex-start; background: #f1f1f1; border-radius: 16px; padding: 16px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: relative;">
+                    <div style="font-size: 1.1em; color: #333;">{{ rating.commentaire }}</div>
+                    <div style="font-size: 0.95em; color: #888; margin-top: 8px;">
+                        Note : <span style="color: #2196F3; font-weight: bold;">{{ rating.note }} ★</span>
+                    </div>
+                </div>
+            {% endif %}
+        {% else %}
+            <div>Aucun commentaire pour cet événement.</div>
+        {% endfor %}
+    </div>
+</div>

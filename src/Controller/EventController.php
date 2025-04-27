@@ -217,6 +217,7 @@ public function eventDetail(
     public function newEventFront(Request $request, EventRepository $eventRepository, CategorieRepository $categorieRepository): Response
     {
         $id_categorie = $request->query->get('id_categorie');
+        $search = $request->query->get('q');
         if (!$id_categorie) {
             throw $this->createNotFoundException("Paramètre id_categorie manquant dans l'URL.");
         }
@@ -224,7 +225,17 @@ public function eventDetail(
         if (!$categorie) {
             throw $this->createNotFoundException('Catégorie non trouvée.');
         }
-        $events = $eventRepository->findBy(['categorie' => $categorie]);
+        if ($search) {
+            $events = $eventRepository->createQueryBuilder('e')
+                ->where('e.categorie = :categorie')
+                ->andWhere('e.titre LIKE :search OR e.description LIKE :search')
+                ->setParameter('categorie', $categorie)
+                ->setParameter('search', '%' . $search . '%')
+                ->getQuery()
+                ->getResult();
+        } else {
+            $events = $eventRepository->findBy(['categorie' => $categorie]);
+        }
         $virtualEvents = [];
         $physicalEvents = [];
         foreach ($events as $event) {
