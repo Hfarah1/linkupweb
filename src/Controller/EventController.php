@@ -25,6 +25,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Eluceo\iCal\Domain\Entity\Event as ICalEvent;
+use Eluceo\iCal\Domain\Entity\Calendar as ICalCalendar;
+use Eluceo\iCal\Domain\ValueObject\DateTime as ICalDateTime;
+use Eluceo\iCal\Presentation\Factory\CalendarFactory;
+use Eluceo\iCal\Domain\ValueObject\Occurrence;
+use Eluceo\iCal\Domain\ValueObject\TimeSpan;
 
 
 
@@ -412,5 +418,35 @@ public function eventDetail(
         $event->setEndDate(new \DateTime());
         $entityManager->flush();
         return $this->redirectToRoute('event_detail', ['id_event' => $id]);
+    }
+
+    #[Route('/calendar/ics', name: 'calendar_ics')]
+    public function ics(EventRepository $eventRepository): Response
+    {
+        $events = $eventRepository->findAll();
+        $calendar = new ICalCalendar();
+
+        foreach ($events as $event) {
+            $icalEvent = new ICalEvent();
+            $icalEvent->setSummary($event->getTitre());
+            $occurrence = new TimeSpan(
+                new ICalDateTime($event->getDateDebut(), false),
+                new ICalDateTime($event->getDateFin(), false)
+            );
+            $icalEvent->setOccurrence($occurrence);
+            $calendar->addEvent($icalEvent);
+        }
+
+        $componentFactory = new CalendarFactory();
+        $calendarComponent = $componentFactory->createCalendar($calendar);
+
+        return new Response(
+            $calendarComponent,
+            200,
+            [
+                'Content-Type' => 'text/calendar; charset=utf-8',
+                'Content-Disposition' => 'attachment; filename="calendar.ics"',
+            ]
+        );
     }
 }

@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Calendrier des événements{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('components/fullcalendar/dist/fullcalendar.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Calendrier des événements</h1>
+        <div id="calendar"></div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('components/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('components/moment/min/moment.min.js') }}"></script>
+    <script src="{{ asset('components/fullcalendar/dist/fullcalendar.js') }}"></script>
+    <script>
+        var categorieId = {{ categorieId|json_encode|raw }};
+        $(document).ready(function() {
+            $('#calendar').fullCalendar({
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                events: '/calendar/' + categorieId + '/events',
+                editable: true,
+                selectable: true,
+                select: function(start, end) {
+                    var startStr = start.format('YYYY-MM-DD HH:mm:ss');
+                    window.location.href = '/new/' + categorieId + '?start=' + encodeURIComponent(startStr);
+                },
+                eventClick: function(event) {
+                    alert('Événement cliqué : ' + event.title);
+                }
+            });
+        });
+    </script>
+{% endblock %} 
