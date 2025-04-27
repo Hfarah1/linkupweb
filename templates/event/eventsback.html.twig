@@ -20,6 +20,7 @@
                     <th>Date début</th>
                     <th>Date fin</th>
                     <th>Type</th>
+                    <th>QR Code</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -27,7 +28,7 @@
                   {% for e in events %}
                     <tr>
                       <td>
-                        <img src="{{ asset('uploads/' ~ e.imagePath ) }}" class="img-fluid rounded-3" style="width: 50px; height: 50px;">
+                        <img src="{{ asset('uploads/' ~ e.imagePath ) }}" class="img-fluid rounded-3" style="width: 50px; height: 50px;" onerror="this.onerror=null;this.src='{{ asset('images/default-avatar.png') }}';">
                       </td>
                       <td>{{ e.titre }}</td>
                       <td>{{ e.dateDebut|date('Y-m-d H:i') }}</td>
@@ -38,6 +39,14 @@
                         {% else %}
                           <span class="badge bg-success">Présentiel</span>
                         {% endif %}
+                      </td>
+                      <td style="text-align: center;">
+                        <a class="btn btn-outline-secondary btn-sm"
+                           href="{{ path('generate_qr_code', {'id': e.id}) }}"
+                           target="_blank"
+                           title="Voir le QR code dans un nouvel onglet">
+                              Générer QR Code
+                        </a>
                       </td>
                       <td>
                         {% if e.type == 'virtual' %}
@@ -63,4 +72,18 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function toggleQrCode(id) {
+            var el = document.getElementById(id);
+            if (el.style.display === 'none') {
+                el.style.display = 'block';
+            } else {
+                el.style.display = 'none';
+            }
+        }
+    </script>
 {% endblock %}

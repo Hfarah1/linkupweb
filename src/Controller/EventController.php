@@ -31,6 +31,9 @@ use Eluceo\iCal\Domain\ValueObject\DateTime as ICalDateTime;
 use Eluceo\iCal\Presentation\Factory\CalendarFactory;
 use Eluceo\iCal\Domain\ValueObject\Occurrence;
 use Eluceo\iCal\Domain\ValueObject\TimeSpan;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
 
@@ -447,6 +450,23 @@ public function eventDetail(
                 'Content-Type' => 'text/calendar; charset=utf-8',
                 'Content-Disposition' => 'attachment; filename="calendar.ics"',
             ]
+        );
+    }
+
+    #[Route('/event/{id}/qr', name: 'generate_qr_code')]
+    public function generateQrCode(int $id): Response
+    {
+        // Utilise l'URL ngrok ici
+        $url = 'https://b64a-197-29-196-61.ngrok-free.app' . $this->generateUrl('event_detail', ['id_event' => $id]);
+
+        $qrCode = new QrCode($url);
+        $writer = new PngWriter();
+        $result = $writer->write($qrCode);
+
+        return new Response(
+            $result->getString(),
+            200,
+            ['Content-Type' => $result->getMimeType()]
         );
     }
 }
