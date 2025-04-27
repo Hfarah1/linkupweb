@@ -1,0 +1,303 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la rencontre{% endblock %}
+
+{% block content %}
+<!-- Single Page Header start -->
+<div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">Modifier la Rencontre</h1>
+    <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('app_rencontre_index') }}">Rencontres</a></li>
+        <li class="breadcrumb-item active text-white">Modifier</li>
+    </ol>
+</div>
+<!-- Single Page Header End -->
+
+<!-- Flash Messages -->
+<div class="container mt-4">
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>
+
+<!-- Checkout Page Start -->
+<div class="container-fluid py-5">
+    <div class="container py-5">
+        <h1 class="mb-4">Modifier les informations</h1>
+        {{ form_start(form, {'attr': {'id': 'rencontre-edit-form', 'novalidate': 'novalidate'}}) }}
+        {{ form_errors(form) }}
+        <div class="row g-5">
+            <div class="col-md-12 col-lg-6 col-xl-7">
+                <div class="row">
+                    <div class="col-md-12 col-lg-6">
+                        <div class="form-item w-100">
+                            <label class="form-label my-3">Titre<sup>*</sup></label>
+                            {{ form_widget(form.titre, {'attr': {'class': 'form-control'}}) }}
+                            {% if form.titre.vars.errors|length > 0 %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.titre.vars.errors %}
+                                        {{ error.message }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-lg-6">
+                        <div class="form-item w-100">
+                            <label class="form-label my-3">Catégorie<sup>*</sup></label>
+                            {{ form_widget(form.categorie_rencontre, {'attr': {'class': 'form-control'}}) }}
+                            {% if form.categorie_rencontre.vars.errors|length > 0 %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.categorie_rencontre.vars.errors %}
+                                        {{ error.message }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-item">
+                    <label class="form-label my-3">Lieu<sup>*</sup></label>
+                    {{ form_widget(form.lieu, {'attr': {'class': 'form-control'}}) }}
+                    {% if form.lieu.vars.errors|length > 0 %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.lieu.vars.errors %}
+                                {{ error.message }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-item">
+                            <label class="form-label my-3">Date de la rencontre<sup>*</sup></label>
+                            {{ form_widget(form.date_rencontre, {'attr': {'class': 'form-control'}}) }}
+                            {% if form.date_rencontre.vars.errors|length > 0 %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.date_rencontre.vars.errors %}
+                                        {{ error.message }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-item">
+                            <label class="form-label my-3">Budget</label>
+                            {{ form_widget(form.budget, {'attr': {'class': 'form-control', 'placeholder': 'En euros'}}) }}
+                            {% if form.budget.vars.errors|length > 0 %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.budget.vars.errors %}
+                                        {{ error.message }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-item">
+                            <label class="form-label my-3">Âge minimum<sup>*</sup></label>
+                            {{ form_widget(form.age_min, {'attr': {'class': 'form-control'}}) }}
+                            {% if form.age_min.vars.errors|length > 0 %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.age_min.vars.errors %}
+                                        {{ error.message }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-item">
+                            <label class="form-label my-3">Âge maximum<sup>*</sup></label>
+                            {{ form_widget(form.age_max, {'attr': {'class': 'form-control'}}) }}
+                            {% if form.age_max.vars.errors|length > 0 %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.age_max.vars.errors %}
+                                        {{ error.message }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-item">
+                            <label class="form-label my-3">Places disponibles</label>
+                            {{ form_widget(form.places_dispo, {'attr': {'class': 'form-control'}}) }}
+                            {% if form.places_dispo.vars.errors|length > 0 %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.places_dispo.vars.errors %}
+                                        {{ error.message }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-item">
+                            <label class="form-label my-3">Distance max (km)<sup>*</sup></label>
+                            {{ form_widget(form.distance_max, {'attr': {'class': 'form-control'}}) }}
+                            {% if form.distance_max.vars.errors|length > 0 %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.distance_max.vars.errors %}
+                                        {{ error.message }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-item">
+                            <label class="form-label my-3">Genre recherché</label>
+                            {{ form_widget(form.genre_recherche, {'attr': {'class': 'form-control'}}) }}
+                            {% if form.genre_recherche.vars.errors|length > 0 %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.genre_recherche.vars.errors %}
+                                        {{ error.message }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-item">
+                    <label class="form-label my-3">Niveau de relation</label>
+                    {{ form_widget(form.niveau_relation, {'attr': {'class': 'form-control'}}) }}
+                    {% if form.niveau_relation.vars.errors|length > 0 %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.niveau_relation.vars.errors %}
+                                {{ error.message }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="form-item">
+                    <label class="form-label my-3">Description<sup>*</sup></label>
+                    {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': '5'}}) }}
+                    {% if form.description.vars.errors|length > 0 %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.description.vars.errors %}
+                                {{ error.message }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="form-item">
+                    <label class="form-label my-3">Bio</label>
+                    {{ form_widget(form.bio, {'attr': {'class': 'form-control', 'rows': '4'}}) }}
+                    {% if form.bio.vars.errors|length > 0 %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.bio.vars.errors %}
+                                {{ error.message }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="form-item">
+                    <label class="form-label my-3">Tags (séparés par des virgules)</label>
+                    {{ form_widget(form.tags, {'attr': {'class': 'form-control'}}) }}
+                    {% if form.tags.vars.errors|length > 0 %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.tags.vars.errors %}
+                                {{ error.message }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="form-item mt-3">
+                    <label class="form-label my-3">Image</label>
+                    {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_widget(form.image_name, {'attr': {'class': 'form-control d-none'}}) }}
+                    {% if form.image.vars.errors|length > 0 %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.image.vars.errors %}
+                                {{ error.message }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                {{ form_row(form.id_utilisateur, {'attr': {'class': 'd-none'}, 'label_attr': {'class': 'd-none'}}) }}
+                {{ form_row(form.statut, {'attr': {'class': 'd-none'}, 'label_attr': {'class': 'd-none'}}) }}
+                {{ form_row(form.created_at, {'attr': {'class': 'd-none'}, 'label_attr': {'class': 'd-none'}}) }}
+                {{ form_row(form.latitude, {'attr': {'class': 'd-none'}, 'label_attr': {'class': 'd-none'}}) }}
+                {{ form_row(form.longitude, {'attr': {'class': 'd-none'}, 'label_attr': {'class': 'd-none'}}) }}
+                
+                {% if form._token is defined %}
+                    {{ form_widget(form._token) }}
+                {% endif %}
+            </div>
+            <div class="col-md-12 col-lg-6 col-xl-5">
+                <div class="bg-light rounded p-4">
+                    <h4 class="mb-4">Actions</h4>
+                    <div class="mt-4">
+                        <button class="btn btn-primary rounded-pill py-3 px-5 w-100 mb-3" type="submit">Enregistrer les modifications</button>
+                        
+                        <a href="{{ path('app_rencontre_show', {'id_rencontre': rencontre.id_rencontre}) }}" class="btn btn-outline-secondary rounded-pill py-2 px-4 w-100 mb-3">
+                            <i class="fa fa-eye me-2"></i> Voir la rencontre
+                        </a>
+                        
+                        <a href="{{ path('app_rencontre_index') }}" class="btn btn-outline-secondary rounded-pill py-2 px-4 w-100 mb-3">
+                            <i class="fa fa-arrow-left me-2"></i> Retour à la liste
+                        </a>
+                        
+                        {{ include('rencontre/_delete_form.html.twig', {'button_class': 'btn btn-outline-danger rounded-pill py-2 px-4 w-100'}) }}
+                    </div>
+                </div>
+                
+                <div class="bg-light rounded p-4 mt-4">
+                    <h4 class="mb-4">État actuel</h4>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Catégorie:</span>
+                        <span class="fw-bold">{{ rencontre.categorieRencontre }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Date:</span>
+                        <span class="fw-bold">{{ rencontre.dateRencontre ? rencontre.dateRencontre|date('d/m/Y') : 'Non définie' }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Lieu:</span>
+                        <span class="fw-bold">{{ rencontre.lieu }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Budget:</span>
+                        <span class="fw-bold">{% if rencontre.budget %}{{ rencontre.budget }} €{% else %}Gratuit{% endif %}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Places:</span>
+                        <span class="fw-bold">{{ rencontre.placesDispo ?? 'Illimité' }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Date de création:</span>
+                        <span class="fw-bold">{{ rencontre.createdAt is defined and rencontre.createdAt ? rencontre.createdAt|date('d/m/Y') : '-' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{ form_end(form, {'render_rest': true}) }}
+    </div>
+</div>
+<!-- Checkout Page End -->
+
+<!-- Add a simple script to check form submission -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('rencontre-edit-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            console.log('Form submission detected');
+        });
+    }
+});
+</script>
+{% endblock %}

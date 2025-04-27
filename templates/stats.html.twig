@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques des Rencontres{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="card shadow p-4">
+        <h1 class="text-center mb-5">📊 Statistiques des Rencontres par Catégorie</h1>
+
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <canvas id="barChart" height="300"></canvas>
+            </div>
+            <div class="col-md-6 mb-4">
+                <canvas id="pieChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Already JSON from controller, no need json_encode again
+    const transpId = {{ transpId|raw }};
+    const transpIdCount = {{ transpIdCount|raw }};
+
+    const categories = Object.keys(transpIdCount);
+    const counts = Object.values(transpIdCount);
+
+    // Bar Chart
+    const ctxBar = document.getElementById('barChart').getContext('2d');
+    new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+            labels: categories,
+            datasets: [{
+                label: 'Nombre de Rencontres',
+                data: counts,
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(255, 159, 64, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: {
+                duration: 1500,
+                easing: 'easeInOutBounce'
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    precision: 0
+                }
+            }
+        }
+    });
+
+    // Pie Chart
+    const ctxPie = document.getElementById('pieChart').getContext('2d');
+    new Chart(ctxPie, {
+        type: 'pie',
+        data: {
+            labels: categories,
+            datasets: [{
+                data: counts,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)'
+                ],
+                borderColor: '#fff',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: {
+                duration: 2000,
+                easing: 'easeInOutCubic'
+            }
+        }
+    });
+</script>
+{% endblock %}

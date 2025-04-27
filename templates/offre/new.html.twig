@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Offre{% endblock %}
+
+{% block content %}
+    <!-- Single Page Header start -->
+    <div class="container-fluid page-header py-5">
+        <h1 class="text-center text-white display-6">Create New Job Offer</h1>
+        <ol class="breadcrumb justify-content-center mb-0">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Offers</a></li>
+            <li class="breadcrumb-item active text-white">New Offer</li>
+        </ol>
+    </div>
+    <!-- Single Page Header End -->
+
+    <!-- Checkout Page Start -->
+    <div class="container-fluid py-5">
+        <div class="container py-5">
+            <h1 class="mb-4">Offer Details</h1>
+            
+            <div class="row g-5">
+                <div class="col-12">
+                    {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-item w-100">
+                                {{ form_label(form.titre, 'Job Title', {'label_attr': {'class': 'form-label my-3'}}) }}
+                                {{ form_widget(form.titre, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.titre) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-item w-100">
+                                {{ form_label(form.type_contrat, 'Contract Type', {'label_attr': {'class': 'form-label my-3'}}) }}
+                                {{ form_widget(form.type_contrat, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.type_contrat) }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-item w-100">
+                                {{ form_label(form.gouvernorat, 'Governorate', {'label_attr': {'class': 'form-label my-3'}}) }}
+                                {{ form_widget(form.gouvernorat, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.gouvernorat) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-item w-100">
+                                {{ form_label(form.ville, 'City', {'label_attr': {'class': 'form-label my-3'}}) }}
+                                {{ form_widget(form.ville, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.ville) }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-item">
+                        {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label my-3'}}) }}
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 5}}) }}
+                        {{ form_errors(form.description) }}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-item w-100">
+                                {{ form_label(form.organisation, 'Organization', {'label_attr': {'class': 'form-label my-3'}}) }}
+                                {{ form_widget(form.organisation, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.organisation) }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-item w-100">
+                                {{ form_label(form.categorie, 'Category', {'label_attr': {'class': 'form-label my-3'}}) }}
+                                {{ form_widget(form.categorie, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.categorie) }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-item w-100">
+                                {{ form_label(form.salaire, 'Salary', {'label_attr': {'class': 'form-label my-3'}}) }}
+                                {{ form_widget(form.salaire, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.salaire) }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-item">
+                        {{ form_label(form.competences_requises, 'Required Skills', {'label_attr': {'class': 'form-label my-3'}}) }}
+                        {{ form_widget(form.competences_requises, {'attr': {'class': 'form-control', 'rows': 3}}) }}
+                        {{ form_errors(form.competences_requises) }}
+                    </div>
+                    
+                    <div class="row g-4 text-center align-items-center justify-content-center pt-4">
+                        <button type="submit" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary">
+                            {{ button_label|default('Create Offer') }}
+                        </button>
+                    </div>
+                    
+                    {{ form_end(form) }}
+                    
+                    <div class="text-center mt-3">
+                        <a href="{{ path('app_offre_index') }}" class="btn btn-outline-secondary">Back to list</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Checkout Page End -->
+{% endblock %}

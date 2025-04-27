@@ -1,0 +1,4 @@
+<form method="post" action="{{ path('app_rencontre_delete', {'id_rencontre': rencontre.id_rencontre}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette rencontre ?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ rencontre.id_rencontre) }}">
+    <button class="{{ button_class|default('btn btn-outline-danger') }}"><i class="fas fa-trash me-2"></i> Supprimer</button>
+</form>

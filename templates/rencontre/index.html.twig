@@ -1,0 +1,172 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Découvrez les Rencontres{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .fruite-img {
+            height: 250px;
+            overflow: hidden;
+        }
+        .fruite-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<!-- Single Page Header start -->
+<div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">Rencontres</h1>
+    <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+        <li class="breadcrumb-item active text-white">Rencontres</li>
+    </ol>
+</div>
+<!-- Single Page Header End -->
+
+<!-- Rencontres Shop Start-->
+<div class="container-fluid fruite py-5">
+    <div class="container py-5">
+        <h1 class="mb-4">Explorer les rencontres</h1>
+        <div class="row g-4">
+            <div class="col-lg-12">
+                <div class="row g-4">
+                    <div class="col-xl-3">
+                        <div class="input-group w-100 mx-auto d-flex">
+                            <input type="search" class="form-control p-3" placeholder="Mots-clés" aria-describedby="search-icon-1">
+                            <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                        </div>
+                    </div>
+                    <div class="col-6"></div>
+                    <div class="col-xl-3">
+                        <div class="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
+                            <label for="trier">Trier par:</label>
+                            <select id="trier" name="trier" class="border-0 form-select-sm bg-light me-3">
+                                <option value="recent">Plus récents</option>
+                                <option value="populaire">Popularité</option>
+                                <option value="date">Date de l'événement</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-3">
+                        <div class="row g-4">
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <h4>Catégories</h4>
+                                    <ul class="list-unstyled fruite-categorie">
+                                        <li>
+                                            <div class="d-flex justify-content-between fruite-name">
+                                                <a href="{{ path('app_rencontre_by_category', {'category': 'Sport'}) }}"><i class="fas fa-users me-2"></i>Sport</a>
+                                                <span>(3)</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="d-flex justify-content-between fruite-name">
+                                                <a href="{{ path('app_rencontre_by_category', {'category': 'Gastronomie'}) }}"><i class="fas fa-utensils me-2"></i>Gastronomie</a>
+                                                <span>(5)</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="d-flex justify-content-between fruite-name">
+                                                <a href="{{ path('app_rencontre_by_category', {'category': 'Culture'}) }}"><i class="fas fa-music me-2"></i>Culture</a>
+                                                <span>(2)</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="d-flex justify-content-between fruite-name">
+                                                <a href="{{ path('app_rencontre_by_category', {'category': 'Aventure'}) }}"><i class="fas fa-hiking me-2"></i>Aventure</a>
+                                                <span>(8)</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="d-flex justify-content-between fruite-name">
+                                                <a href="{{ path('app_rencontre_by_category', {'category': 'Éducation'}) }}"><i class="fas fa-graduation-cap me-2"></i>Éducation</a>
+                                                <span>(5)</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <h4 class="mb-2">Budget</h4>
+                                    <input type="range" class="form-range w-100" id="budgetRange" name="budgetRange" min="0" max="500" value="0" oninput="budgetAmount.value=budgetRange.value">
+                                    <output id="budgetAmount" name="budgetAmount" min-velue="0" max-value="500" for="budgetRange">0</output>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <h4>Tranche d'âge</h4>
+                                    <div class="mb-2">
+                                        <input type="checkbox" class="form-check-input" id="age1" value="18-25">
+                                        <label class="form-check-label" for="age1">18-25</label>
+                                    </div>
+                                    <div class="mb-2">
+                                        <input type="checkbox" class="form-check-input" id="age2" value="26-35">
+                                        <label class="form-check-label" for="age2">26-35</label>
+                                    </div>
+                                    <div class="mb-2">
+                                        <input type="checkbox" class="form-check-input" id="age3" value="36-45">
+                                        <label class="form-check-label" for="age3">36-45</label>
+                                    </div>
+                                    <div class="mb-2">
+                                        <input type="checkbox" class="form-check-input" id="age4" value="46+">
+                                        <label class="form-check-label" for="age4">46+</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="row g-4 justify-content-center">
+        {% for rencontre in rencontres %}
+                            <div class="col-md-6 col-lg-6 col-xl-4">
+                                <div class="rounded position-relative fruite-item">
+                                    <div class="fruite-img">
+                                        {% if rencontre.imageName %}
+                                            <img src="{{ asset('uploads/rencontres/' ~ rencontre.imageName) }}" class="img-fluid w-100 rounded-top" alt="{{ rencontre.titre }}">
+                                        {% else %}
+                                            <img src="{{ asset('front/img/event-default.jpg') }}" class="img-fluid w-100 rounded-top" alt="{{ rencontre.titre }}">
+                                        {% endif %}
+                                    </div>
+                                    <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">{{ rencontre.categorieRencontre }}</div>
+                                    <div class="p-4 border border-secondary border-top-0 rounded-bottom">
+                                        <h4>{{ rencontre.titre }}</h4>
+                                        <p>{{ rencontre.lieu }} - {{ rencontre.dateRencontre ? rencontre.dateRencontre|date('d/m/Y') : '' }}</p>
+                                        <div class="d-flex justify-content-between flex-lg-wrap">
+                                            <p class="text-dark fs-5 fw-bold mb-0">
+                                                {% if rencontre.budget %}
+                                                    {{ rencontre.budget }} €
+                                                {% else %}
+                                                    Gratuit
+                                                {% endif %}
+                                            </p>
+                                            <a href="{{ path('app_rencontre_show', {'id_rencontre': rencontre.id_rencontre}) }}" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> Voir</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+        {% else %}
+                            <div class="col-12 text-center">
+                                <p>Aucune rencontre disponible pour le moment.</p>
+                            </div>
+        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 text-center mt-4">
+            <a href="{{ path('app_rencontre_new') }}" class="btn btn-primary rounded-pill py-3 px-5">Créer une nouvelle rencontre</a>
+        </div>
+    </div>
+</div>
+<!-- Rencontres Shop End -->
+{% endblock %}

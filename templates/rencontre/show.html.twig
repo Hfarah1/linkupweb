@@ -1,0 +1,284 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ rencontre.titre }}{% endblock %}
+
+{% block content %}
+<!-- Single Page Header start -->
+<div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">Détails de la Rencontre</h1>
+    <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('app_rencontre_index') }}">Rencontres</a></li>
+        <li class="breadcrumb-item active text-white">{{ rencontre.titre }}</li>
+    </ol>
+</div>
+<!-- Single Page Header End -->
+
+<!-- Single Rencontre Start -->
+<div class="container-fluid py-5 mt-5">
+    <div class="container py-5">
+        <div class="row g-4 mb-5">
+            <div class="col-lg-8 col-xl-9">
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="border rounded">
+                            {% if rencontre.imageName %}
+                                <img src="{{ asset('uploads/rencontres/' ~ rencontre.imageName) }}" class="img-fluid rounded" alt="{{ rencontre.titre }}">
+                            {% else %}
+                                <img src="{{ asset('front/img/event-default.jpg') }}" class="img-fluid rounded" alt="{{ rencontre.titre }}">
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <h2 class="fw-bold mb-3">{{ rencontre.titre }}</h2>
+                        <p class="mb-3">Catégorie: {{ rencontre.categorieRencontre }}</p>
+                        
+                        {% if rencontre.budget %}
+                            <h5 class="fw-bold mb-3">{{ rencontre.budget }} €</h5>
+                        {% else %}
+                            <h5 class="fw-bold mb-3 text-success">Gratuit</h5>
+                        {% endif %}
+                        
+                        <div class="d-flex mb-4">
+                            <p><i class="fas fa-map-marker-alt me-2 text-primary"></i> {{ rencontre.lieu }}</p>
+                        </div>
+                        
+                        <div class="d-flex mb-4">
+                            <p><i class="fas fa-calendar-alt me-2 text-primary"></i> {{ rencontre.dateRencontre ? rencontre.dateRencontre|date('d/m/Y') : 'Date à définir' }}</p>
+                        </div>
+                        
+                        {% if rencontre.placesDispo %}
+                            <div class="d-flex mb-4">
+                                <p><i class="fas fa-users me-2 text-primary"></i> Places disponibles: {{ rencontre.placesDispo }}</p>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="mb-4">
+                            <p><i class="fas fa-user-circle me-2 text-primary"></i> Âge: {{ rencontre.ageMin }} - {{ rencontre.ageMax }} ans</p>
+                        </div>
+                        
+                       <a href="{{ path('app_participate') }}" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
+    <i class="fa fa-calendar-check me-2 text-primary"></i> Participer
+</a>
+
+                    </div>
+                    <div class="col-lg-12 mt-5">
+                        <nav>
+                            <div class="nav nav-tabs mb-3">
+                                <button class="nav-link active border-white border-bottom-0" type="button" role="tab"
+                                    id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
+                                    aria-controls="nav-about" aria-selected="true">Description</button>
+                                <button class="nav-link border-white border-bottom-0" type="button" role="tab"
+                                    id="nav-mission-tab" data-bs-toggle="tab" data-bs-target="#nav-mission"
+                                    aria-controls="nav-mission" aria-selected="false">Informations</button>
+                                <button class="nav-link border-white border-bottom-0" type="button" role="tab"
+                                    id="nav-comments-tab" data-bs-toggle="tab" data-bs-target="#nav-comments"
+                                    aria-controls="nav-comments" aria-selected="false">Commentaires</button>
+                            </div>
+                        </nav>
+                        <div class="tab-content mb-5">
+                            <div class="tab-pane active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
+                                <p>{{ rencontre.description|nl2br }}</p>
+                                
+                                {% if rencontre.bio %}
+                                    <h5 class="mt-4 mb-3">À propos de l'organisateur</h5>
+                                    <p>{{ rencontre.bio|nl2br }}</p>
+                                {% endif %}
+                                
+                                {% if rencontre.tags %}
+                                    <div class="mt-4">
+                                        <h5 class="mb-3">Tags</h5>
+                                        <div class="d-flex flex-wrap">
+                                            {% set tagsList = rencontre.tags|split(',') %}
+                                            {% for tag in tagsList %}
+                                                <span class="bg-light px-3 py-2 rounded me-2 mb-2">{{ tag|trim }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="tab-pane" id="nav-mission" role="tabpanel" aria-labelledby="nav-mission-tab">
+                                <div class="px-2">
+                                    <div class="row g-4">
+                                        <div class="col-6">
+                                            <div class="row bg-light align-items-center text-center justify-content-center py-2">
+                                                <div class="col-6">
+                                                    <p class="mb-0">Tranche d'âge</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <p class="mb-0">{{ rencontre.ageMin }} - {{ rencontre.ageMax }} ans</p>
+                                                </div>
+                                            </div>
+                                            <div class="row text-center align-items-center justify-content-center py-2">
+                                                <div class="col-6">
+                                                    <p class="mb-0">Budget</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <p class="mb-0">{% if rencontre.budget %}{{ rencontre.budget }} €{% else %}Gratuit{% endif %}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row bg-light text-center align-items-center justify-content-center py-2">
+                                                <div class="col-6">
+                                                    <p class="mb-0">Catégorie</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <p class="mb-0">{{ rencontre.categorieRencontre }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row text-center align-items-center justify-content-center py-2">
+                                                <div class="col-6">
+                                                    <p class="mb-0">Places disponibles</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <p class="mb-0">{{ rencontre.placesDispo ?? 'Illimité' }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="row bg-light align-items-center text-center justify-content-center py-2">
+                                                <div class="col-6">
+                                                    <p class="mb-0">Date</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <p class="mb-0">{{ rencontre.dateRencontre ? rencontre.dateRencontre|date('d/m/Y') : 'À définir' }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row text-center align-items-center justify-content-center py-2">
+                                                <div class="col-6">
+                                                    <p class="mb-0">Lieu</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <p class="mb-0">{{ rencontre.lieu }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row bg-light text-center align-items-center justify-content-center py-2">
+                                                <div class="col-6">
+                                                    <p class="mb-0">Distance max</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <p class="mb-0">{{ rencontre.distanceMax }} km</p>
+                                                </div>
+                                            </div>
+                                            <div class="row text-center align-items-center justify-content-center py-2">
+                                                <div class="col-6">
+                                                    <p class="mb-0">Genre recherché</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <p class="mb-0">{{ rencontre.genreRecherche }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="nav-comments" role="tabpanel" aria-labelledby="nav-comments-tab">
+                                <div class="p-4 bg-light rounded">
+                                    <h5 class="mb-4">Laisser un commentaire</h5>
+                                    <form action="{{ path('app_feedback_new', {'id_rencontre': rencontre.id_rencontre}) }}" method="post">
+                                        <div class="row g-3">
+                                            <div class="col-12 mb-3">
+                                                <textarea class="form-control" rows="5" placeholder="Votre commentaire" name="contenu" required></textarea>
+                                            </div>
+                                            <div class="col-12 mb-3">
+                                                <label for="score" class="form-label">Note (1-5)</label>
+                                                <div class="d-flex">
+                                                    {% for i in 1..5 %}
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="score" id="score{{ i }}" value="{{ i }}" {% if i == 5 %}checked{% endif %}>
+                                                            <label class="form-check-label" for="score{{ i }}">{{ i }}</label>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="id_utilisateur" value="1">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('feedback' ~ rencontre.id_rencontre) }}">
+                                            <div class="col-12">
+                                                <button type="submit" class="btn btn-primary py-3 px-4">Publier</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                
+                                <div class="mt-5">
+                                    <h5 class="mb-4">Commentaires ({{ feedbackCount|default(0) }})</h5>
+                                    {% if feedbacks is defined and feedbacks|length > 0 %}
+                                        <div class="feedback-container">
+                                            {% for feedback in feedbacks %}
+                                                {% include 'feedback/_feedback_item.html.twig' with {
+                                                    'feedback': feedback,
+                                                    'replies': repliesMap[feedback.id_feedback] is defined ? repliesMap[feedback.id_feedback] : [],
+                                                    'is_reply': false,
+                                                    'rencontre_id': rencontre.id_rencontre
+                                                } %}
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        <p>Aucun commentaire pour le moment. Soyez le premier à commenter!</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-xl-3">
+                <div class="row g-4 fruite">
+                    <div class="col-lg-12">
+                        <div class="input-group w-100">
+                            <input type="text" class="form-control" placeholder="Mot-clé">
+                            <button class="btn btn-primary px-4"><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="bg-light rounded p-4 pt-0">
+                            <h4 class="mb-4 pb-2 pt-3">Actions</h4>
+                            <div class="d-flex flex-column">
+                                <a href="{{ path('app_rencontre_edit', {'id_rencontre': rencontre.id_rencontre}) }}" class="btn btn-outline-primary mb-3"><i class="fas fa-edit me-2"></i> Modifier</a>
+                                
+                                <form method="post" action="{{ path('app_rencontre_delete', {'id_rencontre': rencontre.id_rencontre}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette rencontre?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ rencontre.id_rencontre) }}">
+                                    <button class="btn btn-outline-danger mb-3 w-100"><i class="fas fa-trash me-2"></i> Supprimer</button>
+                                </form>
+                                
+                                <a href="#" class="btn btn-outline-success mb-3"><i class="fas fa-share-alt me-2"></i> Partager</a>
+                                
+                                <a href="{{ path('app_rencontre_index') }}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i> Retour à la liste</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-12">
+                        <div class="bg-light rounded p-4">
+                            <h4 class="mb-4">Organisateur</h4>
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                    <i class="fa fa-user"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-0">Utilisateur #{{ rencontre.idUtilisateur }}</h5>
+                                    <p class="mb-0">Organisateur</p>
+                                </div>
+                            </div>
+                            <p>{{ rencontre.bio|slice(0, 100) ~ (rencontre.bio|length > 100 ? '...' : '') }}</p>
+                            <a href="#" class="btn btn-outline-primary btn-sm">Voir le profil</a>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-12">
+                        <div class="bg-light rounded p-4">
+                            <h4 class="mb-4">Rencontres similaires</h4>
+                            <div class="d-flex flex-column">
+                                <a href="#" class="h5 mb-4">Découvrez d'autres rencontres dans la même catégorie</a>
+                                <p class="text-center">
+                                    <a href="{{ path('app_rencontre_index') }}" class="btn btn-outline-primary">Explorer</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Single Rencontre End -->
+{% endblock %}
