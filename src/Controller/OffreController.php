@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
-use Psr\Log\LoggerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/offre')]
 final class OffreController extends AbstractController
@@ -104,8 +104,8 @@ final class OffreController extends AbstractController
         ]);
     }
 
-    #[Route('/{page<\d+>}', name: 'app_offre_index', methods: ['GET'], defaults: ['page' => 1])]
-    public function index(Request $request, OffreRepository $offreRepository, int $page): Response
+    #[Route('/', name: 'app_offre_index', methods: ['GET'])]
+    public function index(Request $request, OffreRepository $offreRepository, PaginatorInterface $paginator): Response
     {
         // Fetch distinct categories and their counts
         $categoriesResult = $offreRepository->createQueryBuilder('o')
@@ -132,7 +132,6 @@ final class OffreController extends AbstractController
         $regions = array_map(fn($row) => $row['gouvernorat'], $regionsResult);
 
         // Pagination parameters
-        $itemsPerPage = 9;
         $queryBuilder = $offreRepository->createQueryBuilder('o');
 
         // Apply filters
@@ -175,21 +174,17 @@ final class OffreController extends AbstractController
                 break;
         }
 
-        // Paginate
-        $query = $queryBuilder->getQuery()
-            ->setFirstResult(($page - 1) * $itemsPerPage)
-            ->setMaxResults($itemsPerPage);
-
-        $paginator = new Paginator($query, true);
-        $totalItems = count($paginator);
-        $totalPages = (int) ceil($totalItems / $itemsPerPage);
+        // Paginate with KnpPaginator
+        $pagination = $paginator->paginate(
+            $queryBuilder->getQuery(), // Query to paginate
+            $request->query->getInt('page', 1), // Page number from query, default to 1
+            9 // Items per page
+        );
 
         return $this->render('offre/index.html.twig', [
-            'offres' => $paginator,
+            'offres' => $pagination,
             'categories' => $categories,
             'regions' => $regions,
-            'currentPage' => $page,
-            'totalPages' => $totalPages,
             'filters' => $filters,
         ]);
     }

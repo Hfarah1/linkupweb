@@ -180,14 +180,14 @@
                                 <i class="fas fa-arrow-left me-1"></i>
                                 Retour à l'offre
                             </a>
-
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <a href="{{ path('app_candidature_edit', { 'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature }) }}" class="btn btn-warning">
-                                    <i class="fas fa-edit me-1"></i>
-                                    Modifier le statut
-                                </a>
-                                {{ include('candidature/_delete_form.html.twig') }}
-                            {% endif %}
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#acceptModal{{ candidature.id_candidature }}">
+                                <i class="fas fa-check me-1"></i>
+                                Accepter
+                            </button>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#refuseModal{{ candidature.id_candidature }}">
+                                <i class="fas fa-times me-1"></i>
+                                Refuser
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -266,41 +266,83 @@
         </div>
     </div>
 
+    <!-- Accept Modal -->
+<div class="modal fade" id="acceptModal{{ candidature.id_candidature }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Accepter la candidature</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Voulez-vous accepter la candidature de {{ candidature.user.prenom }} {{ candidature.user.nom }}?</p>
+            </div>
+            <div class="modal-footer">
+                <form action="{{ path('app_candidature_accept', {'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature}) }}" method="post">
+                    <button type="submit" class="btn btn-success">Confirmer</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+   <!-- Refuse Modal -->
+<div class="modal fade" id="refuseModal{{ candidature.id_candidature }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Refuser la candidature</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Voulez-vous refuser la candidature de {{ candidature.user.prenom }} {{ candidature.user.nom }}?</p>
+            </div>
+            <div class="modal-footer">
+                <form action="{{ path('app_candidature_refuse', {'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature}) }}" method="post">
+                    <button type="submit" class="btn btn-danger">Confirmer</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
     <!-- JavaScript -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Initialize Owl Carousel
-            const $carousel = $('.vegetable-carousel');
-            if ($carousel.length) {
-                $carousel.owlCarousel({
-                    loop: {{ otherCandidatures|length > 3 ? 'true' : 'false' }},
-                    margin: 20,
-                    nav: true,
-                    dots: true,
-                    autoplay: true,
-                    autoplayTimeout: 5000,
-                    responsive: {
-                        0: { items: 1 },
-                        600: { items: 2 },
-                        1000: { items: 3 }
-                    }
-                });
-            }
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize Owl Carousel
+        const $carousel = $('.vegetable-carousel');
+        if ($carousel.length) {
+            $carousel.owlCarousel({
+                loop: {{ otherCandidatures|length > 3 ? 'true' : 'false' }},
+                margin: 20,
+                nav: true,
+                dots: true,
+                autoplay: true,
+                autoplayTimeout: 5000,
+                responsive: {
+                    0: { items: 1 },
+                    600: { items: 2 },
+                    1000: { items: 3 }
+                }
+            });
+        }
 
-            // Load CV iframe on modal show and clear on hide
-            const modal = document.getElementById('cvModal{{ candidature.id_candidature }}');
-            if (modal) {
-                modal.addEventListener('show.bs.modal', function () {
-                    const iframe = document.getElementById('cvIframe{{ candidature.id_candidature }}');
-                    iframe.src = "{{ path('app_candidature_view_cv', { 'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature })|e('js') }}";
-                });
-                modal.addEventListener('hidden.bs.modal', function () {
-                    const iframe = document.getElementById('cvIframe{{ candidature.id_candidature }}');
-                    iframe.src = '';
-                });
-            }
-        });
-    </script>
+        // Load CV iframe on modal show and clear on hide
+        const modal = document.getElementById('cvModal{{ candidature.id_candidature }}');
+        if (modal) {
+            modal.addEventListener('show.bs.modal', function () {
+                const iframe = document.getElementById('cvIframe{{ candidature.id_candidature }}');
+                iframe.src = "{{ path('app_candidature_view_cv', { 'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature })|e('js') }}";
+            });
+            modal.addEventListener('hidden.bs.modal', function () {
+                const iframe = document.getElementById('cvIframe{{ candidature.id_candidature }}');
+                iframe.src = '';
+            });
+        }
+    });
+</script>
 
     <style>
         /* Custom enhancements */
