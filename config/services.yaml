@@ -6,6 +6,7 @@
 parameters:
 
 services:
+    
     App\Twig\AppExtension:
         tags: ['twig.extension']
     # default configuration for services in *this* file
@@ -21,6 +22,8 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-
+    Mailtrap\Bridge\Transport\MailtrapTransportFactory:
+        tags:
+            - { name: 'mailer.transport_factory' }
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

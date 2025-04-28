@@ -307,7 +307,51 @@
         </div>
     </div>
 </div>
+<!-- Email Sent Modal -->
+<div class="modal fade" id="emailSentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Succès</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                L'email a été envoyé avec succès.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- In your accept modal -->
+<form action="{{ path('app_candidature_accept', {'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature}) }}" method="post" data-ajax-form>
+    <button type="submit" class="btn btn-success">Confirmer</button>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+</form>
 
+<!-- In your refuse modal -->
+<form action="{{ path('app_candidature_refuse', {'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature}) }}" method="post" data-ajax-form>
+    <button type="submit" class="btn btn-danger">Confirmer</button>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+</form>
+<!-- Email Error Modal -->
+<div class="modal fade" id="emailErrorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Erreur</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Une erreur est survenue lors de l'envoi de l'email.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
     <!-- JavaScript -->
     <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -342,6 +386,35 @@
             });
         }
     });
+    // In your show.html.twig, update the form submission to use AJAX
+$(document).ready(function() {
+    $('form[data-ajax-form]').on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        
+        $.ajax({
+            url: form.attr('action'),
+            method: form.attr('method'),
+            data: form.serialize(),
+            success: function(response) {
+                // Show success modal
+                $('#emailSentModal .modal-body').text(response.message);
+                $('#emailSentModal').modal('show');
+                
+                // Close the action modal
+                form.closest('.modal').modal('hide');
+                
+                // Optional: reload or update page
+                setTimeout(function() {
+                    window.location.reload();
+                }, 2000);
+            },
+            error: function() {
+                $('#emailErrorModal').modal('show');
+            }
+        });
+    });
+});
 </script>
 
     <style>

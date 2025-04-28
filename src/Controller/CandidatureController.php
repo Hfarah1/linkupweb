@@ -12,9 +12,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\HttpClient;
 use Smalot\PdfParser\Parser;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 #[Route('/offre/{id_offre}/candidature')]
 final class CandidatureController extends AbstractController
@@ -115,8 +118,6 @@ final class CandidatureController extends AbstractController
                             'stream' => false,
                         ],
                     ]);
-
-                    #dd($response->getContent());
 
                     // Log the raw response
                     $rawResponse = $response->getContent();
@@ -258,12 +259,44 @@ final class CandidatureController extends AbstractController
     }
 
     #[Route('/{id_candidature}/accept', name: 'app_candidature_accept', methods: ['POST'])]
-    public function accept(Candidature $candidature, EntityManagerInterface $entityManager): Response
-    {
+    public function accept(
+        Candidature $candidature,
+        EntityManagerInterface $entityManager,
+        Request $request,
+        MailerInterface $mailer
+    ): Response {
         $candidature->setStatut('Acceptée');
         $entityManager->flush();
 
-        $this->addFlash('success', 'La candidature a été acceptée avec succès.');
+        try {
+            $email = (new Email())
+                ->from($this->getParameter('MAILER_FROM_ADDRESS'))
+                ->to($candidature->getUser()->getEmail())
+                ->subject('Votre candidature a été acceptée')
+                ->text(sprintf(
+                    "Bonjour %s,\n\nNous sommes heureux de vous informer que votre candidature pour l'offre '%s' a été acceptée.\n\nCordialement,\nL'équipe de recrutement",
+                    $candidature->getUser()->getPrenom(),
+                    $candidature->getOffre()->getTitre()
+                ));
+
+            $mailer->send($email);
+            $this->logger->info('Acceptance email sent', ['candidature_id' => $candidature->getIdCandidature()]);
+
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(['success' => true, 'message' => 'Email d\'acceptation envoyé']);
+            }
+            $this->addFlash('success', 'Email d\'acceptation envoyé');
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to send acceptance email', [
+                'error' => $e->getMessage(),
+                'candidature_id' => $candidature->getIdCandidature()
+            ]);
+
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(['success' => false, 'message' => 'Erreur d\'envoi d\'email']);
+            }
+            $this->addFlash('error', 'Erreur d\'envoi d\'email');
+        }
 
         return $this->redirectToRoute('app_candidature_show', [
             'id_offre' => $candidature->getOffre()->getIdOffre(),
@@ -272,16 +305,80 @@ final class CandidatureController extends AbstractController
     }
 
     #[Route('/{id_candidature}/refuse', name: 'app_candidature_refuse', methods: ['POST'])]
-    public function refuse(Candidature $candidature, EntityManagerInterface $entityManager): Response
-    {
+    public function refuse(
+        Candidature $candidature,
+        EntityManagerInterface $entityManager,
+        Request $request,
+        MailerInterface $mailer
+    ): Response {
         $candidature->setStatut('Refusée');
         $entityManager->flush();
 
-        $this->addFlash('success', 'La candidature a été refusée avec succès.');
+        try {
+            // Create email using Symfony's Email class
+            $email = (new Email())
+                ->from('smtp@mailtrap.io') // Matches MAILER_FROM_ADDRESS in .env
+                ->to($candidature->getUser()->getEmail())
+                ->subject('Votre candidature a été examinée')
+                ->text(sprintf(
+                    "Bonjour %s,\n\nAprès examen, nous regrettons de vous informer que votre candidature pour l'offre '%s' n'a pas été retenue.\n\nCordialement,\nL'équipe de recrutement",
+                    $candidature->getUser()->getPrenom(),
+                    $candidature->getOffre()->getTitre()
+                ));
+
+            // Send email via Symfony Mailer (using Mailtrap API via MAILER_DSN)
+            $mailer->send($email);
+
+            $this->logger->info('Email sent successfully via Mailtrap API');
+
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(['success' => true, 'message' => 'Email de refus envoyé']);
+            }
+            $this->addFlash('success', 'Email de refus envoyé');
+        } catch (\Exception $e) {
+            $this->logger->error('Email sending failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse([
+                    'success' => false,
+                    'message' => 'Erreur d\'envoi d\'email',
+                    'error' => $e->getMessage()
+                ]);
+            }
+            $this->addFlash('error', 'Erreur d\'envoi d\'email: ' . $e->getMessage());
+        }
 
         return $this->redirectToRoute('app_candidature_show', [
             'id_offre' => $candidature->getOffre()->getIdOffre(),
             'id_candidature' => $candidature->getIdCandidature(),
         ]);
+    }
+
+
+    #[Route('/send-test-email', name: 'app_send_test_email')]
+    public function sendEmail(MailerInterface $mailer): Response
+    {
+        try {
+            $email = (new Email())
+                ->from('hello@demomailtrap.co')
+                ->to('hammoudayass@gmail.com')
+                ->subject('Hello from Symfony and MailTrap')
+                ->text('This is a test email')
+                ->html('<p>This is a <b>test</b> email!</p>');
+
+            $mailer->send($email);
+
+            $this->logger->info('Test email sent successfully');
+            return new Response('Email sent successfully!');
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to send test email', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return new Response('Failed to send email: ' . $e->getMessage(), 500);
+        }
     }
 }
