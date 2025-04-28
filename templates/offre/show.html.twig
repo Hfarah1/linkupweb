@@ -174,6 +174,16 @@
 														{{ candidature.user.prenom|default('Non spécifié') }}
 														{{ candidature.user.nom|default('') }}
 													</a>
+													{% if candidature.score is defined and candidature.score is not null %}
+														<span class="badge bg-info rounded-pill ms-2">
+															score de correspondance:
+															{{ candidature.score }}
+														</span>
+													{% else %}
+														<span class="badge bg-secondary rounded-pill ms-2">
+															Score: N/A
+														</span>
+													{% endif %}
 												</h5>
 												<span class="badge bg-{{ candidature.statut == 'Acceptée' ? 'success' : (candidature.statut == 'Refusée' ? 'danger' : 'warning') }} rounded-pill">
 													{{ candidature.statut|default('En attente') }}
@@ -288,30 +298,33 @@
 			</div>
 		{% endif %}
 	</div>
-</div></div></div></div><!-- Single Offer End --><!-- CV and Motivation Letter Modals -->{% for candidature in candidatures %}{% if candidature.cvFile %}<div class="modal fade" id="cvModal{{ candidature.id_candidature }}" tabindex="-1" aria-labelledby="cvModalLabel{{ candidature.id_candidature }}" aria-hidden="true">
-<div class="modal-dialog modal-xl">
-	<div class="modal-content">
-		<div class="modal-header bg-primary text-white">
-			<h5 class="modal-title" id="cvModalLabel{{ candidature.id_candidature }}">
-				CV de
-				{{ candidature.user.prenom|default('Non spécifié') }}
-				{{ candidature.user.nom|default('') }}
-			</h5>
-			<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-		</div>
-		<div class="modal-body p-0">
-			<div class="ratio ratio-16x9">
-				<iframe id="cvIframe{{ candidature.id_candidature }}" style="width: 100%; height: 100%; border: none;"></iframe>
-			</div>
-		</div>
-		<div class="modal-footer">
-			<a href="{{ path('app_candidature_download_cv', { 'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature }) }}" class="btn btn-primary">
-				<i class="fas fa-download me-1"></i>Télécharger
-			</a>
-			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-		</div>
-	</div>
-</div></div>{% endif %}{% if candidature.lettreMotivation %}<div class="modal fade" id="motivationLetterModal{{ candidature.id_candidature }}" tabindex="-1" aria-labelledby="motivationLetterModalLabel{{ candidature.id_candidature }}" aria-hidden="true">
+</div></div></div></div><!-- Single Offer End --><!-- CV and Motivation Letter Modals -->{% for candidature in candidatures %}{% if candidature.cvFile %}
+        <div class="modal fade" id="cvModal{{ candidature.id_candidature }}" tabindex="-1" aria-labelledby="cvModalLabel{{ candidature.id_candidature }}" aria-hidden="true" data-candidature-id="{{ candidature.id_candidature }}">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="cvModalLabel{{ candidature.id_candidature }}">
+                            CV de
+                            {{ candidature.user.prenom|default('Non spécifié') }}
+                            {{ candidature.user.nom|default('') }}
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <div class="ratio ratio-16x9">
+                            <iframe id="cvIframe{{ candidature.id_candidature }}" style="width: 100%; height: 100%; border: none;"></iframe>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="{{ path('app_candidature_download_cv', { 'id_offre': candidature.offre.id_offre, 'id_candidature': candidature.id_candidature }) }}" class="btn btn-primary">
+                            <i class="fas fa-download me-1"></i>Télécharger
+                        </a>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}{% if candidature.lettreMotivation %}<div class="modal fade" id="motivationLetterModal{{ candidature.id_candidature }}" tabindex="-1" aria-labelledby="motivationLetterModalLabel{{ candidature.id_candidature }}" aria-hidden="true">
 <div class="modal-dialog modal-lg">
 	<div class="modal-content">
 		<div class="modal-header bg-primary text-white">
@@ -331,11 +344,11 @@
 			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
 		</div>
 	</div>
-</div></div>{% endif %}{% endfor %}<!-- JavaScript --><script>document.addEventListener('DOMContentLoaded', function () {
+</div></div>{% endif %}{% endfor %}<!-- JavaScript --><script>
+document.addEventListener('DOMContentLoaded', function () {
     // Initialize carousel (assuming Owl Carousel is replaced with vanilla JS or a modern library)
     const carousel = document.querySelector('.vegetable-carousel');
     if (carousel) {
-        // Replace with actual carousel logic or library
         console.log('Initialize carousel');
     }
 
@@ -367,23 +380,34 @@
     activateCandidaturesTab();
     window.addEventListener('hashchange', activateCandidaturesTab);
 
-    // Handle modals with event delegation
+    // Handle CV modals with event delegation
     document.addEventListener('show.bs.modal', function (event) {
         const modal = event.target;
-        const iframe = modal.querySelector('.cv-iframe');
-        if (iframe && modal.dataset.candidatureId) {
-            iframe.src = `/path/to/cv/${modal.dataset.candidatureId}`;
+        const candidatureId = modal.getAttribute('data-candidature-id');
+        if (candidatureId) {
+            const iframe = document.getElementById('cvIframe' + candidatureId);
+            if (iframe) {
+                // Dynamically generate the URL for the CV view
+                const cvViewUrl = "{{ path('app_candidature_view_cv', { 'id_offre': 'OFFER_ID', 'id_candidature': 'CANDIDATURE_ID' })|e('js') }}"
+                    .replace('OFFER_ID', {{ offre.id_offre }})
+                    .replace('CANDIDATURE_ID', candidatureId);
+                iframe.src = cvViewUrl;
+            }
         }
     });
 
     document.addEventListener('hidden.bs.modal', function (event) {
         const modal = event.target;
-        const iframe = modal.querySelector('.cv-iframe');
-        if (iframe) {
-            iframe.src = '';
+        const candidatureId = modal.getAttribute('data-candidature-id');
+        if (candidatureId) {
+            const iframe = document.getElementById('cvIframe' + candidatureId);
+            if (iframe) {
+                iframe.src = '';
+            }
         }
     });
-});</script><!-- Styles --><style>.vesitable-item {
+});
+</script><!-- Styles --><style>.vesitable-item {
 	transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .vesitable-item:hover {

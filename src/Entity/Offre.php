@@ -86,7 +86,8 @@ class Offre
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "La ville ne peut pas être vide")]
     #[Assert\Length(
         max: 50,
         maxMessage: "Le nom de la ville ne peut pas dépasser {{ limit }} caractères"
@@ -165,7 +166,7 @@ class Offre
         return $this;
     }
 
-    #[ORM\Column(type: 'blob', nullable: false)]
+    #[ORM\Column(type: 'blob', nullable: true)]
     private $organisationLogo = null;
 
     public function getOrganisationLogo(): ?string
@@ -173,7 +174,7 @@ class Offre
         if ($this->organisationLogo === null) {
             return null;
         }
-        
+
         // Convert resource to string if needed
         if (is_resource($this->organisationLogo)) {
             $this->organisationLogo = stream_get_contents($this->organisationLogo);
@@ -244,7 +245,7 @@ class Offre
     #[ORM\Column(type: 'string', nullable: false)]
     #[Assert\NotBlank(message: "Le type de contrat ne peut pas être vide")]
     #[Assert\Choice(
-        choices: ['Bénévolat','Contrat', 'Mission','CDD Événementiel','CDI Saisonnier', 'Freelance', 'Stage'],
+        choices: ['Bénévolat', 'Contrat', 'Mission', 'CDD Événementiel', 'CDI Saisonnier', 'Freelance', 'Stage'],
         message: "Choisissez un type de contrat valide"
     )]
     private ?string $type_contrat = null;

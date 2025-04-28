@@ -1,0 +1,34 @@
+Metiers Avancées : 
+
+- recherche avancée
+	- Filtres multicritères à la rechreche des offres
+	- Auto-complétion AJAX à la recherche
+	- offres similaires
+	
+- statistiques (avec charts)
+   	- nombre des candidatures par offre
+	- temps moyen de traitement par offre
+	- Taux d'acceptation
+	- nombre des offres par catégories
+
+
+---------------------------------------------------------------------------------------------------------------------------
+Bundles (Done)
+
+- smalot/pdfparser (CVs)
+
+- knplabs/knp-paginator-bundle ( Offres)
+---------------------------------------------------------------------------------------------------------------------------
+APIs:
+
+- Mail d'acceptation ou refus de candidature (using Mailer)
+---------------------------------------------------------------------------------------------------------------------------
+Fonctionnalité AI:
+
+Using smalot/pdfparser pour l'extraction du texte from les cv sous forme PDF
+Utilisation AI using LLAMA pour analyser les données des cv et utiliser les données de l'offre pour donner une note de correspondance pour ce cv dependant sur cet offre
+---------------------------------------------------------------------------------------------------------------------------
+
+Plus:  Ajouter entité catégorie offre
+
+Scénario Clair
