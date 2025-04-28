@@ -292,8 +292,9 @@
 													<div class="col-md-2">
 														<select name="offer_category" class="form-control">
 															<option value="">Toutes les Catégories</option>
-															{% for category in categories %}
-																<option value="{{ category }}" {{ filters.offer_category == category ? 'selected' }}>{{ category }}</option>
+															{% for categoryName, count in categories %}
+																<option value="{{ categoryName }}" {{ filters.offer_category == categoryName ? 'selected' }}>{{ categoryName }}
+																	({{ count }})</option>
 															{% endfor %}
 														</select>
 													</div>
@@ -420,7 +421,7 @@
 													</button>
 												</div>
 											</div>
-											
+
 											<!-- Search and Filter Form -->
 											<form action="{{ path('back') }}#candidatures" method="get" class="mb-4">
 												<div class="row g-3">
@@ -592,7 +593,7 @@
 						</div>
 					</div>
 
-                    
+
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
 						<button type="submit" class="btn btn-primary">Créer l'Offre</button>
@@ -748,233 +749,246 @@
 {% endblock %}
 
 {% block javascripts %}
-    {{ parent() }}
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Function to activate Offers tab for #offers
-            function activateOffersTab() {
-                if (window.location.hash === '#offers') {
-                    const tabEl = document.getElementById('offers-tab');
-                    if (tabEl) {
-                        if (typeof bootstrap !== 'undefined') {
-                            const tab = new bootstrap.Tab(tabEl);
-                            tab.show();
-                            setTimeout(() => {
-                                const tabsContainer = document.querySelector('.nav-tabs');
-                                if (tabsContainer) {
-                                    const headerHeight = document.querySelector('.fixed-top')?.offsetHeight || 0;
-                                    window.scrollTo({
-                                        top: tabsContainer.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20,
-                                        behavior: 'smooth'
-                                    });
-                                }
-                            }, 300);
-                        } else {
-                            tabEl.click();
-                        }
-                    }
-                }
-            }
+	{{ parent() }}
+	<script>
+		document.addEventListener('DOMContentLoaded', function () { // Function to activate Offers tab for #offers
+function activateOffersTab() {
+if (window.location.hash === '#offers') {
+const tabEl = document.getElementById('offers-tab');
+if (tabEl) {
+if (typeof bootstrap !== 'undefined') {
+const tab = new bootstrap.Tab(tabEl);
+tab.show();
+setTimeout(() => {
+const tabsContainer = document.querySelector('.nav-tabs');
+if (tabsContainer) {
+const headerHeight = document.querySelector('.fixed-top') ?. offsetHeight || 0;
+window.scrollTo({
+top: tabsContainer.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20,
+behavior: 'smooth'
+});
+}
+}, 300);
+} else {
+tabEl.click();
+}
+}
+}
+}
 
-            // Function to activate Candidatures tab for #candidatures
-            function activateCandidaturesTab() {
-                if (window.location.hash === '#candidatures') {
-                    const tabEl = document.getElementById('applications-tab');
-                    if (tabEl) {
-                        if (typeof bootstrap !== 'undefined') {
-                            const tab = new bootstrap.Tab(tabEl);
-                            tab.show();
-                            setTimeout(() => {
-                                const tabsContainer = document.querySelector('.nav-tabs');
-                                if (tabsContainer) {
-                                    const headerHeight = document.querySelector('.fixed-top')?.offsetHeight || 0;
-                                    window.scrollTo({
-                                        top: tabsContainer.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20,
-                                        behavior: 'smooth'
-                                    });
-                                }
-                            }, 300);
-                        } else {
-                            tabEl.click();
-                        }
-                    }
-                }
-            }
+// Function to activate Candidatures tab for #candidatures
+function activateCandidaturesTab() {
+if (window.location.hash === '#candidatures') {
+const tabEl = document.getElementById('applications-tab');
+if (tabEl) {
+if (typeof bootstrap !== 'undefined') {
+const tab = new bootstrap.Tab(tabEl);
+tab.show();
+setTimeout(() => {
+const tabsContainer = document.querySelector('.nav-tabs');
+if (tabsContainer) {
+const headerHeight = document.querySelector('.fixed-top') ?. offsetHeight || 0;
+window.scrollTo({
+top: tabsContainer.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20,
+behavior: 'smooth'
+});
+}
+}, 300);
+} else {
+tabEl.click();
+}
+}
+}
+}
 
-            // Function to activate default Overview tab
-            function activateDefaultTab() {
-                if (!window.location.hash || (window.location.hash !== '#offers' && window.location.hash !== '#candidatures')) {
-                    const tabEl = document.getElementById('overview-tab');
-                    if (tabEl) {
-                        if (typeof bootstrap !== 'undefined') {
-                            const tab = new bootstrap.Tab(tabEl);
-                            tab.show();
-                            setTimeout(() => {
-                                const tabsContainer = document.querySelector('.nav-tabs');
-                                if (tabsContainer) {
-                                    const headerHeight = document.querySelector('.fixed-top')?.offsetHeight || 0;
-                                    window.scrollTo({
-                                        top: tabsContainer.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20,
-                                        behavior: 'smooth'
-                                    });
-                                }
-                            }, 300);
-                        } else {
-                            tabEl.click();
-                        }
-                    }
-                }
-            }
+// Function to activate default Overview tab
+function activateDefaultTab() {
+if (!window.location.hash || (window.location.hash !== '#offers' && window.location.hash !== '#candidatures')) {
+const tabEl = document.getElementById('overview-tab');
+if (tabEl) {
+if (typeof bootstrap !== 'undefined') {
+const tab = new bootstrap.Tab(tabEl);
+tab.show();
+setTimeout(() => {
+const tabsContainer = document.querySelector('.nav-tabs');
+if (tabsContainer) {
+const headerHeight = document.querySelector('.fixed-top') ?. offsetHeight || 0;
+window.scrollTo({
+top: tabsContainer.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20,
+behavior: 'smooth'
+});
+}
+}, 300);
+} else {
+tabEl.click();
+}
+}
+}
+}
 
 
 // Update URL hash when a tab is clicked
-            document.querySelectorAll('.nav-tabs .nav-link').forEach(tabLink => {
-                tabLink.addEventListener('click', function () {
-                    const tabId = this.getAttribute('id');
-                    let hash;
-                    if (tabId === 'overview-tab') {
-                        hash = ''; // No hash for Overview to keep URL clean
-                    } else if (tabId === 'offers-tab') {
-                        hash = '#offers';
-                    } else if (tabId === 'applications-tab') {
-                        hash = '#candidatures';
-                    }
-                    if (hash !== undefined) {
-                        window.location.hash = hash;
-                    }
-                });
-            });
-            // Activate tabs on page load
-            activateOffersTab();
-            activateCandidaturesTab();
-            activateDefaultTab();
+document.querySelectorAll('.nav-tabs .nav-link').forEach(tabLink => {
+tabLink.addEventListener('click', function () {
+const tabId = this.getAttribute('id');
+let hash;
+if (tabId === 'overview-tab') {
+hash = ''; // No hash for Overview to keep URL clean
+} else if (tabId === 'offers-tab') {
+hash = '#offers';
+} else if (tabId === 'applications-tab') {
+hash = '#candidatures';
+}
+if (hash !== undefined) {
+window.location.hash = hash;
+}
+});
+});
+// Activate tabs on page load
+activateOffersTab();
+activateCandidaturesTab();
+activateDefaultTab();
 
-            // Handle hash changes
-            window.addEventListener('hashchange', function () {
-                activateOffersTab();
-                activateCandidaturesTab();
-                activateDefaultTab();
-            });
+// Handle hash changes
+window.addEventListener('hashchange', function () {
+activateOffersTab();
+activateCandidaturesTab();
+activateDefaultTab();
+});
 
-            // Handle filter form submission for offers (sets #offers hash)
-            const offerFilterForm = document.querySelector('form[action="{{ path('back') }}#offers"]');
-            if (offerFilterForm) {
-                offerFilterForm.addEventListener('submit', function (event) {
-                    window.location.hash = '#offers';
-                });
-            }
+// Handle filter form submission for offers (sets #offers hash)
+const offerFilterForm = document.querySelector('form[action="  {{ path('back') }}#offers"]');
+if (offerFilterForm) {
+offerFilterForm.addEventListener('submit', function (event) {
+window.location.hash = '#offers';
+});
+}
 
-            // Handle filter form submission for applications (sets #candidatures hash)
-            const applicationFilterForm = document.querySelector('form[action="{{ path('back') }}#candidatures"]');
-            if (applicationFilterForm) {
-                applicationFilterForm.addEventListener('submit', function (event) {
-                    window.location.hash = '#candidatures';
-                });
-            }
+// Handle filter form submission for applications (sets #candidatures hash)
+const applicationFilterForm = document.querySelector('form[action="  {{ path('back') }}#candidatures"]');
+if (applicationFilterForm) {
+applicationFilterForm.addEventListener('submit', function (event) {
+window.location.hash = '#candidatures';
+});
+}
 
-            // View Offer Modal
-            document.querySelectorAll('[data-bs-target="#viewOffreModal"]').forEach(button => {
-                button.addEventListener('click', function () {
-                    const offerId = this.getAttribute('data-id');
-                    // Replace with actual AJAX call to fetch offer data
-                    const offerData = {
-                        id: offerId,
-                        title: "Développeur Full Stack",
-                        organisation: "Tech Corp",
-                        category: "Informatique",
-                        region: "Tunis",
-                        salary: "3000.00",
-                        status: "Actif",
-                        date: "01/04/2025",
-                        description: "Rejoignez notre équipe pour développer des applications web innovantes."
-                    };
-                    document.getElementById('viewOfferTitle').textContent = offerData.title;
-                    document.getElementById('viewOfferOrganisation').textContent = offerData.organisation;
-                    document.getElementById('viewOfferCategory').textContent = offerData.category;
-                    document.getElementById('viewOfferRegion').textContent = offerData.region;
-                    document.getElementById('viewOfferSalary').textContent = offerData.salary;
-                    document.getElementById('viewOfferStatus').textContent = offerData.status;
-                    document.getElementById('viewOfferDate').textContent = offerData.date;
-                    document.getElementById('viewOfferDescription').textContent = offerData.description;
-                });
-            });
+// View Offer Modal
+document.querySelectorAll('[data-bs-target="#viewOffreModal"]').forEach(button => {
+button.addEventListener('click', function () {
+const offerId = this.getAttribute('data-id');
+// Replace with actual AJAX call to fetch offer data
+const offerData = {
+id: offerId,
+title: "Développeur Full Stack",
+organisation: "Tech Corp",
+category: "Informatique",
+region: "Tunis",
+salary: "3000.00",
+status: "Actif",
+date: "01/04/2025",
+description: "Rejoignez notre équipe pour développer des applications web innovantes."
+};
+document.getElementById('viewOfferTitle').textContent = offerData.title;
+document.getElementById('viewOfferOrganisation').textContent = offerData.organisation;
+document.getElementById('viewOfferCategory').textContent = offerData.category;
+document.getElementById('viewOfferRegion').textContent = offerData.region;
+document.getElementById('viewOfferSalary').textContent = offerData.salary;
+document.getElementById('viewOfferStatus').textContent = offerData.status;
+document.getElementById('viewOfferDate').textContent = offerData.date;
+document.getElementById('viewOfferDescription').textContent = offerData.description;
+});
+});
 
-            // View Candidature Modal
-            document.querySelectorAll('[data-bs-target="#viewCandidatureModal"]').forEach(button => {
-                button.addEventListener('click', function () {
-                    const candidatureId = this.getAttribute('data-id');
-                    // Replace with actual AJAX call to fetch candidature data
-                    const candidatureData = {
-                        id: candidatureId,
-                        user: "Jean Dupont",
-                        email: "jean.dupont@example.com",
-                        offer: "Développeur Full Stack",
-                        date: "01/04/2025",
-                        status: "En attente",
-                        message: "Je suis très motivé pour rejoindre votre équipe.",
-                        cv: "/path/to/cv.pdf"
-                    };
-                    document.getElementById('viewCandidatureUser').textContent = candidatureData.user;
-                    document.getElementById('viewCandidatureEmail').textContent = candidatureData.email;
-                    document.getElementById('viewCandidatureOffer').textContent = candidatureData.offer;
-                    document.getElementById('viewCandidatureDate').textContent = candidatureData.date;
-                    document.getElementById('viewCandidatureStatus').textContent = candidatureData.status;
-                    document.getElementById('viewCandidatureMessage').textContent = candidatureData.message;
-                    document.getElementById('viewCandidatureCV').setAttribute('href', candidatureData.cv);
-                });
-            });
+// View Candidature Modal
+document.querySelectorAll('[data-bs-target="#viewCandidatureModal"]').forEach(button => {
+button.addEventListener('click', function () {
+const candidatureId = this.getAttribute('data-id');
+// Replace with actual AJAX call to fetch candidature data
+const candidatureData = {
+id: candidatureId,
+user: "Jean Dupont",
+email: "jean.dupont@example.com",
+offer: "Développeur Full Stack",
+date: "01/04/2025",
+status: "En attente",
+message: "Je suis très motivé pour rejoindre votre équipe.",
+cv: "/path/to/cv.pdf"
+};
+document.getElementById('viewCandidatureUser').textContent = candidatureData.user;
+document.getElementById('viewCandidatureEmail').textContent = candidatureData.email;
+document.getElementById('viewCandidatureOffer').textContent = candidatureData.offer;
+document.getElementById('viewCandidatureDate').textContent = candidatureData.date;
+document.getElementById('viewCandidatureStatus').textContent = candidatureData.status;
+document.getElementById('viewCandidatureMessage').textContent = candidatureData.message;
+document.getElementById('viewCandidatureCV').setAttribute('href', candidatureData.cv);
+});
+});
 
-            // Application Status Chart (Bar Chart)
-            const ctxStatus = document.getElementById('applicationStatusChart').getContext('2d');
-            new Chart(ctxStatus, {
-                type: 'bar',
-                data: {
-                    labels: ['En attente', 'Acceptée', 'Refusée'],
-                    datasets: [{
-                        label: 'Candidatures',
-                        data: [
-                            {{ stats.pending_applications|default(0) }},
-                            {{ stats.accepted_applications|default(0) }},
-                            {{ stats.rejected_applications|default(0) }}
-                        ],
-                        backgroundColor: ['#ffc107', '#28a745', '#dc3545'],
-                        borderColor: ['#ffca2c', '#218838', '#c82333'],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
-            });
+// Application Status Chart (Bar Chart)
+const ctxStatus = document.getElementById('applicationStatusChart').getContext('2d');
+new Chart(ctxStatus, {
+type: 'bar',
+data: {
+labels: [
+'En attente', 'Acceptée', 'Refusée'
+],
+datasets: [
+{
+label: 'Candidatures',
+data: [
+{{ stats.pending_applications|default(0) }}, {{ stats.accepted_applications|default(0) }}, {{ stats.rejected_applications|default(0) }}
+],
+backgroundColor: [
+'#ffc107', '#28a745', '#dc3545'
+],
+borderColor: [
+'#ffca2c', '#218838', '#c82333'
+],
+borderWidth: 1
+}
+]
+},
+options: {
+scales: {
+y: {
+beginAtZero: true
+}
+},
+plugins: {
+legend: {
+display: false
+}
+}
+}
+});
 
-            // Offer Categories Chart (Doughnut Chart)
-            const ctxCategories = document.getElementById('offerCategoriesChart').getContext('2d');
-            new Chart(ctxCategories, {
-                type: 'doughnut',
-                data: {
-                    labels: [{% for category, count in categories %}'{{ category }}',{% endfor %}],
-                    datasets: [{
-                        data: [{% for category, count in categories %}{{ count }},{% endfor %}],
-                        backgroundColor: ['#007bff', '#28a745', '#dc3545', '#ffc107', '#17a2b8']
-                    }]
-                },
-                options: {
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-        });
-    </script>
+// Offer Categories Chart (Doughnut Chart)
+const ctxCategories = document.getElementById('offerCategoriesChart').getContext('2d');
+new Chart(ctxCategories, {
+type: 'doughnut',
+data: {
+labels: [{% for category, count in categories %}'{{ category }}',{% endfor %}],
+datasets: [
+{
+data: [{% for category, count in categories %}{{ count }},{% endfor %}],
+backgroundColor: [
+'#007bff',
+'#28a745',
+'#dc3545',
+'#ffc107',
+'#17a2b8'
+]
+}
+]
+},
+options: {
+plugins: {
+legend: {
+position: 'bottom'
+}
+}
+}
+});
+});
+	</script>
 {% endblock %}

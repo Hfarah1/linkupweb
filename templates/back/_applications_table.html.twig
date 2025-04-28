@@ -1,0 +1,66 @@
+<div class="table-responsive">
+    <table class="table select-table">
+        <thead>
+            <tr>
+                <th>Candidat</th>
+                <th>Offre</th>
+                <th>Date</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for candidature in candidatures %}
+                <tr>
+                    <td>
+                        <div class="d-flex">
+                            <img src="{{ candidature.user.avatar|default(asset('back/images/faces/face1.jpg')) }}" alt="Candidat" class="rounded-circle" style="width: 40px; height: 40px;"/>
+                            <div>
+                                <h6>{{ candidature.user.prenom }} {{ candidature.user.nom }}</h6>
+                                <p>{{ candidature.user.email|u.truncate(20, '...') }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <h6>{{ candidature.offre.titre|u.truncate(20, '...') }}</h6>
+                        <p>{{ candidature.offre.organisation|u.truncate(20, '...') }}</p>
+                    </td>
+                    <td>{{ candidature.date_candidature|date('d/m/Y') }}</td>
+                    <td>
+                        <form action="{{ path('back') }}" method="post" style="display:inline;">
+                            <input type="hidden" name="action" value="edit_candidature">
+                            <input type="hidden" name="id" value="{{ candidature.id_candidature }}">
+                            <select name="status" onchange="this.form.submit()">
+                                <option value="En attente" {{ candidature.statut == 'En attente' ? 'selected' }}>En attente</option>
+                                <option value="Acceptée" {{ candidature.statut == 'Acceptée' ? 'selected' }}>Acceptée</option>
+                                <option value="Refusée" {{ candidature.statut == 'Refusée' ? 'selected' }}>Refusée</option>
+                            </select>
+                        </form>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewCandidatureModal" data-id="{{ candidature.id_candidature }}">
+                            <i class="mdi mdi-eye"></i>
+                        </button>
+                        <a href="{{ path('back', {'download_cv': candidature.id_candidature}) }}" class="btn btn-sm btn-outline-info">
+                            <i class="mdi mdi-download"></i>
+                        </a>
+                        <form action="{{ path('back') }}" method="post" style="display:inline;" onsubmit="return confirm('Supprimer cette candidature ?');">
+                            <input type="hidden" name="action" value="delete_candidature">
+                            <input type="hidden" name="id" value="{{ candidature.id_candidature }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="mdi mdi-delete"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">Aucune candidature trouvée.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="mt-4">
+    {{ knp_pagination_render(application_pagination) }}
+</div>

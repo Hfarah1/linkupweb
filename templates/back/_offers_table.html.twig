@@ -1,0 +1,46 @@
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Organisation</th>
+                <th>Catégorie</th>
+                <th>Région</th>
+                <th>Salaire</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for offre in offres %}
+                <tr>
+                    <td>{{ offre.titre|u.truncate(30, '...') }}</td>
+                    <td>{{ offre.organisation|u.truncate(20, '...') }}</td>
+                    <td>{{ offre.categorie|default('N/A') }}</td>
+                    <td>{{ offre.gouvernorat|default('N/A') }}</td>
+                    <td>{{ offre.salaire ? offre.salaire|number_format(2) : 'N/A' }}</td>
+                    <td>{{ offre.date_publication|date('d/m/Y') }}</td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewOffreModal" data-id="{{ offre.id_offre }}">
+                            <i class="mdi mdi-eye"></i>
+                        </button>
+                        <form action="{{ path('back') }}" method="post" style="display:inline;" onsubmit="return confirm('Supprimer cette offre ?');">
+                            <input type="hidden" name="action" value="delete_offer">
+                            <input type="hidden" name="id" value="{{ offre.id_offre }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="mdi mdi-delete"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7" class="text-center">Aucune offre trouvée.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="mt-4">
+    {{ knp_pagination_render(offer_pagination) }}
+</div>

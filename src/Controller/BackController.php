@@ -82,6 +82,18 @@ final class BackController extends AbstractController
             ->getResult();
         $regions = array_map(fn($row) => $row['gouvernorat'], $regionsResult);
 
+        $categoriesResult = $offreRepository->createQueryBuilder('o')
+    ->select('o.categorie, COUNT(o.id_offre) as offer_count')
+    ->groupBy('o.categorie')
+    ->getQuery()
+    ->getResult();
+$categories = [];
+foreach ($categoriesResult as $result) {
+    if ($result['categorie']) {
+        $categories[$result['categorie']] = (int) $result['offer_count'];
+    }
+}
+
         // Recent Applications
         $recentApplications = $candidatureRepository->findBy([], ['date_candidature' => 'DESC'], 5);
 
@@ -351,6 +363,7 @@ final class BackController extends AbstractController
         return $this->render('back/backAhmed.html.twig', [
             'controller_name' => 'BackController',
             'user' => $user,
+            'categories' => $categories,
             'stats' => $stats,
             'recent_applications' => $recentApplications,
             'recent_offers' => $recentOffers,
