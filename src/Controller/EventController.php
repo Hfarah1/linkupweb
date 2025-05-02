@@ -11,6 +11,7 @@ use App\Repository\CategorieRepository;
 use App\Repository\RatingRepository;
 use App\Repository\EventRepository;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,6 +35,7 @@ use Eluceo\iCal\Domain\ValueObject\TimeSpan;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use App\Service\AgoraTokenService;
 
 
 
@@ -179,7 +181,7 @@ public function eventDetail(
         if ($form->isSubmitted() && $form->isValid()) {
             if ($event->getType() === 'virtual') {
                 $event->setAppId('788fe3b38e104edba009da276cb137ca');
-                $event->setToken('007eJxTYIjqX6/y6ubjsMgH6VorFkt2ztZvn5FgqdEmW1PB4V7E2K3AYG5hkZZqnGRskWpoYJKakpRoYGCZkmhkbpacZGhsnpzILsWb0RDIyHDgoiwzIwMEgvhsDDmZedmlBQwMAAsNHd8=');
+                $event->setToken('007eJxTYAipOZ7oVTfrcNf/t6+vTFW9tjOo4JCYRdXiquCI7V0MX+coMJhbWKSlGicZW6QaGpikpiQlGhhYpiQamZslJxkamycndp0WyWgIZGT46HWAhZEBAkF8NoaczLzs0gIGBgBP9iLs');
                 $event->setChannel('linkup');
             }
 
@@ -205,11 +207,11 @@ public function eventDetail(
             return $this->redirectToRoute('newEventFront', ['id_categorie' => $categorie->getId()]);
         }
 
-        return $this->render('event/new.html.twig', [
+        return $this->render('event/form.html.twig', [
             'form' => $form->createView(),
+            'title' => 'Créer un événement virtuel',
+            'header' => 'Créer un événement virtuel',
             'event' => $event,
-            'categorie' => $categorie,
-            'type' => $type,
         ]);
     }
 
@@ -266,7 +268,13 @@ public function eventDetail(
     #[Route('/event/edit/{id}', name: 'event_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Event $event, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
-        $form = $this->createForm(EventType::class, $event);
+        $type = $event->getType();
+        if ($type !== 'virtual' && $type !== 'physical') {
+            $type = 'virtual'; // Valeur par défaut si le type n'est pas défini
+        }
+        $form = $this->createForm(EventType::class, $event, [
+            'type' => $type,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -297,30 +305,36 @@ public function eventDetail(
             return $this->redirectToRoute('eventslist');
         }
 
-        return $this->renderForm('event/edit.html.twig', [
+        return $this->render('event/form.html.twig', [
             'form' => $form->createView(),
-           
+            'title' => 'Éditer un événement',
+            'header' => 'Éditer un événement',
             'event' => $event,
         ]);
     }
 
 
     #[Route('/event/delete/{id}', name: 'event_delete', methods: ['GET', 'POST'])]
-    public function deleteEvent($id, ManagerRegistry $managerRegistry, EventRepository $EventRepository): Response
+    public function deleteEvent($id, ManagerRegistry $managerRegistry, EventRepository $EventRepository, RatingRepository $ratingRepository): Response
     {
         $entityManager = $managerRegistry->getManager();
         
-        // Find the category by ID
+        // Find the event by ID
         $event = $EventRepository->find($id);
         
-        // Check if the category exists
+        // Check if the event exists
         if ($event) {
-            // Remove the produit from the database
+            // Supprimer d'abord tous les ratings liés à cet event
+            $ratings = $ratingRepository->findBy(['event' => $event]);
+            foreach ($ratings as $rating) {
+                $entityManager->remove($rating);
+            }
+            // Ensuite, supprimer l'event
             $entityManager->remove($event);
             $entityManager->flush();
         }
         
-        // Redirect to the list page of produits after deletion
+        // Redirect to the list page of events after deletion
         return $this->redirectToRoute('eventslist', [], Response::HTTP_SEE_OTHER);
     }
 
@@ -334,10 +348,15 @@ public function eventDetail(
     {
         $event = new Event();
         
-        // Configuration Agora
-        $event->setAppId('788fe3b38e104edba009da276cb137ca');
-        $event->setToken('007eJxTYIjqX6/y6ubjsMgH6VorFkt2ztZvn5FgqdEmW1PB4V7E2K3AYG5hkZZqnGRskWpoYJKakpRoYGCZkmhkbpacZGhsnpzILsWb0RDIyHDgoiwzIwMEgvhsDDmZedmlBQwMAAsNHd8=');
-        $event->setChannel('linkup');
+        // Configuration Agora simplifiée
+        $appId = '788fe3b38e104edba009da276cb137ca';
+        $channel = 'test'; // Changement du nom du channel
+        // Token temporaire simple
+        $tempToken = '007eJxTYAipOZ7oVTfrcNf/t6+vTFW9tjOo4JCYRdXiquCI7V0MX+coMJhbWKSlGicZW6QaGpikpiQlGhhYpiQamZslJxkamycndp0WyWgIZGT46HWAhZEBAkF8NoaczLzs0gIGBgBP9iLs';
+        
+        $event->setAppId($appId);
+        $event->setChannel($channel);
+        $event->setToken($tempToken);
         
         // Autres configurations
         $event->setType('virtual');
@@ -356,15 +375,19 @@ public function eventDetail(
                 'required' => false,
                 'attr' => ['placeholder' => 'Décrivez votre événement...']
             ])
-            ->add('date_debut', DateType::class, [
+            ->add('date_debut', DateTimeType::class, [
                 'label' => 'Date de début',
                 'widget' => 'single_text',
                 'html5' => true
             ])
-            ->add('date_fin', DateType::class, [
+            ->add('date_fin', DateTimeType::class, [
                 'label' => 'Date de fin',
                 'widget' => 'single_text',
                 'html5' => true
+            ])
+            ->add('places', IntegerType::class, [
+                'label' => 'Places',
+                'attr' => ['placeholder' => 'Nombre de places']
             ])
             ->getForm();
 
@@ -387,8 +410,11 @@ public function eventDetail(
             }
         }
 
-        return $this->render('event/virtual_new.html.twig', [
+        return $this->render('event/form.html.twig', [
             'form' => $form->createView(),
+            'title' => 'Créer un événement virtuel',
+            'header' => 'Créer un événement virtuel',
+            'event' => $event,
         ]);
     }
 
@@ -405,7 +431,10 @@ public function eventDetail(
     }
 
     #[Route('/event/virtual/{id}/join', name: 'virtual_event_join', methods: ['GET'])]
-    public function joinVirtualEvent(int $id, EventRepository $eventRepository): Response
+    public function joinVirtualEvent(
+        int $id, 
+        EventRepository $eventRepository
+    ): Response
     {
         $event = $eventRepository->find($id);
         if (!$event) {
@@ -414,6 +443,7 @@ public function eventDetail(
         if ($event->getType() !== 'virtual') {
             throw $this->createNotFoundException('Cet événement n\'est pas un événement virtuel.');
         }
+        
         return $this->render('event/virtual_join.html.twig', [
             'event' => $event,
         ]);
@@ -467,8 +497,8 @@ public function eventDetail(
     #[Route('/event/{id}/qr', name: 'generate_qr_code')]
     public function generateQrCode(int $id): Response
     {
-        // Utilise l'URL ngrok ici
-        $url = 'https://b64a-197-29-196-61.ngrok-free.app' . $this->generateUrl('event_detail', ['id_event' => $id]);
+        // Utilise l'URL ngrok ici pour un accès universel
+        $url = 'https://eca8-197-3-6-252.ngrok-free.app' . $this->generateUrl('event_detail', ['id_event' => $id]);
 
         $qrCode = new QrCode($url);
         $writer = new PngWriter();
@@ -479,5 +509,40 @@ public function eventDetail(
             200,
             ['Content-Type' => $result->getMimeType()]
         );
+    }
+
+    #[Route('/', name: 'home')]
+    public function home(EventRepository $eventRepository): Response
+    {
+        // Exemple : afficher la liste de tous les événements
+        $events = $eventRepository->findAll();
+        return $this->render('event/home.html.twig', [
+            'events' => $events
+        ]);
+    }
+
+    #[Route('/event/virtual/edit/{id}', name: 'virtual_event_edit', methods: ['GET', 'POST'])]
+    public function editVirtualEvent(int $id, Request $request, EntityManagerInterface $em): Response
+    {
+        $event = $em->getRepository(Event::class)->find($id);
+        if (!$event || $event->getType() !== 'virtual') {
+            throw $this->createNotFoundException('Événement virtuel non trouvé.');
+        }
+
+        $form = $this->createForm(VirtualEventType::class, $event);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            $this->addFlash('success', 'Événement virtuel modifié avec succès !');
+            return $this->redirectToRoute('eventslist');
+        }
+
+        return $this->render('event/form.html.twig', [
+            'form' => $form->createView(),
+            'title' => 'Éditer un événement virtuel',
+            'header' => 'Éditer un événement virtuel',
+            'event' => $event,
+        ]);
     }
 }

@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Choisir une image générée{% endblock %}
+
+{% block body %}
+    <h2>Choisissez une image générée pour votre matériel</h2>
+    <form method="post">
+        {{ form_widget(form) }}
+        <div style="display:flex;gap:20px;margin:20px 0;">
+            {% for img in images %}
+                <label style="text-align:center;">
+                    <input type="radio" name="selected_image" value="{{ img }}" required>
+                    <br>
+                    <img src="{{ img }}" style="max-width:200px;max-height:200px;border:1px solid #ccc;padding:5px;">
+                </label>
+            {% endfor %}
+        </div>
+        <button class="btn btn-success">Valider ce choix</button>
+    </form>
+{% endblock %} 

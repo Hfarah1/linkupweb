@@ -6,9 +6,8 @@
 
 parameters:
     upload_directory: '%kernel.project_dir%/public/uploads'
-    # Add your Agora configuration here
-    agora.app_id: '%env(AGORA_APP_ID)%'
-    agora.app_certificate: '%env(AGORA_APP_CERTIFICATE)%'
+    # Agora configuration from environment variables
+    agora_app_certificate: '%env(AGORA_APP_CERTIFICATE)%'
 
 services:
     # default configuration for services in *this* file
@@ -24,6 +23,10 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+
+    App\Service\AgoraTokenService:
+        autowire: false
+        autoconfigure: false
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

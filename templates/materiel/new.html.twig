@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Matériel{% endblock %}
+
+{% block body %}
+    <h1>Créer un nouveau matériel</h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
+    {{ form_start(form) }}
+        {{ form_row(form.nomMat) }}
+        {{ form_row(form.descriptionMat) }}
+        {{ form_row(form.categorieMat) }}
+        {{ form_row(form.marqueMat) }}
+        {{ form_row(form.referenceMat) }}
+        {{ form_row(form.quantiteStock) }}
+        {{ form_row(form.quantiteReservee) }}
+        {{ form_row(form.idEv) }}
+        <button class="btn btn-primary">Créer</button>
+    {{ form_end(form) }}
+
+    {% if materiel is defined and materiel.imagePath %}
+        <h2>Image générée :</h2>
+        <img src="{{ materiel.imagePath }}" alt="Image générée" style="max-width:300px;">
+    {% endif %}
+{% endblock %} 

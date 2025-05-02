@@ -11,6 +11,8 @@ framework:
         handler_id: null
         cookie_secure: auto
         cookie_samesite: lax
+        cookie_lifetime: 31536000 # 1 an en secondes
+        gc_maxlifetime: 31536000 # 1 an en secondes
 
     #esi: true
     #fragments: true
