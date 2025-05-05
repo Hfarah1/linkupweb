@@ -49,6 +49,31 @@ Ces deux applications interagissent avec une **base de données commune**, assur
 
 ![image](https://github.com/user-attachments/assets/55489cd7-12b7-4055-bb1c-81ff98ddd0ae)
 
+### 🚀 Utilisation
+
+Pour exécuter ce projet, vous devez d’abord vous assurer que **PHP** est installé sur votre machine.
+
+---
+
+### 🛠️ Installation de PHP
+
+Voici les étapes à suivre :
+
+1. **Téléchargez PHP** depuis le site officiel :  
+   👉 [https://www.php.net/downloads](https://www.php.net/downloads)
+
+2. **Installez PHP** en fonction de votre système d’exploitation :  
+   - Pour **Windows**, vous pouvez utiliser :
+     - 👉 [XAMPP](https://www.apachefriends.org/index.html)  
+     - 👉 [WampServer](https://www.wampserver.com/)  
+   - Ces outils incluent PHP, MySQL et Apache, ce qui facilite l’exécution de projets Symfony localement.
+
+3. **Vérifiez l’installation** :  
+   Ouvrez un terminal et tapez la commande suivante :
+   ```bash
+   php -v
+
+
 ### 🙌 Contributions
 
 Nous remercions chaleureusement toutes les personnes ayant contribué à ce projet :
@@ -92,7 +117,7 @@ Le projet se compose des modules suivants :
 
 ---
 
-## ⚙️ Installation
+## ⚙️ comment contribuer 
 
 1. **Cloner le repository**
 
