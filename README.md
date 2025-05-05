@@ -58,15 +58,15 @@ Amal Boussahmine, Nour Berriche, Ahmed Yessine Ben Othmen, Feres Koumanji, Farah
 
 ### 👥 Contributeurs
 
-- Farah Hammemi – Responsable du module de gestion des produits
+Farah Hammemi – Responsable du module de gestion des produits
 
-- Ahmed Yessine Ben Othmen – Responsable du module de gestion des candidatures
+Ahmed Yessine Ben Othmen – Responsable du module de gestion des candidatures
 
--Feres Koumanji – Responsable de la gestion des utilisateurs
+Feres Koumanji – Responsable de la gestion des utilisateurs
 
--Nour Berriche – Responsable de la gestion des rencontres sociales 
+Nour Berriche – Responsable de la gestion des rencontres sociales
 
-- Amal Boussahmine – Responsable de la gestion des événements
+Amal boussahmine - Responsable de la gestion  des événements
   
  ---
 
