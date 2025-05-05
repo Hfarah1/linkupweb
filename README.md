@@ -97,5 +97,5 @@ Le projet se compose des modules suivants :
 1. **Cloner le repository**
 
 ```bash
-git clone https://github.com/TonCompte/TonProjet.git
-cd TonProjet
+git clone https://github.com/Hfarah1/linkupweb/tree/main
+cd linkupweb
