@@ -41,6 +41,7 @@ Ces deux applications interagissent avec une **base de données commune**, assur
 ### 📆 Planning
 
 ![Planning](Capture d'écran 2025-05-05 124525.png)
+![image](https://github.com/user-attachments/assets/7fad9fcc-bef9-46c3-ac91-c8d4bca79c3f)
 
 ### 📊 Répartition des séances
 
